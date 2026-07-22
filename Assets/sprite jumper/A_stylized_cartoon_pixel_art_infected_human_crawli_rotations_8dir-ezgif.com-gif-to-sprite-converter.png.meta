@@ -1,0 +1,338 @@
+fileFormatVersion: 2
+guid: 079dc46907fb0e640a3960e9b98da6cd
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4914357177211514694
+    second: A_stylized_cartoon_pixel_art_infected_human_crawli_rotations_8dir-ezgif.com-gif-to-sprite-converter_0
+  - first:
+      213: 3396748868390304094
+    second: A_stylized_cartoon_pixel_art_infected_human_crawli_rotations_8dir-ezgif.com-gif-to-sprite-converter_1
+  - first:
+      213: 3149486715348143205
+    second: A_stylized_cartoon_pixel_art_infected_human_crawli_rotations_8dir-ezgif.com-gif-to-sprite-converter_2
+  - first:
+      213: 3481825170304669943
+    second: A_stylized_cartoon_pixel_art_infected_human_crawli_rotations_8dir-ezgif.com-gif-to-sprite-converter_3
+  - first:
+      213: -2498669454889624372
+    second: A_stylized_cartoon_pixel_art_infected_human_crawli_rotations_8dir-ezgif.com-gif-to-sprite-converter_4
+  - first:
+      213: -1854826971076607310
+    second: A_stylized_cartoon_pixel_art_infected_human_crawli_rotations_8dir-ezgif.com-gif-to-sprite-converter_5
+  - first:
+      213: 4338268176784133988
+    second: A_stylized_cartoon_pixel_art_infected_human_crawli_rotations_8dir-ezgif.com-gif-to-sprite-converter_6
+  - first:
+      213: 7077893197316867845
+    second: A_stylized_cartoon_pixel_art_infected_human_crawli_rotations_8dir-ezgif.com-gif-to-sprite-converter_7
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: A_stylized_cartoon_pixel_art_infected_human_crawli_rotations_8dir-ezgif.com-gif-to-sprite-converter_0
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 100
+        width: 38
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64f6517b0dd433440800000000000000
+      internalID: 4914357177211514694
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: A_stylized_cartoon_pixel_art_infected_human_crawli_rotations_8dir-ezgif.com-gif-to-sprite-converter_1
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 101
+        width: 32
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e593d9b591da32f20800000000000000
+      internalID: 3396748868390304094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: A_stylized_cartoon_pixel_art_infected_human_crawli_rotations_8dir-ezgif.com-gif-to-sprite-converter_2
+      rect:
+        serializedVersion: 2
+        x: 182
+        y: 101
+        width: 37
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56c432d1b7935bb20800000000000000
+      internalID: 3149486715348143205
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: A_stylized_cartoon_pixel_art_infected_human_crawli_rotations_8dir-ezgif.com-gif-to-sprite-converter_3
+      rect:
+        serializedVersion: 2
+        x: 265
+        y: 100
+        width: 31
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f8160e7b8de15030800000000000000
+      internalID: 3481825170304669943
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: A_stylized_cartoon_pixel_art_infected_human_crawli_rotations_8dir-ezgif.com-gif-to-sprite-converter_4
+      rect:
+        serializedVersion: 2
+        x: 345
+        y: 98
+        width: 30
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ccc5f2a8e51f25dd0800000000000000
+      internalID: -2498669454889624372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: A_stylized_cartoon_pixel_art_infected_human_crawli_rotations_8dir-ezgif.com-gif-to-sprite-converter_5
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 20
+        width: 31
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b24a2572b45246e0800000000000000
+      internalID: -1854826971076607310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: A_stylized_cartoon_pixel_art_infected_human_crawli_rotations_8dir-ezgif.com-gif-to-sprite-converter_6
+      rect:
+        serializedVersion: 2
+        x: 102
+        y: 20
+        width: 38
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46f8991fbef943c30800000000000000
+      internalID: 4338268176784133988
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: A_stylized_cartoon_pixel_art_infected_human_crawli_rotations_8dir-ezgif.com-gif-to-sprite-converter_7
+      rect:
+        serializedVersion: 2
+        x: 181
+        y: 21
+        width: 37
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 507c938dc5ab93260800000000000000
+      internalID: 7077893197316867845
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      A_stylized_cartoon_pixel_art_infected_human_crawli_rotations_8dir-ezgif.com-gif-to-sprite-converter_0: 4914357177211514694
+      A_stylized_cartoon_pixel_art_infected_human_crawli_rotations_8dir-ezgif.com-gif-to-sprite-converter_1: 3396748868390304094
+      A_stylized_cartoon_pixel_art_infected_human_crawli_rotations_8dir-ezgif.com-gif-to-sprite-converter_2: 3149486715348143205
+      A_stylized_cartoon_pixel_art_infected_human_crawli_rotations_8dir-ezgif.com-gif-to-sprite-converter_3: 3481825170304669943
+      A_stylized_cartoon_pixel_art_infected_human_crawli_rotations_8dir-ezgif.com-gif-to-sprite-converter_4: -2498669454889624372
+      A_stylized_cartoon_pixel_art_infected_human_crawli_rotations_8dir-ezgif.com-gif-to-sprite-converter_5: -1854826971076607310
+      A_stylized_cartoon_pixel_art_infected_human_crawli_rotations_8dir-ezgif.com-gif-to-sprite-converter_6: 4338268176784133988
+      A_stylized_cartoon_pixel_art_infected_human_crawli_rotations_8dir-ezgif.com-gif-to-sprite-converter_7: 7077893197316867845
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

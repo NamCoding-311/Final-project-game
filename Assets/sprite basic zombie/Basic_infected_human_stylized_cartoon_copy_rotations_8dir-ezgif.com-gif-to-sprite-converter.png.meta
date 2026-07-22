@@ -1,0 +1,338 @@
+fileFormatVersion: 2
+guid: 0a7a0e51001a2f2419c6de701513259f
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -1455066679499418696
+    second: Basic_infected_human_stylized_cartoon_copy_rotations_8dir-ezgif.com-gif-to-sprite-converter_0
+  - first:
+      213: -7729376447543101145
+    second: Basic_infected_human_stylized_cartoon_copy_rotations_8dir-ezgif.com-gif-to-sprite-converter_1
+  - first:
+      213: 6126531939907443157
+    second: Basic_infected_human_stylized_cartoon_copy_rotations_8dir-ezgif.com-gif-to-sprite-converter_2
+  - first:
+      213: -6150316408739421133
+    second: Basic_infected_human_stylized_cartoon_copy_rotations_8dir-ezgif.com-gif-to-sprite-converter_3
+  - first:
+      213: -4208226211842228368
+    second: Basic_infected_human_stylized_cartoon_copy_rotations_8dir-ezgif.com-gif-to-sprite-converter_4
+  - first:
+      213: 1556516258266189389
+    second: Basic_infected_human_stylized_cartoon_copy_rotations_8dir-ezgif.com-gif-to-sprite-converter_5
+  - first:
+      213: 6982871582148761538
+    second: Basic_infected_human_stylized_cartoon_copy_rotations_8dir-ezgif.com-gif-to-sprite-converter_6
+  - first:
+      213: -2295407716902265287
+    second: Basic_infected_human_stylized_cartoon_copy_rotations_8dir-ezgif.com-gif-to-sprite-converter_7
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Basic_infected_human_stylized_cartoon_copy_rotations_8dir-ezgif.com-gif-to-sprite-converter_0
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 115
+        width: 32
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b31ee370909ecbe0800000000000000
+      internalID: -1455066679499418696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basic_infected_human_stylized_cartoon_copy_rotations_8dir-ezgif.com-gif-to-sprite-converter_1
+      rect:
+        serializedVersion: 2
+        x: 125
+        y: 114
+        width: 27
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7293ceca21dbbb490800000000000000
+      internalID: -7729376447543101145
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basic_infected_human_stylized_cartoon_copy_rotations_8dir-ezgif.com-gif-to-sprite-converter_2
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 114
+        width: 28
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d9944fe650d50550800000000000000
+      internalID: 6126531939907443157
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basic_infected_human_stylized_cartoon_copy_rotations_8dir-ezgif.com-gif-to-sprite-converter_3
+      rect:
+        serializedVersion: 2
+        x: 309
+        y: 115
+        width: 28
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 334a4d0efcfa5aaa0800000000000000
+      internalID: -6150316408739421133
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basic_infected_human_stylized_cartoon_copy_rotations_8dir-ezgif.com-gif-to-sprite-converter_4
+      rect:
+        serializedVersion: 2
+        x: 398
+        y: 116
+        width: 32
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07ff7a47e806995c0800000000000000
+      internalID: -4208226211842228368
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basic_infected_human_stylized_cartoon_copy_rotations_8dir-ezgif.com-gif-to-sprite-converter_5
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 23
+        width: 28
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4e83154a4bd99510800000000000000
+      internalID: 1556516258266189389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basic_infected_human_stylized_cartoon_copy_rotations_8dir-ezgif.com-gif-to-sprite-converter_6
+      rect:
+        serializedVersion: 2
+        x: 123
+        y: 22
+        width: 28
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c7952605b428e060800000000000000
+      internalID: 6982871582148761538
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basic_infected_human_stylized_cartoon_copy_rotations_8dir-ezgif.com-gif-to-sprite-converter_7
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 22
+        width: 27
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93e9953d7d21520e0800000000000000
+      internalID: -2295407716902265287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Basic_infected_human_stylized_cartoon_copy_rotations_8dir-ezgif.com-gif-to-sprite-converter_0: -1455066679499418696
+      Basic_infected_human_stylized_cartoon_copy_rotations_8dir-ezgif.com-gif-to-sprite-converter_1: -7729376447543101145
+      Basic_infected_human_stylized_cartoon_copy_rotations_8dir-ezgif.com-gif-to-sprite-converter_2: 6126531939907443157
+      Basic_infected_human_stylized_cartoon_copy_rotations_8dir-ezgif.com-gif-to-sprite-converter_3: -6150316408739421133
+      Basic_infected_human_stylized_cartoon_copy_rotations_8dir-ezgif.com-gif-to-sprite-converter_4: -4208226211842228368
+      Basic_infected_human_stylized_cartoon_copy_rotations_8dir-ezgif.com-gif-to-sprite-converter_5: 1556516258266189389
+      Basic_infected_human_stylized_cartoon_copy_rotations_8dir-ezgif.com-gif-to-sprite-converter_6: 6982871582148761538
+      Basic_infected_human_stylized_cartoon_copy_rotations_8dir-ezgif.com-gif-to-sprite-converter_7: -2295407716902265287
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
