@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f9bad88fd75ec0479354655d8e0dd17, type: 3}
+  m_Name: Shotgun_Data
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponData
+  weaponName: XM1108
+  bulletPrefab: {fileID: 2131882094584562652, guid: ca945c39793af4d489e0166fc97c8796, type: 3}
+  fireRate: 0.8
+  pelletsPerShot: 6
+  spreadAngle: 30
+  damage: 8
+  isAutomatic: 0

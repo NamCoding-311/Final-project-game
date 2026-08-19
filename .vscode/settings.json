@@ -68,5 +68,7 @@
         "*.slnx": "*.csproj"
     },
     "dotnet.defaultSolution": "Final project game.slnx",
-    "dotnet.enableWorkspaceBasedDevelopment": false
+    "dotnet.enableWorkspaceBasedDevelopment": false,
+    "editor.unicodeHighlight.nonBasicASCII": false,
+    "editor.unicodeHighlight.ambiguousCharacters": false
 }

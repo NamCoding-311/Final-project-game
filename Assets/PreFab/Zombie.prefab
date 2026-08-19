@@ -180,12 +180,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9e99c64e9ec51d429bbb238c829f3b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Zombie
-  speed: 2
-  damage: 10
-  attackInterval: 1
-  obstacleLayer:
-    serializedVersion: 2
-    m_Bits: 8
+  maxHP: 50
+  moveSpeed: 2.5
+  attackDamage: 15
+  directionalSprites:
+  - {fileID: -1455066679499418696, guid: 0a7a0e51001a2f2419c6de701513259f, type: 3}
+  - {fileID: -7729376447543101145, guid: 0a7a0e51001a2f2419c6de701513259f, type: 3}
+  - {fileID: -6150316408739421133, guid: 0a7a0e51001a2f2419c6de701513259f, type: 3}
+  - {fileID: -4208226211842228368, guid: 0a7a0e51001a2f2419c6de701513259f, type: 3}
+  - {fileID: -2295407716902265287, guid: 0a7a0e51001a2f2419c6de701513259f, type: 3}
+  - {fileID: 1556516258266189389, guid: 0a7a0e51001a2f2419c6de701513259f, type: 3}
+  - {fileID: 6126531939907443157, guid: 0a7a0e51001a2f2419c6de701513259f, type: 3}
+  - {fileID: 6982871582148761538, guid: 0a7a0e51001a2f2419c6de701513259f, type: 3}
+  despawnDistanceBehind: 25
 --- !u!58 &494937548067431963
 CircleCollider2D:
   m_ObjectHideFlags: 0
