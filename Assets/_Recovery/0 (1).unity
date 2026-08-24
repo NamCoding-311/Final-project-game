@@ -577,18 +577,18 @@ MonoBehaviour:
   forwardSpeed: 2
   maxSpeed: 10
   acceleration: 0.1
-  dashSpeed: 7
+  dashSpeed: 24
   dashDuration: 0.25
   dashCooldown: 1.5
   dashRamDamage: 300
-  baseCenterY: 1
-  laneDistance: 1.1
-  laneChangeSpeed: 7
+  baseCenterY: 0
+  laneDistance: 1.5
+  laneChangeSpeed: 15
   minLaneIndex: -1
   maxLaneIndex: 1
   clampToRoadBoundaries: 1
-  minYLimit: -1.2
-  maxYLimit: 3.3
+  minYLimit: -2.2
+  maxYLimit: 1
   normalRamDamage: 80
   speedLossOnRam: 1.5
 --- !u!1 &230090487

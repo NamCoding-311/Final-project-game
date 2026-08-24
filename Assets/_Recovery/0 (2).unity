@@ -582,12 +582,12 @@ MonoBehaviour:
   dashCooldown: 1.5
   dashRamDamage: 300
   baseCenterY: 1
-  laneDistance: 1.1
-  laneChangeSpeed: 7
+  laneDistance: 1.5
+  laneChangeSpeed: 15
   minLaneIndex: -1
   maxLaneIndex: 1
   clampToRoadBoundaries: 1
-  minYLimit: -1.2
+  minYLimit: -1.3
   maxYLimit: 3.3
   normalRamDamage: 80
   speedLossOnRam: 1.5

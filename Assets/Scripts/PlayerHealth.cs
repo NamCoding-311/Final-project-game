@@ -22,6 +22,12 @@ public class PlayerHealth : MonoBehaviour
     private int _currentHP;
     private bool _isDead;
 
+    private void Awake()
+    {
+        // Luôn đảm bảo thời gian game chạy bình thường khi bắt đầu
+        Time.timeScale = 1f;
+    }
+
     private void Start()
     {
         _currentHP = maxHP;

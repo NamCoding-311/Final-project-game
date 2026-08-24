@@ -1,29 +1,39 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
+
+// Component phụ gắn vào từng Chunk để đánh dấu loại Prefab khi thu hồi vào Object Pool
+public class ChunkIdentifier : MonoBehaviour
+{
+    public int PrefabIndex { get; set; }
+}
 
 // Quản lý hệ thống bản đồ vô tận dạng cuộn ngang (Horizontal Endless Map / 3-Lane Runner).
-// Hỗ trợ xem trước (Preview) ngay trong Scene/Game view khi chưa ấn Play, và nhận diện các Chunk đặt sẵn trong Scene.
+// Tự động nhận diện độ cao Y của đường trong Scene và duy trì đường sinh vô tận thẳng tắp.
 public class EndlessMapManager : MonoBehaviour
 {
     [Header("Target & Prefabs")]
     // Transform của Player hoặc Xe cần theo dõi
     [SerializeField] private Transform playerTransform;
 
-    // Danh sách các mẫu đoạn đường (Tilemap Chunk Prefabs) với chướng ngại vật/zombie khác nhau
+    // Danh sách các mẫu đoạn đường (Tilemap Chunk Prefabs)
     [SerializeField] private GameObject[] chunkPrefabs;
 
     [Header("Chunk Configuration")]
     // Chiều rộng (trục X) của một đoạn đường (đơn vị Unity)
-    [SerializeField] private float chunkWidth = 19f;
+    [SerializeField] private float chunkWidth = 50f;
 
-    // Số lượng đoạn đường được tạo sẵn khi bắt đầu game
-    [SerializeField] private int initialChunksCount = 4;
+    // Tọa độ Y của mặt đường (Tự động cập nhật theo đoạn đường bạn đặt trong Scene)
+    [SerializeField] private float roadPosY = 2.5f;
 
-    // Khoảng cách phía sau Player mà đoạn đường cũ sẽ bị thu hồi
-    [SerializeField] private float despawnDistanceBehind = 35f;
+    // Tầm nhìn phía trước cần luôn có sẵn đường (mét)
+    [SerializeField] private float spawnDistanceAhead = 100f;
+
+    // Khoảng cách phía sau Player mà đoạn đường cũ sẽ bị thu hồi (mét)
+    [SerializeField] private float despawnDistanceBehind = 50f;
 
     [Header("Optimization")]
-    // Bật chế độ Object Pooling để tái sử dụng Chunk thay vì Instantiate/Destroy liên tục
+    // Bật chế độ Object Pooling để tái sử dụng Chunk
     [SerializeField] private bool useObjectPooling = true;
 
     // Danh sách các chunk đang hiển thị trên Scene
@@ -32,82 +42,122 @@ public class EndlessMapManager : MonoBehaviour
     // Bộ nhớ đệm (Pool) lưu trữ các chunk đã ẩn để tái sử dụng
     private readonly Dictionary<int, Queue<GameObject>> _chunkPool = new Dictionary<int, Queue<GameObject>>();
 
+    // Danh sách các Prefab hợp lệ đã lọc bỏ Missing
+    private readonly List<GameObject> _validPrefabs = new List<GameObject>();
+
     // Vị trí X tiếp theo để đặt đoạn đường mới
     private float _nextSpawnX = 0f;
 
     private void Start()
     {
-        // Tự động tìm Player nếu chưa được gán trong Inspector
+        // 1. Tự động tìm Player nếu chưa được gán trong Inspector
         if (playerTransform == null)
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null)
+            if (player != null) playerTransform = player.transform;
+        }
+
+        // 2. Lọc danh sách Chunk Prefabs hợp lệ
+        _validPrefabs.Clear();
+        if (chunkPrefabs != null)
+        {
+            foreach (GameObject prefab in chunkPrefabs)
             {
-                playerTransform = player.transform;
-            }
-            else
-            {
-                Debug.LogWarning("EndlessMapManager: Chưa gán PlayerTransform và không tìm thấy GameObject có Tag 'Player'!");
+                if (prefab != null) _validPrefabs.Add(prefab);
             }
         }
 
-        // Khởi tạo các đoạn đường ban đầu
+        // 3. Khởi tạo và tự động nhận diện độ cao Y từ Scene
         InitializeMap();
     }
 
     private void Update()
     {
-        if (playerTransform == null || _activeChunks.Count == 0) return;
+        if (playerTransform == null) return;
 
-        // Kiểm tra xem đoạn đường cũ nhất đã vượt qua phía sau người chơi chưa
-        GameObject oldestChunk = _activeChunks[0];
-        if (playerTransform.position.x - oldestChunk.transform.position.x > despawnDistanceBehind)
+        // 1. Luôn đảm bảo phía trước Player có đủ đường nối tiếp nhau
+        while (_nextSpawnX < playerTransform.position.x + spawnDistanceAhead)
         {
-            RecycleChunk(oldestChunk);
-            _activeChunks.RemoveAt(0);
-
-            // Sinh tiếp một đoạn đường mới ở phía trước
             SpawnChunk(false);
+        }
+
+        // 2. Thu hồi các đoạn đường cũ đã bị xe bỏ lại quá xa phía sau
+        for (int i = _activeChunks.Count - 1; i >= 0; i--)
+        {
+            GameObject chunk = _activeChunks[i];
+            if (chunk != null)
+            {
+                float chunkRightEdge = chunk.transform.position.x + chunkWidth;
+
+                if (playerTransform.position.x - chunkRightEdge > despawnDistanceBehind)
+                {
+                    RecycleChunk(chunk);
+                    _activeChunks.RemoveAt(i);
+                }
+            }
         }
     }
 
-    // Khởi tạo bản đồ: Tận dụng các chunk đã đặt sẵn trong Scene (nếu có) và sinh thêm cho đủ số lượng
+    // Khởi tạo bản đồ: Tự động tìm tất cả các đoạn đường đang có trong Scene để lấy chuẩn độ cao Y và vị trí X
     private void InitializeMap()
     {
         _activeChunks.Clear();
         _nextSpawnX = 0f;
 
-        // 1. Quét xem đã có Chunk nào được đặt sẵn làm con của EndlessMapManager trong Scene chưa
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            Transform child = transform.GetChild(i);
-            if (child.gameObject.activeSelf)
-            {
-                _activeChunks.Add(child.gameObject);
-                
-                // Đảm bảo có ChunkIdentifier
-                ChunkIdentifier identifier = child.GetComponent<ChunkIdentifier>();
-                if (identifier == null)
-                {
-                    identifier = child.gameObject.AddComponent<ChunkIdentifier>();
-                    identifier.PrefabIndex = 0;
-                }
+        // Tìm tất cả các đoạn đường có sẵn trong Scene (kể cả là con của GameManagers hay nằm ngoài Scene)
+        GameObject[] sceneChunks = GameObject.FindObjectsByType<GameObject>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        List<GameObject> existingRoads = new List<GameObject>();
 
-                // Cập nhật vị trí X tiếp theo dựa trên chunk xa nhất
-                float chunkEndX = child.position.x + chunkWidth;
-                if (chunkEndX > _nextSpawnX)
+        foreach (GameObject go in sceneChunks)
+        {
+            if (go.name.Contains("Chunk") || go.name.Contains("Road") || go.name.Contains("Preview"))
+            {
+                // Đảm bảo đối tượng có chứa Grid hoặc Tilemap
+                if (go.GetComponent<Grid>() != null || go.GetComponentInChildren<Tilemap>() != null)
                 {
-                    _nextSpawnX = chunkEndX;
+                    existingRoads.Add(go);
                 }
             }
         }
 
-        // Sắp xếp các chunk đặt sẵn theo thứ tự trục X từ trái sang phải
-        _activeChunks.Sort((a, b) => a.transform.position.x.CompareTo(b.transform.position.x));
+        if (existingRoads.Count > 0)
+        {
+            // Sắp xếp các đoạn đường từ trái sang phải theo trục X
+            existingRoads.Sort((a, b) => a.transform.position.x.CompareTo(b.transform.position.x));
 
-        // 2. Sinh thêm các chunk tiếp theo nếu số lượng đặt sẵn chưa đủ
-        int neededChunks = initialChunksCount - _activeChunks.Count;
-        for (int i = 0; i < neededChunks; i++)
+            // Lấy độ cao Y chính xác từ đoạn đường bạn đã căn chỉnh
+            roadPosY = existingRoads[0].transform.position.y;
+
+            // Đo chiều rộng Tilemap
+            Tilemap tm = existingRoads[0].GetComponentInChildren<Tilemap>();
+            if (tm != null)
+            {
+                tm.CompressBounds();
+                if (tm.cellBounds.size.x > 0)
+                {
+                    chunkWidth = tm.cellBounds.size.x;
+                }
+            }
+
+            foreach (GameObject road in existingRoads)
+            {
+                _activeChunks.Add(road);
+
+                ChunkIdentifier id = road.GetComponent<ChunkIdentifier>();
+                if (id == null) id = road.AddComponent<ChunkIdentifier>();
+                id.PrefabIndex = 0;
+
+                float endX = road.transform.position.x + chunkWidth;
+                if (endX > _nextSpawnX)
+                {
+                    _nextSpawnX = endX;
+                }
+            }
+        }
+
+        // Sinh tiếp các đoạn đường đón đầu phía trước
+        float initialTargetX = playerTransform != null ? playerTransform.position.x + spawnDistanceAhead : spawnDistanceAhead;
+        while (_nextSpawnX < initialTargetX)
         {
             SpawnChunk(_activeChunks.Count == 0);
         }
@@ -116,34 +166,38 @@ public class EndlessMapManager : MonoBehaviour
     // Sinh một đoạn đường mới ở vị trí tiếp theo trên trục X
     private void SpawnChunk(bool isFirstChunk)
     {
-        if (chunkPrefabs == null || chunkPrefabs.Length == 0) return;
+        if (_validPrefabs.Count == 0) return;
 
-        // Chọn index của Prefab (đoạn đầu chọn mẫu 0, các đoạn sau chọn ngẫu nhiên)
-        int prefabIndex = isFirstChunk ? 0 : Random.Range(0, chunkPrefabs.Length);
-        Vector3 spawnPosition = new Vector3(_nextSpawnX, 0f, 0f);
+        int prefabIndex = isFirstChunk ? 0 : Random.Range(0, _validPrefabs.Count);
+        Vector3 spawnPosition = new Vector3(_nextSpawnX, roadPosY, 0f);
 
         GameObject chunk = GetChunkInstance(prefabIndex, spawnPosition);
-        _activeChunks.Add(chunk);
-
-        // Cập nhật vị trí X cho đoạn đường kế tiếp
-        _nextSpawnX += chunkWidth;
+        if (chunk != null)
+        {
+            _activeChunks.Add(chunk);
+            _nextSpawnX += chunkWidth;
+        }
     }
 
-    // Lấy một instance của chunk từ Pool (nếu có) hoặc Instantiate mới
+    // Lấy instance từ Pool hoặc tạo mới
     private GameObject GetChunkInstance(int prefabIndex, Vector3 position)
     {
         if (useObjectPooling && _chunkPool.ContainsKey(prefabIndex) && _chunkPool[prefabIndex].Count > 0)
         {
             GameObject pooledChunk = _chunkPool[prefabIndex].Dequeue();
-            pooledChunk.transform.position = position;
-            pooledChunk.SetActive(true);
-            return pooledChunk;
+            if (pooledChunk != null)
+            {
+                pooledChunk.transform.position = position;
+                pooledChunk.SetActive(true);
+                return pooledChunk;
+            }
         }
 
-        // Nếu không có trong Pool hoặc không dùng Pooling thì Instantiate mới
-        GameObject newChunk = Instantiate(chunkPrefabs[prefabIndex], position, Quaternion.identity, transform);
-        
-        // Gắn kèm thông tin PrefabIndex để khi thu hồi biết thuộc pool nào
+        if (prefabIndex >= _validPrefabs.Count || _validPrefabs[prefabIndex] == null) return null;
+
+        // Sinh trực tiếp ở World Space (không bị ảnh hưởng bởi transform của cha)
+        GameObject newChunk = Instantiate(_validPrefabs[prefabIndex], position, Quaternion.identity);
+
         ChunkIdentifier identifier = newChunk.GetComponent<ChunkIdentifier>();
         if (identifier == null)
         {
@@ -154,9 +208,11 @@ public class EndlessMapManager : MonoBehaviour
         return newChunk;
     }
 
-    // Thu hồi hoặc xóa chunk khi người chơi đã chạy qua
+    // Thu hồi đoạn đường cũ vào Pool
     private void RecycleChunk(GameObject chunk)
     {
+        if (chunk == null) return;
+
         if (useObjectPooling)
         {
             ChunkIdentifier identifier = chunk.GetComponent<ChunkIdentifier>();
@@ -176,64 +232,58 @@ public class EndlessMapManager : MonoBehaviour
         }
     }
 
-    // ==========================================
-    // CÔNG CỤ XEM TRƯỚC BẢN ĐỒ KHI CHƯA ẤN PLAY (EDITOR PREVIEW)
-    // ==========================================
+    // Xóa toàn bộ và giải phóng Pool
+    public void ClearMap()
+    {
+        foreach (GameObject chunk in _activeChunks)
+        {
+            if (chunk != null) Destroy(chunk);
+        }
+        _activeChunks.Clear();
 
-#if UNITY_EDITOR
-    // Tạo sẵn các Chunk nối tiếp nhau trên Scene để nhìn thấy và vẽ thử Tilemap
-    [ContextMenu("Tạo Bản Đồ Xem Trước (Preview Map)")]
+        foreach (var queue in _chunkPool.Values)
+        {
+            while (queue.Count > 0)
+            {
+                GameObject obj = queue.Dequeue();
+                if (obj != null) Destroy(obj);
+            }
+        }
+        _chunkPool.Clear();
+
+        _nextSpawnX = 0f;
+    }
+
+    // Hỗ trợ chế độ xem trước (Preview) trong Editor
     public void GeneratePreviewMap()
     {
         ClearPreviewMap();
 
-        if (chunkPrefabs == null || chunkPrefabs.Length == 0)
+        if (chunkPrefabs == null || chunkPrefabs.Length == 0) return;
+
+        float previewX = 0f;
+        int count = 4;
+        for (int i = 0; i < count; i++)
         {
-            Debug.LogWarning("EndlessMapManager: Chưa có Chunk Prefab nào để tạo Preview!");
-            return;
+            int index = i % chunkPrefabs.Length;
+            if (chunkPrefabs[index] == null) continue;
+
+            GameObject chunk = Instantiate(chunkPrefabs[index], new Vector3(previewX, roadPosY, 0f), Quaternion.identity);
+            chunk.name = $"Preview_Chunk_{i}";
+            previewX += chunkWidth;
         }
-
-        float currentX = 0f;
-        for (int i = 0; i < initialChunksCount; i++)
-        {
-            int prefabIndex = i % chunkPrefabs.Length;
-            if (chunkPrefabs[prefabIndex] != null)
-            {
-                GameObject chunk = (GameObject)UnityEditor.PrefabUtility.InstantiatePrefab(chunkPrefabs[prefabIndex], transform);
-                chunk.transform.position = new Vector3(currentX, 0f, 0f);
-
-                ChunkIdentifier id = chunk.GetComponent<ChunkIdentifier>();
-                if (id == null) id = chunk.AddComponent<ChunkIdentifier>();
-                id.PrefabIndex = prefabIndex;
-            }
-            currentX += chunkWidth;
-        }
-
-        Debug.Log($"EndlessMapManager: Đã tạo {initialChunksCount} đoạn Preview trong Scene!");
     }
 
-    // Xóa các Chunk xem trước trong Scene
-    [ContextMenu("Xóa Bản Đồ Xem Trước (Clear Preview)")]
+    // Xóa các đoạn đường xem trước trong Editor
     public void ClearPreviewMap()
     {
-        while (transform.childCount > 0)
+        GameObject[] previewChunks = GameObject.FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        foreach (GameObject go in previewChunks)
         {
-            DestroyImmediate(transform.GetChild(0).gameObject);
+            if (go.name.StartsWith("Preview_Chunk"))
+            {
+                DestroyImmediate(go);
+            }
         }
     }
-#endif
-
-    // Vẽ đường biên Gizmos trong Scene view để dễ căn chỉnh độ dài Chunk
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.cyan;
-        Vector3 center = transform.position + new Vector3(_nextSpawnX - (chunkWidth / 2f), 0f, 0f);
-        Gizmos.DrawWireCube(center, new Vector3(chunkWidth, 6f, 0.1f));
-    }
-}
-
-// Component phụ trợ để lưu trữ Index của Prefab khi sử dụng Object Pooling
-public class ChunkIdentifier : MonoBehaviour
-{
-    public int PrefabIndex { get; set; }
 }

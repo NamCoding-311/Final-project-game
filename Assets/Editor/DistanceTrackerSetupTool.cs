@@ -9,7 +9,7 @@ public class DistanceTrackerSetupTool : EditorWindow
     public static void SetupDistanceTrackerUI()
     {
         // 1. Tìm hoặc tạo Canvas
-        Canvas canvas = Object.FindFirstObjectByType<Canvas>();
+        Canvas canvas = Object.FindAnyObjectByType<Canvas>();
         if (canvas == null)
         {
             GameObject canvasGo = new GameObject("Canvas");

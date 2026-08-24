@@ -27,7 +27,7 @@ public class MapChunkSplitter : EditorWindow
     public static void ExecuteSplit()
     {
         // 1. Tìm Grid trong Scene
-        Grid sceneGrid = Object.FindFirstObjectByType<Grid>();
+        Grid sceneGrid = Object.FindAnyObjectByType<Grid>();
         if (sceneGrid == null)
         {
             EditorUtility.DisplayDialog("Lỗi", "Không tìm thấy đối tượng Grid nào trong Scene!", "OK");
