@@ -27,24 +27,29 @@ public class Player3LaneMovement : MonoBehaviour
     [SerializeField] private int dashRamDamage = 300;
 
     [Header("Lane Configuration (Cài đặt Làn Đường)")]
-    // Độ cao Y của Làn Giữa (tâm đường)
-    [SerializeField] private float baseCenterY = -0.5f;
+    // Số lượng làn đường xe có thể chạy (Mặc định 3 hoặc chuyển thành 4, 5 làn tùy ý)
+    [Range(2, 6)]
+    [SerializeField] private int numberOfLanes = 4;
+
+    // Độ cao Y của tâm đường (điểm mốc chính giữa)
+    [SerializeField] private float baseCenterY = 1.0f;
 
     // Khoảng cách giữa các làn đường theo trục Y
-    [SerializeField] private float laneDistance = 1.1f;
+    [SerializeField] private float laneDistance = 1.0f;
 
     // Tốc độ chuyển đổi giữa các làn
     [SerializeField] private float laneChangeSpeed = 14f;
 
-    // Giới hạn số làn (minLane = -1, maxLane = 1 -> 3 làn)
-    [SerializeField] private int minLaneIndex = -1;
-    [SerializeField] private int maxLaneIndex = 1;
+    [Header("Custom Lane Heights (Tùy chọn chỉnh tay toạ độ từng làn)")]
+    // Bật lên nếu bạn muốn tự gõ tay chính xác toạ độ Y của 4 làn cho khớp với vạch kẻ đường
+    [SerializeField] private bool useCustomLaneY = false;
+    [SerializeField] private float[] customLaneY = new float[] { -0.5f, 0.4f, 1.4f, 2.3f };
 
     [Header("Hard Road Boundaries (Giới hạn mép vỉa hè)")]
     // Bật chặn cứng để xe tuyệt đối không bao giờ trôi ra ngoài vỉa hè
     [SerializeField] private bool clampToRoadBoundaries = true;
-    [SerializeField] private float minYLimit = -2.2f; // Lề đường dưới
-    [SerializeField] private float maxYLimit = 1.0f;  // Lề đường trên (giáp bờ sông)
+    [SerializeField] private float minYLimit = -1.2f; // Lề đường dưới
+    [SerializeField] private float maxYLimit = 3.3f;  // Lề đường trên (giáp bờ sông)
 
     [Header("Combat & Collision")]
     // Sát thương gây ra khi đâm trực diện Zombie lúc bình thường
@@ -53,7 +58,7 @@ public class Player3LaneMovement : MonoBehaviour
     // Giảm nhẹ tốc độ khi va chạm Zombie lúc chạy bình thường
     [SerializeField] private float speedLossOnRam = 1.0f;
 
-    // Index làn hiện tại
+    // Index làn hiện tại (0 là làn dưới cùng, tăng dần lên làn trên)
     private int _currentLaneIndex = 0;
 
     // Tọa độ Y mục tiêu đang di chuyển tới
@@ -62,12 +67,59 @@ public class Player3LaneMovement : MonoBehaviour
     // Tốc độ hiện tại
     private float _currentSpeed;
 
+    [Header("Speed & Throttle (Phím A / D hoặc Mũi tên Trái / Phải)")]
+    // Tốc độ tối thiểu khi hãm phanh (giữ phím A)
+    [SerializeField] private float minSpeed = 3f;
+
+    // Tốc độ giảm tốc khi đạp phanh (giữ phím A hoặc Mũi tên Trái)
+    [SerializeField] private float brakeRate = 14f;
+
+    // Tốc độ tăng tốc khi nhấn ga (giữ phím D hoặc Mũi tên Phải)
+    [SerializeField] private float boostRate = 12f;
+
     // Quản lý trạng thái Dash
     private bool _isDashing = false;
     private float _dashEndTime = 0f;
     private float _nextDashTime = 0f;
 
     private Rigidbody2D _rb;
+
+    // Lấy toạ độ Y của một làn theo chỉ số
+    public float GetLaneY(int index)
+    {
+        if (useCustomLaneY && customLaneY != null && customLaneY.Length > 0)
+        {
+            index = Mathf.Clamp(index, 0, customLaneY.Length - 1);
+            return customLaneY[index];
+        }
+
+        int count = Mathf.Max(2, numberOfLanes);
+        index = Mathf.Clamp(index, 0, count - 1);
+        float offset = (index - (count - 1) / 2f) * laneDistance;
+        return baseCenterY + offset;
+    }
+
+    // Lấy tổng số lượng làn đang hoạt động
+    public int GetTotalLanes()
+    {
+        if (useCustomLaneY && customLaneY != null && customLaneY.Length > 0)
+        {
+            return customLaneY.Length;
+        }
+        return Mathf.Max(2, numberOfLanes);
+    }
+
+    // Lấy danh sách toạ độ tất cả các làn (để Spawner rải vật cản/quái đúng làn)
+    public float[] GetAllLanePositions()
+    {
+        int total = GetTotalLanes();
+        float[] result = new float[total];
+        for (int i = 0; i < total; i++)
+        {
+            result[i] = GetLaneY(i);
+        }
+        return result;
+    }
 
     private void Awake()
     {
@@ -89,10 +141,11 @@ public class Player3LaneMovement : MonoBehaviour
         float initialY = transform.position.y;
         float bestDiff = float.MaxValue;
         int bestLane = 0;
+        int totalLanes = GetTotalLanes();
 
-        for (int i = minLaneIndex; i <= maxLaneIndex; i++)
+        for (int i = 0; i < totalLanes; i++)
         {
-            float laneY = baseCenterY + (i * laneDistance);
+            float laneY = GetLaneY(i);
             float diff = Mathf.Abs(initialY - laneY);
             if (diff < bestDiff)
             {
@@ -102,14 +155,14 @@ public class Player3LaneMovement : MonoBehaviour
         }
 
         _currentLaneIndex = bestLane;
-        _targetY = baseCenterY + (_currentLaneIndex * laneDistance);
+        _targetY = GetLaneY(_currentLaneIndex);
         transform.position = new Vector3(transform.position.x, _targetY, transform.position.z);
     }
 
     private void Update()
     {
         HandleLaneInput();
-        HandleDashInput();
+        HandleSpeedAndDashInput();
     }
 
     private void FixedUpdate()
@@ -130,8 +183,8 @@ public class Player3LaneMovement : MonoBehaviour
         }
     }
 
-    // Xử lý kích hoạt kỹ năng Dash bằng phím SHIFT (đã bỏ phím A giảm tốc)
-    private void HandleDashInput()
+    // Xử lý phím A / D (Ga / Phanh) và phím SHIFT (Lướt Dash)
+    private void HandleSpeedAndDashInput()
     {
         // 1. Nhấn phím Shift (trái hoặc phải) để kích hoạt Dash
         bool pressShift = Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift);
@@ -141,21 +194,37 @@ public class Player3LaneMovement : MonoBehaviour
             StartDash();
         }
 
-        // 2. Kiểm tra khi thời gian Dash kết thúc
+        // 2. Nếu đang trong trạng thái Dash
         if (_isDashing)
         {
             if (Time.time >= _dashEndTime)
             {
                 _isDashing = false;
             }
+            return;
+        }
+
+        // 3. Xử lý phím D (Tăng tốc / Đạp ga) và phím A (Hãm phanh / Giảm tốc)
+        bool isAccelerating = Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow);
+        bool isBraking = Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow);
+
+        if (isAccelerating && !isBraking)
+        {
+            // Đạp ga: Tăng dần tốc độ lên maxSpeed
+            _currentSpeed = Mathf.MoveTowards(_currentSpeed, maxSpeed, boostRate * Time.deltaTime);
+        }
+        else if (isBraking && !isAccelerating)
+        {
+            // Đạp phanh: Giảm dần tốc độ về minSpeed
+            _currentSpeed = Mathf.MoveTowards(_currentSpeed, minSpeed, brakeRate * Time.deltaTime);
         }
         else
         {
-            // Trở về tốc độ chạy bình thường khi không Dash
+            // Nhả phím: Tự động hồi mượt về tốc độ bình thường forwardSpeed
             _currentSpeed = Mathf.MoveTowards(_currentSpeed, forwardSpeed, 8f * Time.deltaTime);
         }
 
-        // Tăng tốc dần theo thời gian nếu có cài đặt gia tốc
+        // Tăng tốc dần theo thời gian nếu có cài đặt gia tốc tự nhiên
         if (acceleration > 0f && forwardSpeed < maxSpeed)
         {
             forwardSpeed += acceleration * Time.deltaTime;
@@ -171,15 +240,16 @@ public class Player3LaneMovement : MonoBehaviour
         _nextDashTime = Time.time + dashCooldown;
     }
 
-    // Chuyển làn có giới hạn minLaneIndex và maxLaneIndex
+    // Chuyển làn giữa các làn từ 0 đến GetTotalLanes() - 1
     private void ChangeLane(int direction)
     {
-        int newLane = Mathf.Clamp(_currentLaneIndex + direction, minLaneIndex, maxLaneIndex);
+        int totalLanes = GetTotalLanes();
+        int newLane = Mathf.Clamp(_currentLaneIndex + direction, 0, totalLanes - 1);
 
         if (newLane != _currentLaneIndex)
         {
             _currentLaneIndex = newLane;
-            _targetY = baseCenterY + (_currentLaneIndex * laneDistance);
+            _targetY = GetLaneY(_currentLaneIndex);
 
             if (clampToRoadBoundaries)
             {
@@ -243,9 +313,10 @@ public class Player3LaneMovement : MonoBehaviour
         Vector3 currentPos = transform.position;
 
         Gizmos.color = Color.green;
-        for (int i = minLaneIndex; i <= maxLaneIndex; i++)
+        int totalLanes = GetTotalLanes();
+        for (int i = 0; i < totalLanes; i++)
         {
-            float laneY = baseCenterY + (i * laneDistance);
+            float laneY = GetLaneY(i);
             Vector3 startPoint = new Vector3(currentPos.x - 10f, laneY, 0f);
             Vector3 endPoint = new Vector3(currentPos.x + 30f, laneY, 0f);
             Gizmos.DrawLine(startPoint, endPoint);

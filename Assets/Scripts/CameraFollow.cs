@@ -29,10 +29,17 @@ public class CameraFollow : MonoBehaviour
     // Màu nền Camera tiệp màu cát để không bao giờ bị lộ đường đen
     [SerializeField] private Color backgroundColor = new Color(0.96f, 0.74f, 0.45f, 1f);
 
+    [Header("Arena Lock Settings")]
+    [SerializeField] private bool isArenaLocked = false;
+    [SerializeField] private float minCamX = 0f;
+    [SerializeField] private float maxCamX = 0f;
+
     private Camera _cam;
+    private float _originalXOffset;
 
     private void Awake()
     {
+        _originalXOffset = xOffset;
         _cam = GetComponent<Camera>();
         if (_cam == null) _cam = Camera.main;
 
@@ -68,6 +75,12 @@ public class CameraFollow : MonoBehaviour
         // Vị trí X mục tiêu mà Camera cần hướng tới
         float targetX = target.position.x + xOffset;
 
+        // Nếu đang trong chế độ khóa đấu trường (Arena Lock), kẹp X lại
+        if (isArenaLocked)
+        {
+            targetX = Mathf.Clamp(targetX, minCamX, maxCamX);
+        }
+
         // Di chuyển mượt mà tới vị trí X mục tiêu
         float currentX = Mathf.Lerp(transform.position.x, targetX, smoothSpeed * Time.deltaTime);
 
@@ -85,5 +98,14 @@ public class CameraFollow : MonoBehaviour
     public void SetTarget(Transform newTarget)
     {
         target = newTarget;
+    }
+
+    // Khóa hoặc mở khóa Camera trong đấu trường Boss
+    public void SetArenaLock(bool locked, float minX = 0f, float maxX = 0f, float customXOffset = 0f)
+    {
+        isArenaLocked = locked;
+        minCamX = minX;
+        maxCamX = maxX;
+        xOffset = locked ? customXOffset : _originalXOffset;
     }
 }

@@ -1,17 +1,19 @@
 using UnityEngine;
 
-// Quản lý các chướng ngại vật tĩnh trên làn đường (Rào chắn, Thùng gỗ, Xe hỏng, Đá cản)
+// Quản lý các chướng ngại vật tĩnh trên đường (Rào chắn, Thùng phuy, Xe hỏng, Cọc tiêu, Vết dầu)
+// Đâm phải chướng ngại vật CHỈ LÀM GIẢM TỐC ĐỘ XE, HOÀN TOÀN KHÔNG BỊ TRỪ MÁU (HP).
 public class RoadObstacle : MonoBehaviour
 {
-    [Header("Obstacle Settings")]
-    // Sát thương gây cho Player nếu đâm phải
-    [SerializeField] private int damageToPlayer = 25;
+    [Header("Speed Penalty (Giảm tốc độ)")]
+    // Lượng tốc độ bị giảm khi xe đâm phải vật cản (ví dụ: đang chạy 12 km/h -> giảm còn 8 km/h)
+    [SerializeField] private float speedPenalty = 4f;
 
-    // Giảm tốc độ xe khi đâm phải vật cản
-    [SerializeField] private float speedPenalty = 3f;
+    // Tốc độ tối thiểu sau khi đâm (không để xe bị dừng hẳn)
+    [SerializeField] private float minSpeedAfterHit = 3f;
 
-    // Khoảng cách phía sau Player để tự hủy chướng ngại vật tránh rác bộ nhớ
-    [SerializeField] private float despawnDistanceBehind = 30f;
+    [Header("Despawn")]
+    // Khoảng cách phía sau Player để tự hủy vật cản tránh tốn bộ nhớ
+    [SerializeField] private float despawnDistanceBehind = 35f;
 
     private Transform _playerTransform;
 
@@ -40,22 +42,23 @@ public class RoadObstacle : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // Trừ máu người chơi
-            PlayerHealth health = other.GetComponent<PlayerHealth>();
-            if (health != null)
+            Player3LaneMovement movement = other.GetComponent<Player3LaneMovement>();
+
+            // 1. Nếu Player đang bấm SHIFT (Dash): Húc bay vật cản, KHÔNG bị giảm tốc độ
+            if (movement != null && movement.IsDashing())
             {
-                health.TakeDamage(damageToPlayer);
+                Destroy(gameObject);
+                return;
             }
 
-            // Làm xe giảm tốc độ
-            Player3LaneMovement movement = other.GetComponent<Player3LaneMovement>();
+            // 2. Nếu đâm bình thường: CHỈ GIẢM TỐC ĐỘ (TUYỆT ĐỐI KHÔNG TRỪ MÁU HP)
             if (movement != null)
             {
                 float currentSpeed = movement.GetCurrentSpeed();
-                movement.SetSpeed(Mathf.Max(2f, currentSpeed - speedPenalty));
+                movement.SetSpeed(Mathf.Max(minSpeedAfterHit, currentSpeed - speedPenalty));
             }
 
-            // Phá hủy chướng ngại vật sau va chạm (hoặc chạy hiệu ứng vỡ nát)
+            // Phá hủy hoặc làm văng chướng ngại vật sau va chạm
             Destroy(gameObject);
         }
     }

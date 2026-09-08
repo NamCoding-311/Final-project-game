@@ -33,6 +33,9 @@ public class ZombieSpawner : MonoBehaviour
     // Giới hạn trục Y để Zombie không bị sinh ra quá xa ngoài màn hình
     [SerializeField] private float maxVerticalY = 6f;
 
+    // Trạng thái cho phép sinh Zombie (tạm dừng khi đánh Boss hoặc chuyển cảnh)
+    private bool _isSpawningActive = true;
+
     private void Start()
     {
         // Tự động tìm Player nếu chưa được gán
@@ -46,9 +49,16 @@ public class ZombieSpawner : MonoBehaviour
         InvokeRepeating(nameof(SpawnZombiesAroundPlayer), 1f, spawnInterval);
     }
 
+    // Bật / tắt sinh Zombie (dùng khi vào trận đấu Boss)
+    public void SetSpawningActive(bool active)
+    {
+        _isSpawningActive = active;
+    }
+
     // Sinh Zombie ngẫu nhiên trong vùng bán nguyệt phía trước/xung quanh xe
     private void SpawnZombiesAroundPlayer()
     {
+        if (!_isSpawningActive) return;
         if (playerTransform == null || zombiePrefab == null) return;
 
         int spawnCount = Random.Range(1, maxZombiesPerWave + 1);

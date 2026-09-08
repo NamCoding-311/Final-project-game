@@ -125,6 +125,13 @@ public class PlayerShooting : MonoBehaviour
             {
                 bulletScript.SetDirection(finalDir);
                 bulletScript.SetDamage(currentWeapon.damage);
+
+                // Truyền vận tốc hiện tại của xe để đạn bay cộng hưởng theo đà xe
+                Player3LaneMovement movement = GetComponent<Player3LaneMovement>();
+                if (movement != null)
+                {
+                    bulletScript.SetInheritedSpeed(movement.GetCurrentSpeed());
+                }
             }
         }
     }
