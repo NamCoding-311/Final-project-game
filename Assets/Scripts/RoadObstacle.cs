@@ -40,25 +40,26 @@ public class RoadObstacle : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
-        {
-            Player3LaneMovement movement = other.GetComponent<Player3LaneMovement>();
+        Player3LaneMovement movement = other.GetComponent<Player3LaneMovement>();
+        if (movement == null) movement = other.GetComponentInParent<Player3LaneMovement>();
 
-            // 1. Nếu Player đang bấm SHIFT (Dash): Húc bay vật cản, KHÔNG bị giảm tốc độ
+        if (movement != null || other.CompareTag("Player"))
+        {
+            // 1. Nếu Player đang bấm SHIFT (Dash): Húc bay vật cản ngay lập tức, KHÔNG bị giảm tốc độ
             if (movement != null && movement.IsDashing())
             {
                 Destroy(gameObject);
                 return;
             }
 
-            // 2. Nếu đâm bình thường: CHỈ GIẢM TỐC ĐỘ (TUYỆT ĐỐI KHÔNG TRỪ MÁU HP)
+            // 2. Nếu đâm bình thường: CHỈ GIẢM TỐC ĐỘ XE (TUYỆT ĐỐI KHÔNG TRỪ MÁU HP)
             if (movement != null)
             {
                 float currentSpeed = movement.GetCurrentSpeed();
                 movement.SetSpeed(Mathf.Max(minSpeedAfterHit, currentSpeed - speedPenalty));
             }
 
-            // Phá hủy hoặc làm văng chướng ngại vật sau va chạm
+            // Phá hủy vật cản sau va chạm
             Destroy(gameObject);
         }
     }

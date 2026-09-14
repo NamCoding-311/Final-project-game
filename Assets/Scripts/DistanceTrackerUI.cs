@@ -76,7 +76,7 @@ public class DistanceTrackerUI : MonoBehaviour
         // Cập nhật text tốc độ (km/h ảo cho sinh động)
         if (speedText != null && _playerMovement != null)
         {
-            float speedKmh = _playerMovement.GetCurrentSpeed() * 3.6f;
+            float speedKmh = _playerMovement.GetCurrentSpeed();
             speedText.text = $"{Mathf.FloorToInt(speedKmh)} km/h";
         }
     }

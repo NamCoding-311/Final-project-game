@@ -18,6 +18,12 @@ public class Zombie : MonoBehaviour
     // Nếu chỉ có 4 hướng: 0: Dưới (Down), 1: Trái (Left), 2: Trên (Up), 3: Phải (Right)
     [SerializeField] private Sprite[] directionalSprites;
 
+    [Header("Road Boundaries (Khóa không cho chạy lên sông/lan can)")]
+    // Khóa trục Y để Zombie chỉ chạy trong lòng đường và vỉa hè, không bao giờ vượt qua lan can bờ sông
+    [SerializeField] private bool clampToRoad = true;
+    [SerializeField] private float minRoadY = -1.1f; // Mép vỉa hè dưới
+    [SerializeField] private float maxRoadY = 3.0f;  // Lan can trên (giáp bờ sông)
+
     [Header("Cleanup")]
     // Khoảng cách phía sau Player để tự hủy Zombie tránh rác bộ nhớ
     [SerializeField] private float despawnDistanceBehind = 25f;
@@ -38,19 +44,16 @@ public class Zombie : MonoBehaviour
     private void Start()
     {
         _currentHP = maxHP;
-
-        // Tìm Player trong Scene
-        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-        if (playerObj != null)
-        {
-            _playerTransform = playerObj.transform;
-            _playerHealth = playerObj.GetComponent<PlayerHealth>();
-        }
+        FindPlayerTarget();
     }
 
     private void Update()
     {
-        if (_playerTransform == null) return;
+        if (_playerTransform == null || !_playerTransform.gameObject.activeInHierarchy)
+        {
+            FindPlayerTarget();
+            if (_playerTransform == null) return;
+        }
 
         // 1. Tính toán hướng và di chuyển rượt đuổi Player
         ChasePlayer();
@@ -65,11 +68,61 @@ public class Zombie : MonoBehaviour
         }
     }
 
-    // Di chuyển Zombie hướng về phía người chơi
+    // Tự động tìm mục tiêu (Xe hoặc Người đi bộ)
+    private void FindPlayerTarget()
+    {
+        OnFootPlayerController onFoot = FindAnyObjectByType<OnFootPlayerController>();
+        if (onFoot != null && onFoot.gameObject.activeInHierarchy)
+        {
+            _playerTransform = onFoot.transform;
+            _playerHealth = onFoot.GetComponent<PlayerHealth>();
+            if (_playerHealth == null) _playerHealth = FindAnyObjectByType<PlayerHealth>();
+            return;
+        }
+
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+        {
+            _playerTransform = playerObj.transform;
+            _playerHealth = playerObj.GetComponent<PlayerHealth>();
+        }
+    }
+
+    // Gán mục tiêu mới cho Zombie (được gọi khi người chơi xuống xe hoặc lên xe)
+    public void SetTarget(Transform target)
+    {
+        _playerTransform = target;
+        if (target != null)
+        {
+            _playerHealth = target.GetComponent<PlayerHealth>();
+            if (_playerHealth == null) _playerHealth = target.GetComponentInParent<PlayerHealth>();
+        }
+    }
+
+    // Di chuyển Zombie hướng về phía người chơi nhưng luôn bị khóa trong phạm vi lòng đường
     private void ChasePlayer()
     {
+        // Khi người chơi xuống xe đánh Boss, TẤT CẢ Zombie lập tức tập trung vào người đi bộ thay vì cái xe
+        OnFootPlayerController onFoot = FindAnyObjectByType<OnFootPlayerController>();
+        if (onFoot != null && onFoot.gameObject.activeInHierarchy)
+        {
+            if (_playerTransform != onFoot.transform)
+            {
+                SetTarget(onFoot.transform);
+            }
+        }
+
+        if (_playerTransform == null) return;
+
         _moveDirection = (_playerTransform.position - transform.position).normalized;
-        transform.position += (Vector3)(_moveDirection * moveSpeed * Time.deltaTime);
+        Vector3 newPos = transform.position + (Vector3)(_moveDirection * moveSpeed * Time.deltaTime);
+
+        if (clampToRoad)
+        {
+            newPos.y = Mathf.Clamp(newPos.y, minRoadY, maxRoadY);
+        }
+
+        transform.position = newPos;
     }
 
     // Cập nhật hình ảnh/Animation theo góc di chuyển thực tế

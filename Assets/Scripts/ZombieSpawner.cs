@@ -1,6 +1,9 @@
 using UnityEngine;
 
-// Tự động sinh Zombie trong bán kính xung quanh Player, LOẠI TRỪ vùng phía sau xe
+// Tự động sinh Zombie HỢP LOGIC BỐI CẢNH:
+// - CHỈ sinh ở 3 hướng: Phía Trước (Phải), Phía Sau (Trái), và Vỉa Hè (Dưới).
+// - TUYỆT ĐỐI KHÔNG sinh ở Phía Trên (Lan can bờ sông / bầu trời).
+// - Luôn khóa chặt vị trí nằm trọn trên mặt đường và vỉa hè, không bao giờ bị off-road.
 public class ZombieSpawner : MonoBehaviour
 {
     [Header("Prefabs & Target")]
@@ -14,39 +17,71 @@ public class ZombieSpawner : MonoBehaviour
     // Thời gian cách nhau giữa mỗi lần sinh Zombie (giây)
     [SerializeField] private float spawnInterval = 1.2f;
 
-    [Header("Spawn Area (Arc Around Player)")]
-    // Khoảng cách tối thiểu để sinh Zombie (tránh sinh ngay sát người chơi)
-    [SerializeField] private float minSpawnRadius = 12f;
+    [Header("Spawn Direction Weights (Tỉ lệ xuất hiện 3 hướng: Trước, Dưới, Sau)")]
+    [Range(0, 100)]
+    [SerializeField] private int frontSpawnWeight = 60;  // 60% đón đầu phía trước (Bên Phải)
+    [Range(0, 100)]
+    [SerializeField] private int bottomSpawnWeight = 25; // 25% trồi từ vỉa hè dưới lên (Phía Dưới)
+    [Range(0, 100)]
+    [SerializeField] private int backSpawnWeight = 15;   // 15% rượt đuổi từ phía sau (Bên Trái)
 
-    // Khoảng cách tối đa để sinh Zombie
-    [SerializeField] private float maxSpawnRadius = 24f;
+    [Header("Spawn Distances (Khoảng cách trước và sau xe)")]
+    [SerializeField] private float minDistanceAhead = 15f;
+    [SerializeField] private float maxDistanceAhead = 25f;
+    [SerializeField] private float minDistanceBehind = 8f;
+    [SerializeField] private float maxDistanceBehind = 16f;
 
-    // Góc mở rộng phía trước mặt xe tính theo độ (-90 đến +90 là nửa bán cầu phía trước)
-    // Ví dụ 100 độ sẽ bao quát cả phía trước, chéo trên, chéo dưới, trên và dưới
-    [Range(30f, 135f)]
-    [SerializeField] private float forwardAngleArc = 105f;
+    [Header("Road Boundaries (Khóa cứng mặt đường - TUYỆT ĐỐI KHÔNG SPAWN LÊN BỜ SÔNG)")]
+    // Mép lan can trên cùng (giáp bờ sông) - CHẶN CỨNG không bao giờ sinh cao hơn mốc này
+    [SerializeField] private float roadMaxY = 3.0f;
+
+    // Mép làn đường dưới cùng
+    [SerializeField] private float roadMinY = -0.8f;
+
+    // Điểm xuất phát ở mép dưới vỉa hè khi trồi lên
+    [SerializeField] private float bottomSpawnY = -1.4f;
 
     [Header("Difficulty / Multi-Spawn")]
     // Số lượng Zombie tối đa sinh ra trong 1 đợt
     [SerializeField] private int maxZombiesPerWave = 2;
 
-    // Giới hạn trục Y để Zombie không bị sinh ra quá xa ngoài màn hình
-    [SerializeField] private float maxVerticalY = 6f;
-
     // Trạng thái cho phép sinh Zombie (tạm dừng khi đánh Boss hoặc chuyển cảnh)
     private bool _isSpawningActive = true;
+    private Player3LaneMovement _laneMovement;
 
     private void Start()
     {
-        // Tự động tìm Player nếu chưa được gán
-        if (playerTransform == null)
-        {
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null) playerTransform = player.transform;
-        }
+        FindPlayer();
 
         // Bắt đầu chu kỳ sinh Zombie liên tục
         InvokeRepeating(nameof(SpawnZombiesAroundPlayer), 1f, spawnInterval);
+    }
+
+    private void Update()
+    {
+        // Tự động tìm lại Player nếu bị đổi (ví dụ khi bước xuống xe)
+        if (playerTransform == null || !playerTransform.gameObject.activeInHierarchy)
+        {
+            FindPlayer();
+        }
+    }
+
+    private void FindPlayer()
+    {
+        OnFootPlayerController onFoot = FindAnyObjectByType<OnFootPlayerController>();
+        if (onFoot != null && onFoot.gameObject.activeInHierarchy)
+        {
+            playerTransform = onFoot.transform;
+            _laneMovement = null;
+            return;
+        }
+
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            playerTransform = player.transform;
+            _laneMovement = player.GetComponent<Player3LaneMovement>();
+        }
     }
 
     // Bật / tắt sinh Zombie (dùng khi vào trận đấu Boss)
@@ -55,7 +90,7 @@ public class ZombieSpawner : MonoBehaviour
         _isSpawningActive = active;
     }
 
-    // Sinh Zombie ngẫu nhiên trong vùng bán nguyệt phía trước/xung quanh xe
+    // Sinh Zombie ngẫu nhiên theo 3 hướng hợp lệ (Phía Trước, Phía Dưới, Phía Sau)
     private void SpawnZombiesAroundPlayer()
     {
         if (!_isSpawningActive) return;
@@ -70,42 +105,82 @@ public class ZombieSpawner : MonoBehaviour
         }
     }
 
-    // Tính toán tọa độ sinh ngẫu nhiên quanh Player (trừ vùng sau xe)
+    // Tính toán tọa độ sinh: CHỈ sinh ở Bên Phải, Bên Trái hoặc Phía Dưới; TUYỆT ĐỐI KHÔNG SINH Ở TRÊN BỜ SÔNG
     private Vector3 CalculateSpawnPosition()
     {
-        // Chọn một góc ngẫu nhiên từ -forwardAngleArc đến +forwardAngleArc (0 độ là hướng thẳng sang phải)
-        float randomAngleDeg = Random.Range(-forwardAngleArc, forwardAngleArc);
-        float angleRad = randomAngleDeg * Mathf.Deg2Rad;
+        Vector3 playerPos = playerTransform.position;
+        int totalWeight = frontSpawnWeight + bottomSpawnWeight + backSpawnWeight;
+        if (totalWeight <= 0) totalWeight = 100;
 
-        // Chọn bán kính ngẫu nhiên
-        float randomDistance = Random.Range(minSpawnRadius, maxSpawnRadius);
+        int roll = Random.Range(0, totalWeight);
 
-        // Tính tọa độ offset từ người chơi
-        float offsetX = Mathf.Cos(angleRad) * randomDistance;
-        float offsetY = Mathf.Sin(angleRad) * randomDistance;
+        float spawnX;
+        float spawnY;
 
-        Vector3 spawnPos = playerTransform.position + new Vector3(offsetX, offsetY, 0f);
+        if (roll < frontSpawnWeight)
+        {
+            // 1. Phía trước mặt xe (Bên Phải): Xuất hiện trên các làn đường đón đầu
+            spawnX = playerPos.x + Random.Range(minDistanceAhead, maxDistanceAhead);
+            spawnY = GetRandomLaneY();
+        }
+        else if (roll < frontSpawnWeight + bottomSpawnWeight)
+        {
+            // 2. Phía dưới (Lề đường / Vỉa hè): Trồi từ dưới vỉa hè lên mặt đường
+            spawnX = playerPos.x + Random.Range(-4f, 16f);
+            spawnY = bottomSpawnY;
+        }
+        else
+        {
+            // 3. Phía sau xe (Bên Trái): Xuất hiện trên mặt đường rượt theo
+            spawnX = playerPos.x - Random.Range(minDistanceBehind, maxDistanceBehind);
+            spawnY = GetRandomLaneY();
+        }
 
-        // Giới hạn trục Y nằm trong phạm vi hiển thị hợp lý của map
-        spawnPos.y = Mathf.Clamp(spawnPos.y, -maxVerticalY, maxVerticalY);
-        spawnPos.z = 0f;
+        // Khóa chặn tuyệt đối không bao giờ vượt qua lan can bờ sông ở phía trên
+        spawnY = Mathf.Min(spawnY, roadMaxY);
 
-        return spawnPos;
+        return new Vector3(spawnX, spawnY, 0f);
     }
 
-    // Vẽ vùng sinh Zombie trong Scene view để dễ quan sát và căn chỉnh
+    // Lấy ngẫu nhiên độ cao một làn đường để Zombie đứng đúng làn
+    private float GetRandomLaneY()
+    {
+        if (_laneMovement != null)
+        {
+            float[] lanes = _laneMovement.GetAllLanePositions();
+            if (lanes != null && lanes.Length > 0)
+            {
+                return lanes[Random.Range(0, lanes.Length)];
+            }
+        }
+        return Random.Range(roadMinY, roadMaxY);
+    }
+
+    // Vẽ vùng sinh Zombie trong Scene view để bạn dễ quan sát
     private void OnDrawGizmosSelected()
     {
-        if (playerTransform == null) return;
+        Vector3 center = playerTransform != null ? playerTransform.position : transform.position;
 
-        Gizmos.color = new Color(1f, 0f, 0f, 0.3f);
-        Vector3 playerPos = playerTransform.position;
+        // Vùng Phía Trước (Xanh lá cây)
+        Gizmos.color = Color.green;
+        Vector3 frontCenter = new Vector3(center.x + (minDistanceAhead + maxDistanceAhead) * 0.5f, (roadMinY + roadMaxY) * 0.5f, 0f);
+        Vector3 frontSize = new Vector3(maxDistanceAhead - minDistanceAhead, roadMaxY - roadMinY, 0f);
+        Gizmos.DrawWireCube(frontCenter, frontSize);
 
-        // Vẽ các tia biên giới hạn vùng sinh
-        Vector3 topLimit = playerPos + Quaternion.Euler(0, 0, forwardAngleArc) * Vector3.right * maxSpawnRadius;
-        Vector3 bottomLimit = playerPos + Quaternion.Euler(0, 0, -forwardAngleArc) * Vector3.right * maxSpawnRadius;
+        // Vùng Phía Dưới (Vàng)
+        Gizmos.color = Color.yellow;
+        Vector3 bottomCenter = new Vector3(center.x + 6f, bottomSpawnY, 0f);
+        Vector3 bottomSize = new Vector3(20f, 0.4f, 0f);
+        Gizmos.DrawWireCube(bottomCenter, bottomSize);
 
-        Gizmos.DrawLine(playerPos, topLimit);
-        Gizmos.DrawLine(playerPos, bottomLimit);
+        // Vùng Phía Sau (Đỏ cam)
+        Gizmos.color = new Color(1f, 0.5f, 0f);
+        Vector3 backCenter = new Vector3(center.x - (minDistanceBehind + maxDistanceBehind) * 0.5f, (roadMinY + roadMaxY) * 0.5f, 0f);
+        Vector3 backSize = new Vector3(maxDistanceBehind - minDistanceBehind, roadMaxY - roadMinY, 0f);
+        Gizmos.DrawWireCube(backCenter, backSize);
+
+        // Đường ranh giới lan can bờ sông (Đỏ cảnh báo)
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(new Vector3(center.x - 30f, roadMaxY, 0f), new Vector3(center.x + 35f, roadMaxY, 0f));
     }
 }

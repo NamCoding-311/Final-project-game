@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 // Định nghĩa một Chặng trong hành trình (Stage / Biome)
@@ -8,6 +10,12 @@ public class BackgroundStage
     public string stageName = "Chặng 1";
     public float startDistance = 0f;
     public Sprite stageSprite;
+
+    [Tooltip("Độ nâng/hạ trục Y riêng cho chặng này (Chặng 2 & 3 nên đặt khoảng +1.0 đến +1.5 để đẩy bờ sông & thành phố lên trên lan can)")]
+    public float yOffset = 0f;
+
+    [Tooltip("Tỷ lệ phóng to riêng cho chặng này (Chặng 2 & 3 nên đặt khoảng 1.45 để phủ kín nóc màn hình, không bị hở dải màu be)")]
+    public float scaleFactor = 1f;
 }
 
 // Quản lý Background Parallax vô tận:
@@ -25,6 +33,14 @@ public class InfiniteParallaxBackground : MonoBehaviour
     [Header("Stages Configuration (Hệ thống Chặng)")]
     [SerializeField] private BackgroundStage[] stages;
 
+    [Header("Sync with Stage Level Manager")]
+    // Tự động đồng bộ chuyển cảnh với StageLevelManager (chuyển background ngay khi qua màn đánh Boss)
+    [SerializeField] private bool syncWithStageLevelManager = true;
+
+    [Header("Tinh Chinh Do Cao Background (Manual Height Fix)")]
+    [Tooltip("Kéo tăng số này để nâng toàn bộ background lên khỏi mặt đường (khuyên dùng khoảng 2.0 đến 2.5 để thấy rõ sông và che kín dải màu be phía trên)")]
+    [SerializeField] private float globalYOffset = 2.2f;
+
     [Header("Seamless Looping Elements")]
     [SerializeField] private Transform[] backgroundLayers;
 
@@ -33,6 +49,36 @@ public class InfiniteParallaxBackground : MonoBehaviour
     private float _startPlayerX;
     private int _currentStageIndex = 0;
     private float _initialBottomY;
+    private StageLevelManager _stageLevelManager;
+
+    public float GetStageYOffset(int index)
+    {
+        float stageOffset = 0f;
+        if (stages != null && index >= 0 && index < stages.Length)
+        {
+            stageOffset = stages[index].yOffset;
+        }
+        return stageOffset + globalYOffset;
+    }
+
+    private void OnValidate()
+    {
+        if (Application.isPlaying && backgroundLayers != null && backgroundLayers.Length > 0)
+        {
+            ApplyStageSprites(_currentStageIndex);
+        }
+    }
+
+    public float GetStageScale(int index)
+    {
+        if (stages == null || index < 0 || index >= stages.Length) return 1f;
+        // Nếu người dùng chưa chỉnh hoặc scale <= 0.05 mà ảnh thấp (< 800px) thì tự động phóng 1.45f để phủ kín nóc
+        if (stages[index].scaleFactor <= 0.05f || (stages[index].scaleFactor == 1f && stages[index].stageSprite != null && stages[index].stageSprite.rect.height < 800))
+        {
+            return 1.45f;
+        }
+        return stages[index].scaleFactor;
+    }
 
     private void Start()
     {
@@ -73,7 +119,7 @@ public class InfiniteParallaxBackground : MonoBehaviour
         // Tự động nhân bản thêm ảnh con nếu có ít hơn 5 tấm (đảm bảo luôn phủ kín cả vùng phía sau xe)
         if (backgroundLayers != null && backgroundLayers.Length > 0 && backgroundLayers.Length < 5)
         {
-            System.Collections.Generic.List<Transform> layerList = new System.Collections.Generic.List<Transform>(backgroundLayers);
+            List<Transform> layerList = new List<Transform>(backgroundLayers);
             while (layerList.Count < 5)
             {
                 Transform clone = Instantiate(backgroundLayers[0], transform);
@@ -97,8 +143,18 @@ public class InfiniteParallaxBackground : MonoBehaviour
         // Căn chỉnh vị trí ban đầu của các tấm ảnh nối tiếp nhau
         AlignAllSegments();
 
-        // Áp dụng ảnh của chặng 1 cho tất cả các tấm ban đầu
-        ApplyInitialStageSprites();
+        // Đồng bộ chặng với StageLevelManager nếu được bật
+        if (syncWithStageLevelManager)
+        {
+            _stageLevelManager = FindAnyObjectByType<StageLevelManager>();
+            if (_stageLevelManager != null)
+            {
+                _currentStageIndex = _stageLevelManager.GetCurrentStageIndex();
+            }
+        }
+
+        // Áp dụng ảnh cho tất cả các tấm ban đầu
+        ApplyStageSprites(_currentStageIndex);
     }
 
     private void LateUpdate()
@@ -113,9 +169,12 @@ public class InfiniteParallaxBackground : MonoBehaviour
         float moveDistance = deltaCameraX * (1f - parallaxEffect);
         transform.position += Vector3.right * moveDistance;
 
-        // 2. Tính quãng đường xe đã chạy được (mét)
-        float currentDistance = playerTransform != null ? (playerTransform.position.x - _startPlayerX) : (cameraX - _lastCameraX);
-        UpdateCurrentStage(currentDistance);
+        // 2. Tính quãng đường xe đã chạy được (mét) nếu không đồng bộ trực tiếp theo Event
+        if (!syncWithStageLevelManager)
+        {
+            float currentDistance = playerTransform != null ? (playerTransform.position.x - _startPlayerX) : (cameraX - _lastCameraX);
+            UpdateCurrentStage(currentDistance);
+        }
 
         // 3. Tái chế và luân chuyển các tấm ảnh con khi bị tụt lại phía sau Camera
         if (backgroundLayers != null && backgroundLayers.Length > 1)
@@ -155,9 +214,10 @@ public class InfiniteParallaxBackground : MonoBehaviour
                     {
                         currentSegWidth = sr.bounds.size.x;
                         float newHalfHeight = sr.bounds.extents.y;
+                        float stageYOffset = GetStageYOffset(_currentStageIndex);
 
-                        // KHÓA ĐÁY ẢNH VÀO BỜ KÈ (Triệt tiêu 100% khe hở màu cam)
-                        float lockedPosY = _initialBottomY + newHalfHeight;
+                        // KHÓA ĐÁY ẢNH VÀO BỜ KÈ VỚI Y OFFSET VÀ SCALE CHUẨN
+                        float lockedPosY = _initialBottomY + newHalfHeight + stageYOffset;
                         seg.position = new Vector3(maxRightX + furthestWidth, lockedPosY, seg.position.z);
                     }
                     else
@@ -172,23 +232,37 @@ public class InfiniteParallaxBackground : MonoBehaviour
     // Căn xếp các tấm ảnh nối tiếp nhau ngay từ đầu
     private void AlignAllSegments()
     {
-        if (backgroundLayers == null || backgroundLayers.Length <= 1) return;
+        if (backgroundLayers == null || backgroundLayers.Length == 0) return;
 
-        for (int i = 1; i < backgroundLayers.Length; i++)
+        float stageYOffset = GetStageYOffset(_currentStageIndex);
+        float targetScale = GetStageScale(_currentStageIndex);
+
+        for (int i = 0; i < backgroundLayers.Length; i++)
         {
-            SpriteRenderer prevSr = backgroundLayers[i - 1].GetComponent<SpriteRenderer>();
-            float prevWidth = (prevSr != null && prevSr.sprite != null) ? prevSr.bounds.size.x : 17.74f;
-
             Transform curr = backgroundLayers[i];
+            if (curr == null) continue;
             SpriteRenderer currSr = curr.GetComponent<SpriteRenderer>();
-            float currHalfHeight = (currSr != null && currSr.sprite != null) ? currSr.bounds.extents.y : 4.435f;
+            if (currSr != null && currSr.sprite != null)
+            {
+                curr.localScale = new Vector3(targetScale, targetScale, 1f);
+                float currHalfHeight = currSr.bounds.extents.y;
+                float lockedPosY = _initialBottomY + currHalfHeight + stageYOffset;
 
-            float lockedPosY = _initialBottomY + currHalfHeight;
-            curr.position = new Vector3(backgroundLayers[i - 1].position.x + prevWidth, lockedPosY, curr.position.z);
+                if (i > 0)
+                {
+                    SpriteRenderer prevSr = backgroundLayers[i - 1].GetComponent<SpriteRenderer>();
+                    float prevWidth = (prevSr != null && prevSr.sprite != null) ? prevSr.bounds.size.x : 17.74f;
+                    curr.position = new Vector3(backgroundLayers[i - 1].position.x + prevWidth, lockedPosY, curr.position.z);
+                }
+                else
+                {
+                    curr.position = new Vector3(curr.position.x, lockedPosY, curr.position.z);
+                }
+            }
         }
     }
 
-    // Xác định chặng hiện tại dựa trên quãng đường đã đi
+    // Xác định chặng hiện tại dựa trên quãng đường đã đi (chỉ dùng khi tắt syncWithStageLevelManager)
     private void UpdateCurrentStage(float currentDistance)
     {
         if (stages == null || stages.Length == 0) return;
@@ -200,43 +274,192 @@ public class InfiniteParallaxBackground : MonoBehaviour
                 if (_currentStageIndex != i)
                 {
                     _currentStageIndex = i;
+                    ApplyStageSprites(_currentStageIndex);
                 }
                 break;
             }
         }
     }
 
-    // Cập nhật Sprite cho tấm ảnh khi nhảy lên phía trước
+    // Cập nhật Sprite và Scale cho tấm ảnh khi nhảy lên phía trước
     private void UpdateSegmentSprite(Transform seg)
     {
         if (stages == null || stages.Length == 0 || _currentStageIndex >= stages.Length) return;
 
-        Sprite targetSprite = stages[_currentStageIndex].stageSprite;
-        if (targetSprite == null) return;
+        BackgroundStage stage = stages[_currentStageIndex];
+        if (stage.stageSprite == null) return;
 
         SpriteRenderer sr = seg.GetComponent<SpriteRenderer>();
-        if (sr != null && sr.sprite != targetSprite)
+        if (sr != null)
         {
-            sr.sprite = targetSprite;
+            if (sr.sprite != stage.stageSprite)
+            {
+                sr.sprite = stage.stageSprite;
+            }
+            float targetScale = GetStageScale(_currentStageIndex);
+            seg.localScale = new Vector3(targetScale, targetScale, 1f);
         }
     }
 
-    // Áp dụng ảnh của chặng đầu tiên cho tất cả các tấm khi bắt đầu game
-    private void ApplyInitialStageSprites()
+    // Chuyển đổi sang Chặng mới (được gọi từ StageLevelManager khi bước lên xe chuyển chặng)
+    public void SwitchToStage(int newStageIndex, float fadeDuration = 2.0f)
     {
-        if (stages != null && stages.Length > 0 && stages[0].stageSprite != null)
+        if (stages == null || stages.Length == 0) return;
+        newStageIndex = Mathf.Clamp(newStageIndex, 0, stages.Length - 1);
+        if (_currentStageIndex == newStageIndex) return;
+
+        _currentStageIndex = newStageIndex;
+
+        if (fadeDuration > 0.1f)
+        {
+            StopAllCoroutines();
+            StartCoroutine(CrossfadeStageCoroutine(newStageIndex, fadeDuration));
+        }
+        else
+        {
+            ApplyStageSprites(newStageIndex);
+        }
+    }
+
+    // Hiệu ứng hòa trộn mờ dần (Crossfade) giữa 2 background của 2 chặng
+    private IEnumerator CrossfadeStageCoroutine(int newStageIndex, float duration)
+    {
+        BackgroundStage newStage = stages[newStageIndex];
+        Sprite newSprite = newStage.stageSprite;
+        if (newSprite == null) yield break;
+
+        float newScale = GetStageScale(newStageIndex);
+        float newYOffset = GetStageYOffset(newStageIndex);
+
+        List<SpriteRenderer> overlays = new List<SpriteRenderer>();
+
+        if (backgroundLayers != null)
         {
             foreach (Transform seg in backgroundLayers)
             {
-                if (seg != null)
+                if (seg == null) continue;
+                Transform overlayTr = seg.Find("StageFadeOverlay");
+                GameObject overlayGo;
+                if (overlayTr == null)
                 {
-                    SpriteRenderer sr = seg.GetComponent<SpriteRenderer>();
-                    if (sr != null)
-                    {
-                        sr.sprite = stages[0].stageSprite;
-                    }
+                    overlayGo = new GameObject("StageFadeOverlay");
+                    overlayGo.transform.SetParent(seg, false);
+                }
+                else
+                {
+                    overlayGo = overlayTr.gameObject;
+                }
+
+                SpriteRenderer mainSr = seg.GetComponent<SpriteRenderer>();
+                SpriteRenderer overlaySr = overlayGo.GetComponent<SpriteRenderer>();
+                if (overlaySr == null) overlaySr = overlayGo.AddComponent<SpriteRenderer>();
+
+                overlaySr.sprite = newSprite;
+                overlaySr.sortingLayerID = mainSr != null ? mainSr.sortingLayerID : 0;
+                overlaySr.sortingOrder = mainSr != null ? mainSr.sortingOrder + 1 : 1;
+                if (mainSr != null) overlaySr.material = mainSr.material;
+                overlaySr.color = new Color(1f, 1f, 1f, 0f);
+
+                float parentScale = seg.localScale.y > 0.01f ? seg.localScale.y : 1f;
+                float relScale = newScale / parentScale;
+                overlayGo.transform.localScale = new Vector3(relScale, relScale, 1f);
+
+                float curYOffset = GetStageYOffset(_currentStageIndex);
+                float curNewHalfHeight = (mainSr != null && mainSr.sprite != null) ? mainSr.bounds.extents.y : 4.435f;
+                float targetNewHalfHeight = (newSprite.bounds.extents.y / newScale) * newScale;
+                float diffY = (targetNewHalfHeight - curNewHalfHeight) + (newYOffset - curYOffset);
+                overlayGo.transform.localPosition = new Vector3(0f, diffY / parentScale, -0.01f);
+
+                overlayGo.SetActive(true);
+                overlays.Add(overlaySr);
+            }
+        }
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            foreach (var ov in overlays)
+            {
+                if (ov != null) ov.color = new Color(1f, 1f, 1f, t);
+            }
+            yield return null;
+        }
+
+        // Hoàn tất crossfade: Gán chính thức ảnh mới cho các tấm chính
+        ApplyStageSprites(newStageIndex);
+
+        // Ẩn overlay
+        foreach (var ov in overlays)
+        {
+            if (ov != null) ov.gameObject.SetActive(false);
+        }
+    }
+
+    // Áp dụng ảnh của chặng cho tất cả các tấm đang hiển thị và khóa chuẩn đáy ảnh vào bờ kè
+    public void ApplyStageSprites(int stageIndex)
+    {
+        if (stages == null || stageIndex < 0 || stageIndex >= stages.Length) return;
+        BackgroundStage stage = stages[stageIndex];
+        if (stage.stageSprite == null) return;
+
+        float targetScale = GetStageScale(stageIndex);
+        float stageYOffset = GetStageYOffset(stageIndex);
+
+        if (backgroundLayers != null)
+        {
+            foreach (Transform seg in backgroundLayers)
+            {
+                if (seg == null) continue;
+                SpriteRenderer sr = seg.GetComponent<SpriteRenderer>();
+                if (sr != null)
+                {
+                    sr.sprite = stage.stageSprite;
+                    seg.localScale = new Vector3(targetScale, targetScale, 1f);
+
+                    float newHalfHeight = sr.bounds.extents.y;
+                    float lockedPosY = _initialBottomY + newHalfHeight + stageYOffset;
+                    seg.position = new Vector3(seg.position.x, lockedPosY, seg.position.z);
                 }
             }
         }
     }
+
+    // Áp dụng ảnh của chặng đầu tiên khi bắt đầu game
+    public void ApplyInitialStageSprites()
+    {
+        ApplyStageSprites(0);
+    }
+
+    [ContextMenu("Tự Động Cân Chỉnh Fit Tỷ Lệ & Tọa Độ Cho Tất Cả Chặng")]
+    public void AutoFitAndAlignAllStages()
+    {
+        if (stages == null) return;
+        for (int i = 0; i < stages.Length; i++)
+        {
+            if (stages[i].stageSprite != null && stages[i].stageSprite.rect.height < 800)
+            {
+                stages[i].scaleFactor = 1.45f;
+                stages[i].yOffset = 1.1f;
+            }
+            else
+            {
+                stages[i].scaleFactor = 1.0f;
+                stages[i].yOffset = 0f;
+            }
+        }
+        ApplyStageSprites(_currentStageIndex);
+        AlignAllSegments();
+        Debug.Log("[InfiniteParallaxBackground] Đã tự động cân chỉnh Scale và Y Offset chuẩn đẹp cho tất cả các chặng!");
+    }
+
+    [ContextMenu("TEST: Đổi Sang Nền Chặng 1 (Sáng - frame)")]
+    public void TestBgStage1() => SwitchToStage(0, 2.0f);
+
+    [ContextMenu("TEST: Đổi Sang Nền Chặng 2 (Hoàng Hôn - 2ndpng)")]
+    public void TestBgStage2() => SwitchToStage(1, 2.0f);
+
+    [ContextMenu("TEST: Đổi Sang Nền Chặng 3 (Đêm - png3)")]
+    public void TestBgStage3() => SwitchToStage(2, 2.0f);
 }

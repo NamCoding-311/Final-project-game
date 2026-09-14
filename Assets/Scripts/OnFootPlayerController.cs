@@ -55,10 +55,10 @@ public class OnFootPlayerController : MonoBehaviour
 
     private void Start()
     {
-        // Tự động tìm PlayerHealth nếu chưa kéo
+        // Ưu tiên sử dụng PlayerHealth gắn riêng trên người đi bộ (Trashcan)
         if (playerHealth == null)
         {
-            playerHealth = FindAnyObjectByType<PlayerHealth>();
+            playerHealth = GetComponent<PlayerHealth>();
         }
 
         // Bỏ qua va chạm vật lý với xe để người chơi không bao giờ bị kẹt dính vào xe

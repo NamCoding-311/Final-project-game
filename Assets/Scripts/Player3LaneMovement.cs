@@ -67,16 +67,6 @@ public class Player3LaneMovement : MonoBehaviour
     // Tốc độ hiện tại
     private float _currentSpeed;
 
-    [Header("Speed & Throttle (Phím A / D hoặc Mũi tên Trái / Phải)")]
-    // Tốc độ tối thiểu khi hãm phanh (giữ phím A)
-    [SerializeField] private float minSpeed = 3f;
-
-    // Tốc độ giảm tốc khi đạp phanh (giữ phím A hoặc Mũi tên Trái)
-    [SerializeField] private float brakeRate = 14f;
-
-    // Tốc độ tăng tốc khi nhấn ga (giữ phím D hoặc Mũi tên Phải)
-    [SerializeField] private float boostRate = 12f;
-
     // Quản lý trạng thái Dash
     private bool _isDashing = false;
     private float _dashEndTime = 0f;
@@ -130,12 +120,13 @@ public class Player3LaneMovement : MonoBehaviour
         {
             _rb.bodyType = RigidbodyType2D.Kinematic;
             _rb.gravityScale = 0f;
+            _rb.interpolation = RigidbodyInterpolation2D.Interpolate;
         }
     }
 
     private void Start()
     {
-        _currentSpeed = forwardSpeed;
+        _currentSpeed = 0f;
 
         // Tìm chỉ số làn gần nhất với vị trí đặt xe ban đầu
         float initialY = transform.position.y;
@@ -162,11 +153,7 @@ public class Player3LaneMovement : MonoBehaviour
     private void Update()
     {
         HandleLaneInput();
-        HandleSpeedAndDashInput();
-    }
-
-    private void FixedUpdate()
-    {
+        HandleDashInput();
         MovePlayer();
     }
 
@@ -183,8 +170,8 @@ public class Player3LaneMovement : MonoBehaviour
         }
     }
 
-    // Xử lý phím A / D (Ga / Phanh) và phím SHIFT (Lướt Dash)
-    private void HandleSpeedAndDashInput()
+    // Xe tự động chạy đều về phía trước; phím Shift dùng để lướt Dash húc quái
+    private void HandleDashInput()
     {
         // 1. Nhấn phím Shift (trái hoặc phải) để kích hoạt Dash
         bool pressShift = Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift);
@@ -201,29 +188,13 @@ public class Player3LaneMovement : MonoBehaviour
             {
                 _isDashing = false;
             }
-            return;
-        }
-
-        // 3. Xử lý phím D (Tăng tốc / Đạp ga) và phím A (Hãm phanh / Giảm tốc)
-        bool isAccelerating = Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow);
-        bool isBraking = Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow);
-
-        if (isAccelerating && !isBraking)
-        {
-            // Đạp ga: Tăng dần tốc độ lên maxSpeed
-            _currentSpeed = Mathf.MoveTowards(_currentSpeed, maxSpeed, boostRate * Time.deltaTime);
-        }
-        else if (isBraking && !isAccelerating)
-        {
-            // Đạp phanh: Giảm dần tốc độ về minSpeed
-            _currentSpeed = Mathf.MoveTowards(_currentSpeed, minSpeed, brakeRate * Time.deltaTime);
         }
         else
         {
-            // Nhả phím: Tự động hồi mượt về tốc độ bình thường forwardSpeed
-            _currentSpeed = Mathf.MoveTowards(_currentSpeed, forwardSpeed, 8f * Time.deltaTime);
+            // Xe luôn tự động chạy đều với tốc độ forwardSpeed mà không cần nhấn phím A/D
+            _currentSpeed = Mathf.MoveTowards(_currentSpeed, forwardSpeed, 6f * Time.deltaTime);
         }
-
+    
         // Tăng tốc dần theo thời gian nếu có cài đặt gia tốc tự nhiên
         if (acceleration > 0f && forwardSpeed < maxSpeed)
         {
@@ -258,26 +229,24 @@ public class Player3LaneMovement : MonoBehaviour
         }
     }
 
-    // Di chuyển xe theo trục X và trượt làn theo trục Y
+    // Di chuyển xe theo trục X và trượt làn theo trục Y đồng bộ theo từng khung hình (Update)
     private void MovePlayer()
     {
-        float newX = transform.position.x + (_currentSpeed * Time.fixedDeltaTime);
-        float newY = Mathf.MoveTowards(transform.position.y, _targetY, laneChangeSpeed * Time.fixedDeltaTime);
+        float dt = Time.deltaTime;
+        float newX = transform.position.x + (_currentSpeed * dt);
+        float newY = Mathf.MoveTowards(transform.position.y, _targetY, laneChangeSpeed * dt);
 
         if (clampToRoadBoundaries)
         {
             newY = Mathf.Clamp(newY, minYLimit, maxYLimit);
         }
 
-        Vector2 targetPos = new Vector2(newX, newY);
+        Vector3 targetPos = new Vector3(newX, newY, transform.position.z);
+        transform.position = targetPos;
 
         if (_rb != null)
         {
-            _rb.MovePosition(targetPos);
-        }
-        else
-        {
-            transform.position = new Vector3(newX, newY, transform.position.z);
+            _rb.position = targetPos;
         }
     }
 

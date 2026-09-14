@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using System.Collections.Generic;
 using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -270,6 +271,57 @@ public class StageSystemSetupTool : EditorWindow
             onFootGo.SetActive(false); // Ẩn ban đầu, chỉ kích hoạt khi xe dừng đánh Boss
         }
 
+        // 3.1 Tìm hoặc tạo Thanh Máu Người Đi Bộ (OnFootHPBar) trên Canvas
+        Transform onFootHpTr = canvas.transform.Find("OnFootHPBar");
+        GameObject onFootHpGo = null;
+        Transform carHpTr = canvas.transform.Find("HPBar");
+
+        if (onFootHpTr == null)
+        {
+            if (carHpTr != null)
+            {
+                onFootHpGo = Object.Instantiate(carHpTr.gameObject, canvas.transform);
+                onFootHpGo.name = "OnFootHPBar";
+                // Đổi màu Fill sang màu xanh lá/xanh cyan để phân biệt với máu xe
+                Transform fillTr = onFootHpGo.transform.Find("Fill Area/Fill");
+                if (fillTr != null)
+                {
+                    Image fillImg = fillTr.GetComponent<Image>();
+                    if (fillImg != null) fillImg.color = new Color(0.2f, 0.9f, 0.4f, 1f);
+                }
+                onFootHpGo.SetActive(false);
+            }
+        }
+        else
+        {
+            onFootHpGo = onFootHpTr.gameObject;
+        }
+
+        // Đảm bảo OnFootPlayer có PlayerHealth riêng cho người đi bộ
+        if (onFootGo != null)
+        {
+            PlayerHealth footHp = onFootGo.GetComponent<PlayerHealth>();
+            if (footHp == null)
+            {
+                footHp = onFootGo.AddComponent<PlayerHealth>();
+            }
+
+            SerializedObject footHpSo = new SerializedObject(footHp);
+            footHpSo.Update();
+            footHpSo.FindProperty("maxHP").intValue = 100;
+            if (onFootHpGo != null)
+            {
+                footHpSo.FindProperty("hpBar").objectReferenceValue = onFootHpGo.GetComponent<Slider>();
+            }
+
+            GameObject gameOverPanelGo = GameObject.Find("GameOverPanel");
+            if (gameOverPanelGo != null)
+            {
+                footHpSo.FindProperty("gameOverPanel").objectReferenceValue = gameOverPanelGo;
+            }
+            footHpSo.ApplyModifiedProperties();
+        }
+
         // 4. Gắn StageLevelManager vào GameManagers trong Scene
         GameObject gameManagers = GameObject.Find("GameManagers");
         if (gameManagers == null)
@@ -322,11 +374,33 @@ public class StageSystemSetupTool : EditorWindow
             so.FindProperty("mapManager").objectReferenceValue = map;
         }
 
+        // Tự động tạo và liên kết Hệ Thống Chướng Ngại Vật Ngẫu Nhiên (Obstacles)
+        GameObject[] obstaclePrefabs = SetupObstaclePrefabs();
+
         ObstacleSpawner obs = Object.FindAnyObjectByType<ObstacleSpawner>();
-        if (obs != null)
+        if (obs == null)
         {
-            so.FindProperty("obstacleSpawner").objectReferenceValue = obs;
+            obs = gameManagers.AddComponent<ObstacleSpawner>();
         }
+
+        SerializedObject obsSo = new SerializedObject(obs);
+        obsSo.Update();
+        if (carMovement != null)
+        {
+            obsSo.FindProperty("playerTransform").objectReferenceValue = carMovement.transform;
+        }
+        if (obstaclePrefabs != null && obstaclePrefabs.Length > 0)
+        {
+            SerializedProperty prefabsProp = obsSo.FindProperty("obstaclePrefabs");
+            prefabsProp.arraySize = obstaclePrefabs.Length;
+            for (int i = 0; i < obstaclePrefabs.Length; i++)
+            {
+                prefabsProp.GetArrayElementAtIndex(i).objectReferenceValue = obstaclePrefabs[i];
+            }
+        }
+        obsSo.ApplyModifiedProperties();
+
+        so.FindProperty("obstacleSpawner").objectReferenceValue = obs;
 
         if (announceText != null)
         {
@@ -346,6 +420,22 @@ public class StageSystemSetupTool : EditorWindow
         if (bossNameTxt != null)
         {
             so.FindProperty("bossNameText").objectReferenceValue = bossNameTxt;
+        }
+
+        if (carHpTr != null)
+        {
+            so.FindProperty("carHealthBar").objectReferenceValue = carHpTr.gameObject;
+        }
+
+        if (onFootHpGo != null)
+        {
+            so.FindProperty("onFootHealthBar").objectReferenceValue = onFootHpGo;
+        }
+
+        InfiniteParallaxBackground parallaxBg = Object.FindAnyObjectByType<InfiniteParallaxBackground>();
+        if (parallaxBg != null)
+        {
+            so.FindProperty("parallaxBackground").objectReferenceValue = parallaxBg;
         }
 
         // Cài đặt Prefab Boss vào các chặng và chỉnh mốc khoảng cách xuất hiện
@@ -374,8 +464,11 @@ public class StageSystemSetupTool : EditorWindow
 
         if (!silent)
         {
-            EditorUtility.DisplayDialog("Cài Đặt Hệ Thống Xuống Xe Đánh Boss Thành Công!",
+            EditorUtility.DisplayDialog("Cài Đặt Hệ Thống 3 Chặng, Boss & Chướng Ngại Vật Thành Công!",
                 "Đã tự động thiết lập xong 100%:\n" +
+                "• Chướng ngại vật ngẫu nhiên (Thùng dầu, Rào bê tông, Xác xe cháy, Rào nhựa, Bao cát...) xuất hiện trên các làn đường\n" +
+                "• Đâm trúng vật cản sẽ bị giảm tốc độ (không mất máu)\n" +
+                "• Bấm Shift (Dash) sẽ húc bay chướng ngại vật\n" +
                 "• Xe chạy đến mốc 100m -> Tấp lề góc trên bên trái\n" +
                 "• Người chơi bước xuống xe (WASD 8 hướng, ngắm bắn chuột)\n" +
                 "• Khóa Đấu Trường (Arena Lock-In), Trùm Zombie xuất hiện\n" +
@@ -383,6 +476,84 @@ public class StageSystemSetupTool : EditorWindow
                 "Bấm Play ▶️ để trải nghiệm ngay!",
                 "Tuyệt Vời!");
         }
+    }
+
+    private static GameObject[] SetupObstaclePrefabs()
+    {
+        string folder = "Assets/PreFab/Obstacles";
+        if (!AssetDatabase.IsValidFolder("Assets/PreFab"))
+        {
+            AssetDatabase.CreateFolder("Assets", "PreFab");
+        }
+        if (!AssetDatabase.IsValidFolder(folder))
+        {
+            AssetDatabase.CreateFolder("Assets/PreFab", "Obstacles");
+        }
+
+        var definitions = new (string name, string spritePath, Vector3 scale, float penalty)[]
+        {
+            ("Obstacle_OilBarrel", "Assets/MainPalette/object/Oil_barrel.png", new Vector3(2.2f, 2.2f, 1f), 3.5f),
+            ("Obstacle_ConcreteBarrier", "Assets/MainPalette/object/Concrete_barrier.png", new Vector3(2.0f, 2.0f, 1f), 5.0f),
+            ("Obstacle_PlasticBarricade", "Assets/MainPalette/object/Plastic_barricade.png", new Vector3(2.2f, 2.2f, 1f), 3.0f),
+            ("Obstacle_BurnedCar", "Assets/MainPalette/object/Burned_sedan.png", new Vector3(2.0f, 2.0f, 1f), 6.0f),
+            ("Obstacle_WoodenPallet", "Assets/MainPalette/object/Wooden_pallet.png", new Vector3(2.2f, 2.2f, 1f), 2.5f),
+            ("Obstacle_Sandbags", "Assets/MainPalette/object/Sandbags.png", new Vector3(2.2f, 2.2f, 1f), 4.0f)
+        };
+
+        List<GameObject> result = new List<GameObject>();
+        Material defaultMat = AssetDatabase.LoadAssetAtPath<Material>("Assets/MainPalette/hanoimap/background/Materials/Default_Material.mat");
+
+        foreach (var def in definitions)
+        {
+            string prefabPath = $"{folder}/{def.name}.prefab";
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            if (prefab == null)
+            {
+                Sprite sprite = GetSpriteFromPath(def.spritePath);
+                if (sprite == null) continue;
+
+                GameObject go = new GameObject(def.name);
+                go.transform.localScale = def.scale;
+
+                SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+                sr.sprite = sprite;
+                sr.sortingOrder = 8;
+                if (defaultMat != null) sr.material = defaultMat;
+
+                BoxCollider2D col = go.AddComponent<BoxCollider2D>();
+                col.isTrigger = true;
+
+                RoadObstacle obstacle = go.AddComponent<RoadObstacle>();
+                SerializedObject obSo = new SerializedObject(obstacle);
+                obSo.Update();
+                obSo.FindProperty("speedPenalty").floatValue = def.penalty;
+                obSo.FindProperty("minSpeedAfterHit").floatValue = 3f;
+                obSo.FindProperty("despawnDistanceBehind").floatValue = 35f;
+                obSo.ApplyModifiedProperties();
+
+                prefab = PrefabUtility.SaveAsPrefabAsset(go, prefabPath);
+                Object.DestroyImmediate(go);
+            }
+
+            if (prefab != null)
+            {
+                result.Add(prefab);
+            }
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        return result.ToArray();
+    }
+
+    private static Sprite GetSpriteFromPath(string path)
+    {
+        Object[] all = AssetDatabase.LoadAllAssetsAtPath(path);
+        foreach (Object obj in all)
+        {
+            if (obj is Sprite s) return s;
+        }
+        return AssetDatabase.LoadAssetAtPath<Sprite>(path);
     }
 }
 #endif

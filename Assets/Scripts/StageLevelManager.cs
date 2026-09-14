@@ -42,6 +42,7 @@ public class StageLevelManager : MonoBehaviour
     [SerializeField] private CameraFollow cameraFollow;
     [SerializeField] private EndlessMapManager mapManager;
     [SerializeField] private ObstacleSpawner obstacleSpawner;
+    [SerializeField] private InfiniteParallaxBackground parallaxBackground;
 
     [Header("Stages Setup (3 Chặng Sáng - Chiều - Tối)")]
     [SerializeField] private LevelStageInfo[] stages = new LevelStageInfo[]
@@ -50,6 +51,13 @@ public class StageLevelManager : MonoBehaviour
         new LevelStageInfo { stageName = "Chặng 2: Phố Hoàng Hôn", bossSpawnDistance = 500f, lightColor = new Color(1f, 0.6f, 0.3f), lightIntensity = 0.9f },
         new LevelStageInfo { stageName = "Chặng 3: Đêm Tàn Tích", bossSpawnDistance = 800f, lightColor = new Color(0.2f, 0.3f, 0.5f), lightIntensity = 0.7f }
     };
+
+    [Header("Player Health Bars (Thanh máu Xe & Người)")]
+    // Thanh máu của Xe (sẽ ẩn khi đánh Boss)
+    [SerializeField] private GameObject carHealthBar;
+
+    // Thanh máu của Người đi bộ (Trashcan - chỉ hiện khi xuống xe đánh Boss)
+    [SerializeField] private GameObject onFootHealthBar;
 
     [Header("UI Announcements")]
     // Text thông báo tên chặng
@@ -131,12 +139,32 @@ public class StageLevelManager : MonoBehaviour
             obstacleSpawner = FindAnyObjectByType<ObstacleSpawner>();
         }
 
+        if (parallaxBackground == null)
+        {
+            parallaxBackground = FindAnyObjectByType<InfiniteParallaxBackground>();
+        }
+
+        // Cài đặt trạng thái hiển thị thanh máu ban đầu (Hiện máu xe, ẩn máu người đi bộ)
+        if (carHealthBar == null)
+        {
+            GameObject hpGo = GameObject.Find("HPBar");
+            if (hpGo != null) carHealthBar = hpGo;
+        }
+        if (onFootHealthBar == null)
+        {
+            GameObject onFootHpGo = GameObject.Find("OnFootHPBar");
+            if (onFootHpGo != null) onFootHealthBar = onFootHpGo;
+        }
+
+        if (carHealthBar != null) carHealthBar.SetActive(true);
+        if (onFootHealthBar != null) onFootHealthBar.SetActive(false);
+
         // Tắt các UI không cần thiết lúc bắt đầu
         if (bossWarningBanner != null) bossWarningBanner.SetActive(false);
         if (bossHealthBar != null) bossHealthBar.gameObject.SetActive(false);
         if (victoryPanel != null) victoryPanel.SetActive(false);
 
-        // Khởi tạo ánh sáng chặng 1
+        // Khởi tạo ánh sáng và background chặng 1
         ApplyInitialStage();
     }
 
@@ -156,7 +184,7 @@ public class StageLevelManager : MonoBehaviour
         }
     }
 
-    // Thiết lập ánh sáng và thông báo chặng 1
+    // Thiết lập ánh sáng, background và thông báo chặng 1
     private void ApplyInitialStage()
     {
         if (stages.Length > 0)
@@ -165,6 +193,11 @@ public class StageLevelManager : MonoBehaviour
             {
                 globalLight2D.color = stages[0].lightColor;
                 globalLight2D.intensity = stages[0].lightIntensity;
+            }
+
+            if (parallaxBackground != null)
+            {
+                parallaxBackground.ApplyStageSprites(0);
             }
 
             ShowStageAnnouncement(stages[0].stageName);
@@ -243,6 +276,13 @@ public class StageLevelManager : MonoBehaviour
                 cameraFollow.SetTarget(onFootPlayer.transform);
                 cameraFollow.SetArenaLock(true, targetParkPos.x + 4f, targetParkPos.x + 18f, 0f);
             }
+
+            // Ẩn thanh máu của xe, hiện thanh máu của nhân vật đi bộ (Trashcan)
+            if (carHealthBar != null) carHealthBar.SetActive(false);
+            if (onFootHealthBar != null) onFootHealthBar.SetActive(true);
+
+            // Chuyển toàn bộ Zombie thường và Boss sang tập trung rượt đuổi người chơi đi bộ thay vì cái xe
+            RedirectAllZombiesTo(onFootPlayer.transform);
         }
 
         // 4. Nhấp nháy cảnh báo Boss
@@ -340,6 +380,13 @@ public class StageLevelManager : MonoBehaviour
             onFootPlayer.gameObject.SetActive(false);
         }
 
+        // Ẩn thanh máu của người đi bộ, hiện lại thanh máu của xe
+        if (onFootHealthBar != null) onFootHealthBar.SetActive(false);
+        if (carHealthBar != null) carHealthBar.SetActive(true);
+
+        // Chuyển toàn bộ Zombie nhắm lại vào xe
+        RedirectAllZombiesTo(playerTransform);
+
         // 2. Bật lại điều khiển xe và súng trên xe
         if (_playerMovement != null)
         {
@@ -372,6 +419,17 @@ public class StageLevelManager : MonoBehaviour
         }
     }
 
+    // Chuyển hướng toàn bộ Zombie thường đang có trong Scene sang nhắm vào mục tiêu mới
+    public void RedirectAllZombiesTo(Transform newTarget)
+    {
+        if (newTarget == null) return;
+        Zombie[] allZombies = FindObjectsByType<Zombie>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        foreach (var z in allZombies)
+        {
+            if (z != null) z.SetTarget(newTarget);
+        }
+    }
+
     // Cutscene chuyển chặng: Xe tăng tốc Nitro, ánh sáng đổi màu, thông báo chặng mới
     private IEnumerator TriggerStageTransitionCutscene()
     {
@@ -388,7 +446,13 @@ public class StageLevelManager : MonoBehaviour
             _playerMovement.SetSpeed(24f);
         }
 
-        // 2. Chuyển đổi màu ánh sáng Global Light 2D mượt mà (Fade sang màu của chặng mới)
+        // 2. Chuyển đổi Background Parallax sang chặng mới (Crossfade mượt mà 2.0s)
+        if (parallaxBackground != null)
+        {
+            parallaxBackground.SwitchToStage(nextStageIndex, fadeDuration: 2.0f);
+        }
+
+        // 3. Chuyển đổi màu ánh sáng Global Light 2D mượt mà (Fade sang màu của chặng mới)
         if (globalLight2D != null)
         {
             Color startColor = globalLight2D.color;
@@ -461,4 +525,43 @@ public class StageLevelManager : MonoBehaviour
 
     public int GetCurrentStageIndex() => _currentStageIndex;
     public LevelState GetCurrentState() => _currentState;
+
+    [ContextMenu("TEST: Chuyển Sang Chặng 1 (Sáng)")]
+    public void TestSwitchToStage1()
+    {
+        if (parallaxBackground != null) parallaxBackground.SwitchToStage(0, 2f);
+        if (globalLight2D != null && stages.Length > 0)
+        {
+            globalLight2D.color = stages[0].lightColor;
+            globalLight2D.intensity = stages[0].lightIntensity;
+        }
+        _currentStageIndex = 0;
+        ShowStageAnnouncement("TEST: TIẾN VÀO " + stages[0].stageName.ToUpper());
+    }
+
+    [ContextMenu("TEST: Chuyển Sang Chặng 2 (Hoàng Hôn)")]
+    public void TestSwitchToStage2()
+    {
+        if (parallaxBackground != null) parallaxBackground.SwitchToStage(1, 2f);
+        if (globalLight2D != null && stages.Length > 1)
+        {
+            globalLight2D.color = stages[1].lightColor;
+            globalLight2D.intensity = stages[1].lightIntensity;
+        }
+        _currentStageIndex = 1;
+        ShowStageAnnouncement("TEST: TIẾN VÀO " + stages[1].stageName.ToUpper());
+    }
+
+    [ContextMenu("TEST: Chuyển Sang Chặng 3 (Đêm Tàn Tích)")]
+    public void TestSwitchToStage3()
+    {
+        if (parallaxBackground != null) parallaxBackground.SwitchToStage(2, 2f);
+        if (globalLight2D != null && stages.Length > 2)
+        {
+            globalLight2D.color = stages[2].lightColor;
+            globalLight2D.intensity = stages[2].lightIntensity;
+        }
+        _currentStageIndex = 2;
+        ShowStageAnnouncement("TEST: TIẾN VÀO " + stages[2].stageName.ToUpper());
+    }
 }
