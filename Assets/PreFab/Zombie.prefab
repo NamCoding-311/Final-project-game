@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 8331047553540860356}
   - component: {fileID: 8807812297841264805}
   - component: {fileID: 494937548067431963}
+  - component: {fileID: 8300555280816691280}
   m_Layer: 0
   m_Name: Zombie
   m_TagString: Zombie
@@ -192,6 +193,9 @@ MonoBehaviour:
   - {fileID: 1556516258266189389, guid: 0a7a0e51001a2f2419c6de701513259f, type: 3}
   - {fileID: 6126531939907443157, guid: 0a7a0e51001a2f2419c6de701513259f, type: 3}
   - {fileID: 6982871582148761538, guid: 0a7a0e51001a2f2419c6de701513259f, type: 3}
+  clampToRoad: 1
+  minRoadY: -1.1
+  maxRoadY: 3
   despawnDistanceBehind: 25
 --- !u!58 &494937548067431963
 CircleCollider2D:
@@ -229,3 +233,25 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.4
+--- !u!95 &8300555280816691280
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5957661502690297034}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 982f2a8633593a24c944c932080c6264, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

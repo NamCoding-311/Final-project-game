@@ -1,39 +1,40 @@
 using UnityEngine;
 
-// Điều khiển hành vi Zombie: Di chuyển rượt đuổi Player và tự động đổi hình ảnh/animation theo 4 hướng hoặc 8 hướng
+// Điều khiển hành vi Zombie:
+// - Rượt đuổi Player
+// - Chạy animation Run
+// - Nhận damage
+// - HP = 0 → Knockdown
 public class Zombie : MonoBehaviour
 {
     [Header("Stats")]
-    // Lượng máu tối đa của Zombie
     [SerializeField] private int maxHP = 50;
-
-    // Tốc độ di chuyển khi rượt đuổi người chơi
     [SerializeField] private float moveSpeed = 2.5f;
-
-    // Sát thương gây ra cho Player khi cắn trúng
     [SerializeField] private int attackDamage = 15;
 
-    [Header("Directional Sprites (Tùy chọn không cần Animator)")]
-    // Mảng 8 Sprite tương ứng 8 hướng (0: Nam/Dưới, 1: Tây Nam, 2: Tây/Trái, 3: Tây Bắc, 4: Bắc/Trên, 5: Đông Bắc, 6: Đông/Phải, 7: Đông Nam)
-    // Nếu chỉ có 4 hướng: 0: Dưới (Down), 1: Trái (Left), 2: Trên (Up), 3: Phải (Right)
+    [Header("Directional Sprites")]
     [SerializeField] private Sprite[] directionalSprites;
 
-    [Header("Road Boundaries (Khóa không cho chạy lên sông/lan can)")]
-    // Khóa trục Y để Zombie chỉ chạy trong lòng đường và vỉa hè, không bao giờ vượt qua lan can bờ sông
+    [Header("Road Boundaries")]
     [SerializeField] private bool clampToRoad = true;
-    [SerializeField] private float minRoadY = -1.1f; // Mép vỉa hè dưới
-    [SerializeField] private float maxRoadY = 3.0f;  // Lan can trên (giáp bờ sông)
+    [SerializeField] private float minRoadY = -1.1f;
+    [SerializeField] private float maxRoadY = 3.0f;
 
     [Header("Cleanup")]
-    // Khoảng cách phía sau Player để tự hủy Zombie tránh rác bộ nhớ
     [SerializeField] private float despawnDistanceBehind = 25f;
 
     private int _currentHP;
+
     private Transform _playerTransform;
     private PlayerHealth _playerHealth;
+
     private SpriteRenderer _spriteRenderer;
     private Animator _animator;
+
     private Vector2 _moveDirection;
+
+    // Zombie đã chết
+    private bool _isDead;
 
     private void Awake()
     {
@@ -44,67 +45,110 @@ public class Zombie : MonoBehaviour
     private void Start()
     {
         _currentHP = maxHP;
+        _isDead = false;
+
         FindPlayerTarget();
     }
 
     private void Update()
     {
-        if (_playerTransform == null || !_playerTransform.gameObject.activeInHierarchy)
+        // Zombie chết thì dừng hoàn toàn
+        if (_isDead)
+            return;
+
+        if (_playerTransform == null ||
+            !_playerTransform.gameObject.activeInHierarchy)
         {
             FindPlayerTarget();
-            if (_playerTransform == null) return;
+
+            if (_playerTransform == null)
+                return;
         }
 
-        // 1. Tính toán hướng và di chuyển rượt đuổi Player
+        // Rượt Player
         ChasePlayer();
 
-        // 2. Cập nhật hướng nhìn (Animation / Sprite 4 hướng hoặc 8 hướng)
+        // Cập nhật Run animation
         UpdateDirectionVisuals();
 
-        // 3. Tự hủy nếu xe đã chạy qua và bỏ xa phía sau
-        if (_playerTransform.position.x - transform.position.x > despawnDistanceBehind)
+        // Destroy nếu bị bỏ lại phía sau quá xa
+        if (_playerTransform.position.x - transform.position.x >
+            despawnDistanceBehind)
         {
             Destroy(gameObject);
         }
     }
 
-    // Tự động tìm mục tiêu (Xe hoặc Người đi bộ)
+    // =========================================================
+    // FIND PLAYER
+    // =========================================================
+
     private void FindPlayerTarget()
     {
-        OnFootPlayerController onFoot = FindAnyObjectByType<OnFootPlayerController>();
-        if (onFoot != null && onFoot.gameObject.activeInHierarchy)
+        OnFootPlayerController onFoot =
+            FindAnyObjectByType<OnFootPlayerController>();
+
+        if (onFoot != null &&
+            onFoot.gameObject.activeInHierarchy)
         {
             _playerTransform = onFoot.transform;
-            _playerHealth = onFoot.GetComponent<PlayerHealth>();
-            if (_playerHealth == null) _playerHealth = FindAnyObjectByType<PlayerHealth>();
+
+            _playerHealth =
+                onFoot.GetComponent<PlayerHealth>();
+
+            if (_playerHealth == null)
+            {
+                _playerHealth =
+                    FindAnyObjectByType<PlayerHealth>();
+            }
+
             return;
         }
 
-        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        GameObject playerObj =
+            GameObject.FindGameObjectWithTag("Player");
+
         if (playerObj != null)
         {
             _playerTransform = playerObj.transform;
-            _playerHealth = playerObj.GetComponent<PlayerHealth>();
+
+            _playerHealth =
+                playerObj.GetComponent<PlayerHealth>();
         }
     }
 
-    // Gán mục tiêu mới cho Zombie (được gọi khi người chơi xuống xe hoặc lên xe)
+    // =========================================================
+    // SET TARGET
+    // =========================================================
+
     public void SetTarget(Transform target)
     {
         _playerTransform = target;
+
         if (target != null)
         {
-            _playerHealth = target.GetComponent<PlayerHealth>();
-            if (_playerHealth == null) _playerHealth = target.GetComponentInParent<PlayerHealth>();
+            _playerHealth =
+                target.GetComponent<PlayerHealth>();
+
+            if (_playerHealth == null)
+            {
+                _playerHealth =
+                    target.GetComponentInParent<PlayerHealth>();
+            }
         }
     }
 
-    // Di chuyển Zombie hướng về phía người chơi nhưng luôn bị khóa trong phạm vi lòng đường
+    // =========================================================
+    // CHASE
+    // =========================================================
+
     private void ChasePlayer()
     {
-        // Khi người chơi xuống xe đánh Boss, TẤT CẢ Zombie lập tức tập trung vào người đi bộ thay vì cái xe
-        OnFootPlayerController onFoot = FindAnyObjectByType<OnFootPlayerController>();
-        if (onFoot != null && onFoot.gameObject.activeInHierarchy)
+        OnFootPlayerController onFoot =
+            FindAnyObjectByType<OnFootPlayerController>();
+
+        if (onFoot != null &&
+            onFoot.gameObject.activeInHierarchy)
         {
             if (_playerTransform != onFoot.transform)
             {
@@ -112,58 +156,114 @@ public class Zombie : MonoBehaviour
             }
         }
 
-        if (_playerTransform == null) return;
+        if (_playerTransform == null)
+            return;
 
-        _moveDirection = (_playerTransform.position - transform.position).normalized;
-        Vector3 newPos = transform.position + (Vector3)(_moveDirection * moveSpeed * Time.deltaTime);
+        _moveDirection =
+            (_playerTransform.position - transform.position)
+            .normalized;
+
+        Vector3 newPos =
+            transform.position +
+            (Vector3)(
+                _moveDirection *
+                moveSpeed *
+                Time.deltaTime
+            );
 
         if (clampToRoad)
         {
-            newPos.y = Mathf.Clamp(newPos.y, minRoadY, maxRoadY);
+            newPos.y =
+                Mathf.Clamp(
+                    newPos.y,
+                    minRoadY,
+                    maxRoadY
+                );
         }
 
         transform.position = newPos;
     }
 
-    // Cập nhật hình ảnh/Animation theo góc di chuyển thực tế
+    // =========================================================
+    // RUN ANIMATION
+    // =========================================================
+
     private void UpdateDirectionVisuals()
     {
-        // Cách 1: Nếu sử dụng Animator Controller (Blend Tree 4 hướng)
         if (_animator != null)
         {
-            _animator.SetFloat("MoveX", _moveDirection.x);
-            _animator.SetFloat("MoveY", _moveDirection.y);
-            _animator.SetFloat("Speed", _moveDirection.sqrMagnitude);
+            _animator.SetFloat(
+                "MoveX",
+                _moveDirection.x
+            );
+
+            _animator.SetFloat(
+                "MoveY",
+                _moveDirection.y
+            );
+
+            _animator.SetFloat(
+                "Speed",
+                _moveDirection.sqrMagnitude
+            );
+
             return;
         }
 
-        // Cách 2: Nếu sử dụng mảng Sprite trực tiếp (nhẹ, nhanh và không cần setup Animator)
-        if (_spriteRenderer != null && directionalSprites != null && directionalSprites.Length > 0)
+        if (_spriteRenderer != null &&
+            directionalSprites != null &&
+            directionalSprites.Length > 0)
         {
-            // Tính góc xoay từ vector hướng (Góc từ -180 đến +180 độ)
-            float angle = Mathf.Atan2(_moveDirection.y, _moveDirection.x) * Mathf.Rad2Deg;
+            float angle =
+                Mathf.Atan2(
+                    _moveDirection.y,
+                    _moveDirection.x
+                ) * Mathf.Rad2Deg;
 
             if (directionalSprites.Length >= 8)
             {
-                // Quy đổi sang 8 hướng: 0: Down, 1: Down-Left, 2: Left, 3: Up-Left, 4: Up, 5: Up-Right, 6: Right, 7: Down-Right
-                int dirIndex = Mathf.RoundToInt((angle + 90f) / 45f);
-                dirIndex = (dirIndex % 8 + 8) % 8;
-                _spriteRenderer.sprite = directionalSprites[dirIndex];
+                int dirIndex =
+                    Mathf.RoundToInt(
+                        (angle + 90f) / 45f
+                    );
+
+                dirIndex =
+                    (dirIndex % 8 + 8) % 8;
+
+                _spriteRenderer.sprite =
+                    directionalSprites[dirIndex];
             }
             else if (directionalSprites.Length >= 4)
             {
-                // Quy đổi sang 4 hướng: 0: Down (Dưới), 1: Left (Trái), 2: Up (Trên), 3: Right (Phải)
-                int dirIndex = Mathf.RoundToInt((angle + 90f) / 90f);
-                dirIndex = (dirIndex % 4 + 4) % 4;
-                _spriteRenderer.sprite = directionalSprites[dirIndex];
+                int dirIndex =
+                    Mathf.RoundToInt(
+                        (angle + 90f) / 90f
+                    );
+
+                dirIndex =
+                    (dirIndex % 4 + 4) % 4;
+
+                _spriteRenderer.sprite =
+                    directionalSprites[dirIndex];
             }
         }
     }
 
-    // Nhận sát thương từ đạn bắn hoặc từ cú đâm của xe
+    // =========================================================
+    // TAKE DAMAGE
+    // =========================================================
+
     public void TakeDamage(int amount)
     {
+        // Đã chết thì không nhận damage nữa
+        if (_isDead)
+            return;
+
         _currentHP -= amount;
+
+        Debug.Log(
+            "Zombie HP: " + _currentHP
+        );
 
         if (_currentHP <= 0)
         {
@@ -171,22 +271,47 @@ public class Zombie : MonoBehaviour
         }
     }
 
-    // Xử lý khi Zombie bị tiêu diệt
+    // =========================================================
+    // DEATH / KNOCKDOWN
+    // =========================================================
+
     private void Die()
     {
-        // Báo cho UI tăng số đếm Zombie Kill nếu có
-        DistanceTrackerUI tracker = FindAnyObjectByType<DistanceTrackerUI>();
+        if (_isDead)
+            return;
+
+        _isDead = true;
+
+        // Tăng kill count
+        DistanceTrackerUI tracker =
+            FindAnyObjectByType<DistanceTrackerUI>();
+
         if (tracker != null)
         {
             tracker.AddZombieKill();
         }
 
-        Destroy(gameObject);
+        // Chạy Knockdown animation
+        if (_animator != null)
+        {
+            _animator.SetTrigger("knock");
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
-    // Gây sát thương cho Player nếu va chạm mà không bị húc chết
+    // =========================================================
+    // PLAYER DAMAGE
+    // =========================================================
+
     private void OnTriggerEnter2D(Collider2D other)
     {
+        // Zombie chết không thể gây damage
+        if (_isDead)
+            return;
+
         if (other.CompareTag("Player"))
         {
             if (_playerHealth != null)
