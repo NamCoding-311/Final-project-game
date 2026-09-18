@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 8331047553540860356}
   - component: {fileID: 494937548067431963}
   - component: {fileID: -9084107981859590858}
+  - component: {fileID: -2987955860155162320}
   m_Layer: 0
   m_Name: Zombie Boss
   m_TagString: Zombie
@@ -223,4 +224,31 @@ MonoBehaviour:
   chargeSpeed: 7
   chargeDuration: 0.8
   chargeCooldown: 4
+  clampToArena: 1
+  minArenaX: 220
+  maxArenaX: 280
+  minArenaY: -1.2
+  maxArenaY: 3.2
   hitFlashColor: {r: 1, g: 0, b: 0, a: 1}
+--- !u!95 &-2987955860155162320
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5957661502690297034}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 6c0617cbbd569c643a1d4537b0df7b4f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
