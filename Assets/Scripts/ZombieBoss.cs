@@ -1,20 +1,40 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
-// Điều khiển Trùm Zombie (Zombie Boss): Máu trâu, có thanh máu riêng, rượt đuổi xe và kích hoạt chuyển chặng khi bị hạ gục
+// Điều khiển Trùm Zombie (Zombie Boss / Tank):
+// - Kỹ năng 1: Ném đá tầm xa (Parabol)
+// - Kỹ năng 2: Húc tốc cận chiến (Charge Attack)
+// - Lật mặt chuẩn xác theo hướng mục tiêu
 public class ZombieBoss : MonoBehaviour
 {
     [Header("Boss Identity & Stats")]
-    [SerializeField] private string bossName = "TRÙM ĐỘT BIẾN";
+    [SerializeField] private string bossName = "TANK ZOMBIE";
     [SerializeField] private int maxHealth = 500;
-    [SerializeField] private float moveSpeed = 10f;
-    [SerializeField] private int attackDamage = 30;
+    [SerializeField] private float moveSpeed = 4f;
+    [SerializeField] private int baseAttackDamage = 25;
 
-    [Header("Special Ability: Charge Attack (Húc Tốc)")]
-    // Tốc độ phóng vọt áp sát xe
-    [SerializeField] private float chargeSpeed = 18f;
-    [SerializeField] private float chargeDuration = 0.8f;
-    [SerializeField] private float chargeCooldown = 4f;
+    [Header("Skill 1: Rock Throw (Ném Đá Tầm Xa)")]
+    [SerializeField] private GameObject rockPrefab;
+    [SerializeField] private Transform throwPoint;
+    [SerializeField] private float throwCooldown = 5f;
+    [SerializeField] private float minThrowDistance = 4.5f;
+    [SerializeField] private float rockSpeed = 12f;
+    [SerializeField] private float rockArcHeight = 2.5f;
+    [SerializeField] private float throwReleaseDelay = 0.35f; // Thời gian chờ vung tay ném ra đá
+
+    [Header("Skill 2: Charge Attack (Húc Tốc Áp Sát)")]
+    [SerializeField] private float chargeSpeed = 14f;
+    [SerializeField] private float chargeDuration = 1.0f;
+    [SerializeField] private float chargeCooldown = 7f;
+    [SerializeField] private float chargeWindupTime = 0.5f; // Khựng lại lấy đà trước khi phóng
+    [SerializeField] private int chargeDamage = 45;
+
+    [Header("Visual & Facing Settings")]
+    // Bật nếu sprite gốc vẽ quay sang Trái (mặc định của bộ Tank)
+    [SerializeField] private bool invertFacing = true;
+    [SerializeField] private Color hitFlashColor = Color.red;
+    [SerializeField] private Color chargeWarningColor = Color.yellow;
 
     [Header("Arena Clamping")]
     [SerializeField] private bool clampToArena = true;
@@ -23,30 +43,32 @@ public class ZombieBoss : MonoBehaviour
     [SerializeField] private float minArenaY = -1.2f;
     [SerializeField] private float maxArenaY = 3.2f;
 
-    [Header("Visual Effects")]
-    [SerializeField] private Color hitFlashColor = Color.red;
-
     private int _currentHealth;
     private Transform _playerTransform;
     private bool _isTargetingOnFootPlayer = false;
+
     private SpriteRenderer _spriteRenderer;
+    private Animator _animator;
     private Color _originalColor;
+
+    // Trạng thái kỹ năng
+    private bool _isThrowing = false;
     private bool _isCharging = false;
+    private bool _isWindingUpCharge = false;
+
+    private float _nextThrowTime;
     private float _nextChargeTime;
-    private float _chargeEndTime;
 
     // Sự kiện thông báo khi Boss nhận sát thương và khi Boss chết
     public static event Action<ZombieBoss, int, int> OnBossHealthChanged;
     public static event Action<ZombieBoss> OnBossDied;
 
-    // Gán mục tiêu theo đuổi cho Boss (Xe hoặc Nhân vật đi bộ)
     public void SetTarget(Transform newTarget)
     {
         _playerTransform = newTarget;
         _isTargetingOnFootPlayer = newTarget != null && newTarget.GetComponent<OnFootPlayerController>() != null;
     }
 
-    // Cài đặt ranh giới sàn đấu cho Boss
     public void SetArenaBounds(float minX, float maxX, float minY, float maxY)
     {
         minArenaX = minX;
@@ -60,6 +82,8 @@ public class ZombieBoss : MonoBehaviour
     {
         _currentHealth = maxHealth;
         _spriteRenderer = GetComponent<SpriteRenderer>();
+        _animator = GetComponent<Animator>();
+
         if (_spriteRenderer != null)
         {
             _originalColor = _spriteRenderer.color;
@@ -77,9 +101,10 @@ public class ZombieBoss : MonoBehaviour
             }
         }
 
-        _nextChargeTime = Time.time + chargeCooldown;
+        // Cho Boss đi bộ một lúc trước khi tung chiêu đầu tiên
+        _nextThrowTime = Time.time + 2.5f;
+        _nextChargeTime = Time.time + 6.0f;
 
-        // Báo hiệu Boss xuất hiện để cập nhật UI
         OnBossHealthChanged?.Invoke(this, _currentHealth, maxHealth);
     }
 
@@ -87,24 +112,124 @@ public class ZombieBoss : MonoBehaviour
     {
         if (_playerTransform == null) return;
 
-        HandleChargeAttack();
-        MoveTowardsPlayer();
+        // 1. Kiểm tra kỹ năng Ném Đá (ưu tiên khi ở xa)
+        CheckRockThrowSkill();
+
+        // 2. Kiểm tra kỹ năng Húc Tốc
+        CheckChargeAttackSkill();
+
+        // 3. Di chuyển (chỉ khi không đang ném đá hoặc đang gồng lấy đà)
+        if (!_isThrowing && !_isWindingUpCharge)
+        {
+            MoveTowardsPlayer();
+        }
+
+        // 4. Luôn cập nhật hướng quay mặt chuẩn xác (kể cả khi dừng lại ném đá)
+        UpdateFacingDirection();
     }
 
-    // Rượt đuổi theo mục tiêu (Xe hoặc Nhân vật đi bộ)
+    // =========================================================
+    // KỸ NĂNG 1: NÉM ĐÁ (ROCK THROW)
+    // =========================================================
+
+    private void CheckRockThrowSkill()
+    {
+        if (_isThrowing || _isCharging || _isWindingUpCharge) return;
+        if (rockPrefab == null) return;
+
+        float distance = Vector2.Distance(transform.position, _playerTransform.position);
+
+        // Đủ thời gian hồi và ở khoảng cách tầm trung - xa
+        if (Time.time >= _nextThrowTime && distance >= minThrowDistance)
+        {
+            StartCoroutine(PerformRockThrowRoutine());
+        }
+    }
+
+    private IEnumerator PerformRockThrowRoutine()
+    {
+        _isThrowing = true;
+        _nextThrowTime = Time.time + throwCooldown;
+
+        // Bật animation ném đá
+        if (_animator != null)
+        {
+            _animator.SetTrigger("ThrowRock");
+        }
+
+        // Chờ đúng thời điểm tay vung ra để sinh viên đá
+        yield return new WaitForSeconds(throwReleaseDelay);
+
+        // Sinh viên đá tại điểm ném (hoặc tự tính nếu chưa gán throwPoint)
+        Vector3 spawnPos = throwPoint != null
+            ? throwPoint.position
+            : transform.position + new Vector3(transform.localScale.x > 0 ? 0.8f : -0.8f, 0.5f, 0f);
+
+        GameObject rockObj = Instantiate(rockPrefab, spawnPos, Quaternion.identity);
+        BossRock rock = rockObj.GetComponent<BossRock>();
+        if (rock != null)
+        {
+            // Nhắm thẳng vào vị trí hiện tại của người chơi
+            rock.Launch(_playerTransform.position, rockArcHeight, rockSpeed);
+        }
+
+        // Chờ nốt phần còn lại của animation ném đá rồi tiếp tục bước đi
+        yield return new WaitForSeconds(0.4f);
+        _isThrowing = false;
+    }
+
+    // =========================================================
+    // KỸ NĂNG 2: HÚC TỐC (CHARGE ATTACK)
+    // =========================================================
+
+    private void CheckChargeAttackSkill()
+    {
+        if (_isThrowing || _isCharging || _isWindingUpCharge) return;
+
+        if (Time.time >= _nextChargeTime)
+        {
+            StartCoroutine(PerformChargeAttackRoutine());
+        }
+    }
+
+    private IEnumerator PerformChargeAttackRoutine()
+    {
+        _isWindingUpCharge = true;
+        _nextChargeTime = Time.time + chargeCooldown;
+
+        // Giai đoạn 1: Khựng lại 0.5s lấy đà và đổi màu cảnh báo
+        if (_spriteRenderer != null) _spriteRenderer.color = chargeWarningColor;
+        yield return new WaitForSeconds(chargeWindupTime);
+
+        _isWindingUpCharge = false;
+        _isCharging = true;
+
+        // Giai đoạn 2: Phóng vọt với tốc độ cao
+        float chargeEndTime = Time.time + chargeDuration;
+        while (Time.time < chargeEndTime)
+        {
+            MoveTowardsPlayer();
+            yield return null;
+        }
+
+        _isCharging = false;
+        if (_spriteRenderer != null) _spriteRenderer.color = _originalColor;
+    }
+
+    // =========================================================
+    // DI CHUYỂN & LẬT MẶT
+    // =========================================================
+
     private void MoveTowardsPlayer()
     {
         float currentSpeed = _isCharging ? chargeSpeed : moveSpeed;
 
-        // Nếu mục tiêu là người đi bộ: Áp sát trực diện để tấn công
-        // Nếu mục tiêu là xe: Đi song song lệch 3m
         Vector3 targetPos = _isTargetingOnFootPlayer
             ? _playerTransform.position
             : new Vector3(_playerTransform.position.x + 3f, _playerTransform.position.y, transform.position.z);
 
         Vector3 nextPos = Vector3.MoveTowards(transform.position, targetPos, currentSpeed * Time.deltaTime);
 
-        // Giữ Boss trong ranh giới đấu trường
         if (clampToArena)
         {
             nextPos.x = Mathf.Clamp(nextPos.x, minArenaX, maxArenaX);
@@ -113,44 +238,40 @@ public class ZombieBoss : MonoBehaviour
 
         transform.position = nextPos;
 
-        // Lật mặt Boss theo hướng người chơi
-        if (_playerTransform.position.x > transform.position.x)
+        // Xử lý lật mặt Boss hướng về phía mục tiêu
+        UpdateFacingDirection();
+    }
+
+    private void UpdateFacingDirection()
+    {
+        bool playerIsOnRight = _playerTransform.position.x > transform.position.x;
+        float absX = Mathf.Abs(transform.localScale.x);
+
+
+        if (invertFacing)
         {
-            transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+            // Sprite gốc quay sang Trái:
+            // Người chơi ở bên Phải -> Scale âm (-absX) để lật mặt sang Phải
+            // Người chơi ở bên Trái -> Scale dương (+absX) để giữ mặt sang Trái
+            transform.localScale = new Vector3(playerIsOnRight ? -absX : absX, transform.localScale.y, transform.localScale.z);
         }
         else
         {
-            transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+            // Sprite gốc quay sang Phải:
+            transform.localScale = new Vector3(playerIsOnRight ? absX : -absX, transform.localScale.y, transform.localScale.z);
         }
     }
 
-    // Kỹ năng húc tốc định kỳ
-    private void HandleChargeAttack()
-    {
-        if (!_isCharging && Time.time >= _nextChargeTime)
-        {
-            _isCharging = true;
-            _chargeEndTime = Time.time + chargeDuration;
-            _nextChargeTime = Time.time + chargeCooldown;
+    // =========================================================
+    // NHẬN SÁT THƯƠNG
+    // =========================================================
 
-            // Đổi màu cảnh báo húc
-            if (_spriteRenderer != null) _spriteRenderer.color = Color.yellow;
-        }
-
-        if (_isCharging && Time.time >= _chargeEndTime)
-        {
-            _isCharging = false;
-            if (_spriteRenderer != null) _spriteRenderer.color = _originalColor;
-        }
-    }
-
-    // Nhận sát thương khi bị bắn hoặc xe húc
     public void TakeDamage(int damage)
     {
         _currentHealth -= damage;
         OnBossHealthChanged?.Invoke(this, Mathf.Max(0, _currentHealth), maxHealth);
 
-        // Nhấp nháy màu đỏ khi dính đòn
+        // Nhấp nháy màu đỏ báo hiệu trúng đạn
         if (_spriteRenderer != null)
         {
             _spriteRenderer.color = hitFlashColor;
@@ -168,48 +289,56 @@ public class ZombieBoss : MonoBehaviour
     {
         if (_spriteRenderer != null)
         {
-            _spriteRenderer.color = _isCharging ? Color.yellow : _originalColor;
+            if (_isCharging || _isWindingUpCharge)
+            {
+                _spriteRenderer.color = chargeWarningColor;
+            }
+            else
+            {
+                _spriteRenderer.color = _originalColor;
+            }
         }
     }
 
-    // Khi Boss bị tiêu diệt
     private void Die()
     {
         Debug.Log($"[ZombieBoss] {bossName} đã bị tiêu diệt!");
         OnBossDied?.Invoke(this);
-
-        // Hủy Boss (có thể thêm particle nổ tung ở đây)
         Destroy(gameObject);
     }
 
-    // Va chạm với xe hoặc nhân vật người chơi đi bộ
+    // =========================================================
+    // VA CHẠM CẬN CHIẾN
+    // =========================================================
+
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // 1. Nếu va chạm với nhân vật người đi bộ
+        int damageToDeal = _isCharging ? chargeDamage : baseAttackDamage;
+
+        // 1. Va chạm với người đi bộ (Trashcan)
         OnFootPlayerController onFoot = other.GetComponent<OnFootPlayerController>();
         if (onFoot != null)
         {
-            onFoot.TakeDamage(attackDamage);
+            onFoot.TakeDamage(damageToDeal);
             return;
         }
 
-        // 2. Nếu va chạm với xe Player
+        // 2. Va chạm với xe Player
         if (other.CompareTag("Player"))
         {
             Player3LaneMovement movement = other.GetComponent<Player3LaneMovement>();
             PlayerHealth health = other.GetComponent<PlayerHealth>();
 
-            // Nếu người chơi đang bấm SHIFT (Dash): Xe húc Boss mất 150 máu
+            // Nếu người chơi đang bấm SHIFT (Dash): Xe húc Boss mất 150 máu!
             if (movement != null && movement.IsDashing())
             {
                 TakeDamage(150);
             }
             else
             {
-                // Nếu đâm thường: Gây sát thương nặng cho xe
                 if (health != null)
                 {
-                    health.TakeDamage(attackDamage);
+                    health.TakeDamage(damageToDeal);
                 }
             }
         }

@@ -70236,7 +70236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b526b7f5d6e5c04da31dd833a2b4a76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player3LaneMovement
-  forwardSpeed: 12
+  forwardSpeed: 8
   maxSpeed: 16
   acceleration: 0.1
   dashSpeed: 7

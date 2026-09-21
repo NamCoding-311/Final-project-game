@@ -190,6 +190,19 @@ public class Zombie : MonoBehaviour
 
     private void UpdateDirectionVisuals()
     {
+        // Tự động lật mặt Zombie theo hướng di chuyển (ảnh gốc quay sang Phải)
+        if (_spriteRenderer != null)
+        {
+            if (_moveDirection.x < -0.05f)
+            {
+                _spriteRenderer.flipX = true; // Lao sang Trái (đón đầu xe) -> Lật mặt sang Trái
+            }
+            else if (_moveDirection.x > 0.05f)
+            {
+                _spriteRenderer.flipX = false; // Rượt sang Phải (đuổi theo xe) -> Giữ mặt sang Phải
+            }
+        }
+
         if (_animator != null)
         {
             _animator.SetFloat(
