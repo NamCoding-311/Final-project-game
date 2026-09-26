@@ -1,16 +1,22 @@
+
 using UnityEngine;
 
-// Điều khiển hành vi Zombie:
-// - Rượt đuổi Player
-// - Chạy animation Run
-// - Nhận damage
-// - HP = 0 → Knockdown
+// Dieu khien Basic Zombie:
+// - Rượt duoi Player
+// - Run animation
+// - Attack theo khoang cach va cooldown
+// - Gây damage bang Animation Event
+// - Nhan damage, knockback/death animation
 public class Zombie : MonoBehaviour
 {
     [Header("Stats")]
     [SerializeField] private int maxHP = 50;
     [SerializeField] private float moveSpeed = 2.5f;
     [SerializeField] private int attackDamage = 15;
+
+    [Header("Attack Settings")]
+    [SerializeField] private float attackRange = 1.2f;
+    [SerializeField] private float attackCooldown = 1.5f;
 
     [Header("Directional Sprites")]
     [SerializeField] private Sprite[] directionalSprites;
@@ -33,8 +39,13 @@ public class Zombie : MonoBehaviour
 
     private Vector2 _moveDirection;
 
-    // Zombie đã chết
     private bool _isDead;
+
+    // Attack state
+    private bool _isAttacking;
+    private bool _hasDealtAttackDamage;
+
+    private float _nextAttackTime;
 
     private void Awake()
     {
@@ -47,15 +58,19 @@ public class Zombie : MonoBehaviour
         _currentHP = maxHP;
         _isDead = false;
 
+        _isAttacking = false;
+        _hasDealtAttackDamage = false;
+
         FindPlayerTarget();
     }
 
     private void Update()
     {
-        // Zombie chết thì dừng hoàn toàn
+        // Zombie chet thi dung hoan toan
         if (_isDead)
             return;
 
+        // Tim lai Player neu target cu khong con hoat dong
         if (_playerTransform == null ||
             !_playerTransform.gameObject.activeInHierarchy)
         {
@@ -65,18 +80,36 @@ public class Zombie : MonoBehaviour
                 return;
         }
 
-        // Rượt Player
-        ChasePlayer();
-
-        // Cập nhật Run animation
-        UpdateDirectionVisuals();
-
-        // Destroy nếu bị bỏ lại phía sau quá xa
+        // Destroy neu bi bo lai phia sau qua xa
         if (_playerTransform.position.x - transform.position.x >
             despawnDistanceBehind)
         {
             Destroy(gameObject);
+            return;
         }
+
+        // Cap nhat huong nhin theo Player
+        UpdateMoveDirection();
+
+        // Neu dang attack thi dung di chuyen
+        if (_isAttacking)
+        {
+            UpdateDirectionVisuals();
+            return;
+        }
+
+        // Neu Player nam trong tam danh
+        if (IsPlayerInAttackRange())
+        {
+            UpdateDirectionVisuals();
+            TryAttack();
+            return;
+        }
+
+        // Ngoai tam danh: tiep tuc ruot duoi
+        ChasePlayer();
+
+        UpdateDirectionVisuals();
     }
 
     // =========================================================
@@ -91,17 +124,7 @@ public class Zombie : MonoBehaviour
         if (onFoot != null &&
             onFoot.gameObject.activeInHierarchy)
         {
-            _playerTransform = onFoot.transform;
-
-            _playerHealth =
-                onFoot.GetComponent<PlayerHealth>();
-
-            if (_playerHealth == null)
-            {
-                _playerHealth =
-                    FindAnyObjectByType<PlayerHealth>();
-            }
-
+            SetTarget(onFoot.transform);
             return;
         }
 
@@ -110,10 +133,7 @@ public class Zombie : MonoBehaviour
 
         if (playerObj != null)
         {
-            _playerTransform = playerObj.transform;
-
-            _playerHealth =
-                playerObj.GetComponent<PlayerHealth>();
+            SetTarget(playerObj.transform);
         }
     }
 
@@ -124,6 +144,7 @@ public class Zombie : MonoBehaviour
     public void SetTarget(Transform target)
     {
         _playerTransform = target;
+        _playerHealth = null;
 
         if (target != null)
         {
@@ -135,7 +156,162 @@ public class Zombie : MonoBehaviour
                 _playerHealth =
                     target.GetComponentInParent<PlayerHealth>();
             }
+
+            if (_playerHealth == null)
+            {
+                _playerHealth =
+                    target.GetComponentInChildren<PlayerHealth>();
+            }
         }
+    }
+
+    // =========================================================
+    // UPDATE DIRECTION
+    // =========================================================
+
+    private void UpdateMoveDirection()
+    {
+        if (_playerTransform == null)
+            return;
+
+        Vector2 direction =
+            (Vector2)(_playerTransform.position - transform.position);
+
+        if (direction.sqrMagnitude > 0.001f)
+        {
+            _moveDirection = direction.normalized;
+        }
+    }
+
+    // =========================================================
+    // ATTACK RANGE
+    // =========================================================
+
+    private bool IsPlayerInAttackRange()
+    {
+        if (_playerTransform == null)
+            return false;
+
+        float distance =
+            Vector2.Distance(
+                transform.position,
+                _playerTransform.position
+            );
+
+        return distance <= attackRange;
+    }
+
+    // =========================================================
+    // ATTACK
+    // =========================================================
+
+    private void TryAttack()
+    {
+        if (_isDead || _isAttacking)
+            return;
+
+        if (Time.time < _nextAttackTime)
+            return;
+
+        StartAttack();
+    }
+
+    private void StartAttack()
+    {
+        if (_isDead)
+            return;
+
+        _isAttacking = true;
+        _hasDealtAttackDamage = false;
+
+        // Bat dau cooldown tu luc khoi dong attack
+        _nextAttackTime = Time.time + attackCooldown;
+
+        if (_animator != null)
+        {
+            // Phai trung voi Trigger "attack"
+            // trong Animator Controller
+            _animator.SetTrigger("attack");
+        }
+        else
+        {
+            // Khong co Animator thi khong the
+            // phat Animation Event.
+            Debug.LogWarning(
+                "Zombie khong co Animator!",
+                gameObject
+            );
+
+            _isAttacking = false;
+        }
+    }
+
+    // Goi bang Animation Event tai frame tay zombie
+    // cham trung Player.
+    public void DealAttackDamage()
+    {
+        if (_isDead)
+            return;
+
+        if (!_isAttacking)
+            return;
+
+        // Dam bao moi animation chi gay damage 1 lan
+        if (_hasDealtAttackDamage)
+            return;
+
+        if (_playerTransform == null)
+            return;
+
+        // Player chay ra khoi tam danh thi khong bi hit
+        if (!IsPlayerInAttackRange())
+            return;
+
+        // Tim lai PlayerHealth neu chua co
+        if (_playerHealth == null)
+        {
+            _playerHealth =
+                _playerTransform.GetComponent<PlayerHealth>();
+
+            if (_playerHealth == null)
+            {
+                _playerHealth =
+                    _playerTransform.GetComponentInParent<PlayerHealth>();
+            }
+
+            if (_playerHealth == null)
+            {
+                _playerHealth =
+                    _playerTransform.GetComponentInChildren<PlayerHealth>();
+            }
+        }
+
+        if (_playerHealth != null)
+        {
+            _playerHealth.TakeDamage(attackDamage);
+
+            _hasDealtAttackDamage = true;
+
+            Debug.Log(
+                "Basic Zombie attack! Damage: " + attackDamage
+            );
+        }
+        else
+        {
+            Debug.LogWarning(
+                "Khong tim thay PlayerHealth tren Player!",
+                gameObject
+            );
+        }
+    }
+
+    // Goi bang Animation Event o frame cuoi animation Attack
+    public void EndAttack()
+    {
+        if (_isDead)
+            return;
+
+        _isAttacking = false;
     }
 
     // =========================================================
@@ -147,6 +323,7 @@ public class Zombie : MonoBehaviour
         OnFootPlayerController onFoot =
             FindAnyObjectByType<OnFootPlayerController>();
 
+        // Neu Player dang di bo thi uu tien target nay
         if (onFoot != null &&
             onFoot.gameObject.activeInHierarchy)
         {
@@ -185,21 +362,21 @@ public class Zombie : MonoBehaviour
     }
 
     // =========================================================
-    // RUN ANIMATION
+    // RUN ANIMATION / DIRECTION
     // =========================================================
 
     private void UpdateDirectionVisuals()
     {
-        // Tự động lật mặt Zombie theo hướng di chuyển (ảnh gốc quay sang Phải)
+        // Anh goc quay sang Phai
         if (_spriteRenderer != null)
         {
             if (_moveDirection.x < -0.05f)
             {
-                _spriteRenderer.flipX = true; // Lao sang Trái (đón đầu xe) -> Lật mặt sang Trái
+                _spriteRenderer.flipX = true;
             }
             else if (_moveDirection.x > 0.05f)
             {
-                _spriteRenderer.flipX = false; // Rượt sang Phải (đuổi theo xe) -> Giữ mặt sang Phải
+                _spriteRenderer.flipX = false;
             }
         }
 
@@ -223,6 +400,7 @@ public class Zombie : MonoBehaviour
             return;
         }
 
+        // Fallback neu khong co Animator
         if (_spriteRenderer != null &&
             directionalSprites != null &&
             directionalSprites.Length > 0)
@@ -268,7 +446,6 @@ public class Zombie : MonoBehaviour
 
     public void TakeDamage(int amount)
     {
-        // Đã chết thì không nhận damage nữa
         if (_isDead)
             return;
 
@@ -295,7 +472,10 @@ public class Zombie : MonoBehaviour
 
         _isDead = true;
 
-        // Tăng kill count
+        // Huy attack dang chay
+        _isAttacking = false;
+
+        // Tang kill count
         DistanceTrackerUI tracker =
             FindAnyObjectByType<DistanceTrackerUI>();
 
@@ -304,9 +484,10 @@ public class Zombie : MonoBehaviour
             tracker.AddZombieKill();
         }
 
-        // Chạy Knockdown animation
+        // Chay Knockdown animation
         if (_animator != null)
         {
+            _animator.ResetTrigger("attack");
             _animator.SetTrigger("knock");
         }
         else
@@ -321,16 +502,22 @@ public class Zombie : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // Zombie chết không thể gây damage
-        if (_isDead)
-            return;
+        // Khong gay damage bang va cham nua.
+        // Damage duoc xu ly tai Animation Event
+        // DealAttackDamage().
+    }
 
-        if (other.CompareTag("Player"))
-        {
-            if (_playerHealth != null)
-            {
-                _playerHealth.TakeDamage(attackDamage);
-            }
-        }
+    // =========================================================
+    // GIZMOS
+    // =========================================================
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+
+        Gizmos.DrawWireSphere(
+            transform.position,
+            attackRange
+        );
     }
 }
