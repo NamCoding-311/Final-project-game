@@ -204,6 +204,11 @@ public class ZombieBoss : MonoBehaviour
         _isWindingUpCharge = false;
         _isCharging = true;
 
+        if (_animator != null)
+        {
+            _animator.SetTrigger("Dash");
+        }
+
         // Giai đoạn 2: Phóng vọt với tốc độ cao
         float chargeEndTime = Time.time + chargeDuration;
         while (Time.time < chargeEndTime)

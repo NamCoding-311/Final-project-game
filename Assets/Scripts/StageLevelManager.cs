@@ -250,7 +250,7 @@ public class StageLevelManager : MonoBehaviour
 
         // 2. Tính toán phạm vi đấu trường (Arena) quanh vị trí đỗ xe ở góc trên bên trái
         float arenaLeft = targetParkPos.x - 4f;
-        float arenaRight = targetParkPos.x + 35f;
+        float arenaRight = targetParkPos.x + 22f;
         float arenaBottom = -1.2f;
         float arenaTop = 3.2f;
 
@@ -258,6 +258,16 @@ public class StageLevelManager : MonoBehaviour
         if (mapManager != null) mapManager.SetSpawningPaused(true);
         if (zombieSpawner != null) zombieSpawner.SetSpawningActive(false);
         if (obstacleSpawner != null) obstacleSpawner.enabled = false;
+
+        // Tiêu diệt toàn bộ Zombie con tàn dư trên màn hình để đấu trường sạch sẽ cho trận đánh Boss
+        Zombie[] leftoverZombies = FindObjectsByType<Zombie>();
+        foreach (var z in leftoverZombies)
+        {
+            if (z != null)
+            {
+                Destroy(z.gameObject);
+            }
+        }
 
         // 3. Cho người chơi bước xuống xe (Kích hoạt OnFootPlayer ngay dưới mép xe đỗ)
         if (onFootPlayer != null)
@@ -307,8 +317,8 @@ public class StageLevelManager : MonoBehaviour
             ? onFootPlayer.transform
             : playerTransform;
 
-        // Vị trí sinh Boss: mép phải đấu trường
-        Vector3 spawnPos = new Vector3(rightX - 3f, targetTransform.position.y, 0f);
+        // Vị trí sinh Boss:  xuất hiện ngay mép phải màn hình
+        Vector3 spawnPos = new Vector3(targetTransform.position.x + 14f, targetTransform.position.y, 0f);
 
         GameObject bossObj = null;
         if (currentStage.bossPrefab != null)
