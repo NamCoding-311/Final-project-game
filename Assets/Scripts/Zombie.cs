@@ -475,6 +475,13 @@ public class Zombie : MonoBehaviour
         // Huy attack dang chay
         _isAttacking = false;
 
+        // Vo hieu hoa Collider va Rigidbody ngay de khong can tro dan hay nguoi choi
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null) col.enabled = false;
+
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        if (rb != null) rb.simulated = false;
+
         // Tang kill count
         DistanceTrackerUI tracker =
             FindAnyObjectByType<DistanceTrackerUI>();
@@ -484,11 +491,12 @@ public class Zombie : MonoBehaviour
             tracker.AddZombieKill();
         }
 
-        // Chay Knockdown animation
+        // Chay Knockdown animation roi lam bien mat xac zombie sau 0.8s
         if (_animator != null)
         {
             _animator.ResetTrigger("attack");
             _animator.SetTrigger("knock");
+            Destroy(gameObject, 0.8f);
         }
         else
         {

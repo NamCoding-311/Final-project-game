@@ -7,8 +7,15 @@ using UnityEngine;
 public class ZombieSpawner : MonoBehaviour
 {
     [Header("Prefabs & Target")]
-    // Prefab Zombie cần sinh
+    // Prefab Zombie thường cần sinh
     [SerializeField] private GameObject zombiePrefab;
+
+    // Prefab Zombie Jumper (biết phóng vồ vào xe)
+    [SerializeField] private GameObject jumperPrefab;
+
+    // Tỉ lệ % xuất hiện Zombie Jumper (còn lại là zombie thường)
+    [Range(0, 100)]
+    [SerializeField] private int jumperSpawnChance = 25;
 
     // Transform của Player/Xe
     [SerializeField] private Transform playerTransform;
@@ -94,14 +101,30 @@ public class ZombieSpawner : MonoBehaviour
     private void SpawnZombiesAroundPlayer()
     {
         if (!_isSpawningActive) return;
-        if (playerTransform == null || zombiePrefab == null) return;
+        if (playerTransform == null) return;
+        if (zombiePrefab == null && jumperPrefab == null) return;
 
         int spawnCount = Random.Range(1, maxZombiesPerWave + 1);
 
         for (int i = 0; i < spawnCount; i++)
         {
             Vector3 spawnPosition = CalculateSpawnPosition();
-            Instantiate(zombiePrefab, spawnPosition, Quaternion.identity);
+
+            // Xác định loại Zombie sẽ sinh (Jumper hay Thường)
+            GameObject prefabToSpawn = zombiePrefab;
+            if (jumperPrefab != null && Random.Range(0, 100) < jumperSpawnChance)
+            {
+                prefabToSpawn = jumperPrefab;
+            }
+            else if (prefabToSpawn == null)
+            {
+                prefabToSpawn = jumperPrefab;
+            }
+
+            if (prefabToSpawn != null)
+            {
+                Instantiate(prefabToSpawn, spawnPosition, Quaternion.identity);
+            }
         }
     }
 

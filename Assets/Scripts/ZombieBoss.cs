@@ -110,7 +110,8 @@ public class ZombieBoss : MonoBehaviour
 
     private void Update()
     {
-        if (_playerTransform == null) return;
+        if (_isDead || _playerTransform == null) return;
+
 
         // 1. Kiểm tra kỹ năng Ném Đá (ưu tiên khi ở xa)
         CheckRockThrowSkill();
@@ -304,12 +305,33 @@ public class ZombieBoss : MonoBehaviour
             }
         }
     }
+    private bool _isDead = false;
 
     private void Die()
     {
-        Debug.Log($"[ZombieBoss] {bossName} đã bị tiêu diệt!");
+        if (_isDead) return;
+        _isDead = true;
+
+        Debug.Log($"[ZombieBoss] {bossName} has been Defeated!");
+
+        // 1. Kích hoạt animation chết
+        if (_animator != null)
+        {
+            _animator.SetTrigger("die");
+        }
+
+        // 2. Vô hiệu hóa va chạm để không cản đường người chơi
+        Collider2D[] colliders = GetComponents<Collider2D>();
+        foreach (var col in colliders)
+        {
+            col.enabled = false;
+        }
+
+        // 3. Thông báo Boss bị hạ gục
         OnBossDied?.Invoke(this);
-        Destroy(gameObject);
+
+        // 4. Chờ 1.5 giây sau mới xóa GameObject
+        Destroy(gameObject, 1.5f);
     }
 
     // =========================================================

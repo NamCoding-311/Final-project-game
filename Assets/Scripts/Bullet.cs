@@ -59,6 +59,12 @@ public class Bullet : MonoBehaviour
                 zombie.TakeDamage(_damage);
             }
 
+            ZombieJumper jumper = other.GetComponent<ZombieJumper>();
+            if (jumper != null)
+            {
+                jumper.TakeDamage(_damage);
+            }
+
             ZombieBoss boss = other.GetComponent<ZombieBoss>();
             if (boss != null)
             {
