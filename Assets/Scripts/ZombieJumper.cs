@@ -105,6 +105,12 @@ public class ZombieJumper : MonoBehaviour
         _currentHP -= damage;
         if (_currentHP <= 0)
         {
+            if (ArenaManager.Instance != null || BrotatoLevelSystem.Instance != null)
+            {
+                GameObject gem = new GameObject("MaterialGem");
+                gem.transform.position = transform.position;
+                gem.AddComponent<MaterialGem>();
+            }
             Destroy(gameObject);
         }
     }

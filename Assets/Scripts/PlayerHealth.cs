@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 // Quản lý lượng máu, nhận sát thương, hồi máu và xử lý khi người chơi chết
 public class PlayerHealth : MonoBehaviour
@@ -12,6 +13,9 @@ public class PlayerHealth : MonoBehaviour
     [Header("UI References")]
     // Thanh máu Slider (Tùy chọn)
     [SerializeField] private Slider hpBar;
+
+    // Chữ hiển thị lượng máu (Ví dụ: "100 / 100")
+    [SerializeField] private TextMeshProUGUI hpText;
 
     // Tham chiếu đến bộ theo dõi quãng đường để hiện kết quả khi Game Over
     [SerializeField] private DistanceTrackerUI distanceTracker;
@@ -63,12 +67,26 @@ public class PlayerHealth : MonoBehaviour
         UpdateHPBar();
     }
 
+    // Tăng lượng máu tối đa và hồi phục (Dùng cho nâng cấp Brotato)
+    public void IncreaseMaxHP(int amount)
+    {
+        if (_isDead) return;
+        maxHP += amount;
+        _currentHP = Mathf.Clamp(_currentHP + amount, 0, maxHP);
+        UpdateHPBar();
+    }
+
     // Cập nhật giá trị hiển thị trên thanh máu UI
     private void UpdateHPBar()
     {
         if (hpBar != null)
         {
             hpBar.value = (float)_currentHP / maxHP;
+        }
+
+        if (hpText != null)
+        {
+            hpText.text = $"{_currentHP} / {maxHP}";
         }
     }
 

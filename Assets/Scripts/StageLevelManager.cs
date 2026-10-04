@@ -91,8 +91,19 @@ public class StageLevelManager : MonoBehaviour
         ZombieBoss.OnBossDied -= HandleBossDefeated;
     }
 
+    private void Awake()
+    {
+        // Tự động tắt hoàn toàn nếu đang ở trong chế độ Đấu trường Sinh Tồn (Brotato)
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "ArenaSurvival" || FindAnyObjectByType<ArenaManager>() != null)
+        {
+            enabled = false;
+            return;
+        }
+    }
+
     private void Start()
     {
+        if (!enabled) return;
         if (playerTransform == null)
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");

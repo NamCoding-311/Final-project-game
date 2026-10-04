@@ -267,6 +267,37 @@ public class Player3LaneMovement : MonoBehaviour
                 zombie.TakeDamage(normalRamDamage);
                 _currentSpeed = Mathf.Max(forwardSpeed * 0.6f, _currentSpeed - speedLossOnRam);
             }
+            return;
+        }
+
+        ZombieCharger charger = other.GetComponent<ZombieCharger>();
+        if (charger != null)
+        {
+            if (_isDashing)
+            {
+                charger.TakeDamage(dashRamDamage);
+            }
+            else
+            {
+                charger.TakeDamage(normalRamDamage);
+                _currentSpeed = Mathf.Max(forwardSpeed * 0.5f, _currentSpeed - speedLossOnRam * 1.5f);
+            }
+            return;
+        }
+
+        ZombieJumper jumper = other.GetComponent<ZombieJumper>();
+        if (jumper != null)
+        {
+            if (_isDashing)
+            {
+                jumper.TakeDamage(dashRamDamage);
+            }
+            else
+            {
+                jumper.TakeDamage(normalRamDamage);
+                _currentSpeed = Mathf.Max(forwardSpeed * 0.6f, _currentSpeed - speedLossOnRam);
+            }
+            return;
         }
     }
 

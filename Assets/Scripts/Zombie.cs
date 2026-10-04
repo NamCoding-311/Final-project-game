@@ -491,6 +491,9 @@ public class Zombie : MonoBehaviour
             tracker.AddZombieKill();
         }
 
+        // Roi ngoc Material/XP
+        SpawnMaterialGem();
+
         // Chay Knockdown animation roi lam bien mat xac zombie sau 0.8s
         if (_animator != null)
         {
@@ -519,13 +522,14 @@ public class Zombie : MonoBehaviour
     // GIZMOS
     // =========================================================
 
-    private void OnDrawGizmosSelected()
+    private void SpawnMaterialGem()
     {
-        Gizmos.color = Color.red;
-
-        Gizmos.DrawWireSphere(
-            transform.position,
-            attackRange
-        );
+        // Chỉ sinh ngọc nếu đang ở chế độ Đấu trường (Arena)
+        if (ArenaManager.Instance != null || BrotatoLevelSystem.Instance != null)
+        {
+            GameObject gem = new GameObject("MaterialGem");
+            gem.transform.position = transform.position;
+            gem.AddComponent<MaterialGem>();
+        }
     }
 }

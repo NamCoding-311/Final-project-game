@@ -10,4 +10,8 @@ public class WeaponData : ScriptableObject
     public float spreadAngle = 0f;     // độ tản đạn (độ) - Shotgun cao, Sniper = 0
     public int damage = 10;
     public bool isAutomatic = true;    // AR: giữ bắn liên tục, Sniper/Shotgun: mỗi lần click 1 phát
+
+    [Header("Visuals (Tùy chọn)")]
+    public Sprite weaponSprite;
+    public Color weaponColor = Color.white;
 }

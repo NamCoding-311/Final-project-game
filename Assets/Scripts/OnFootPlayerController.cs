@@ -144,6 +144,12 @@ public class OnFootPlayerController : MonoBehaviour
         useArenaBounds = true;
     }
 
+    // Tăng tốc độ chạy (Dùng cho nâng cấp Brotato)
+    public void AddBonusSpeed(float amount)
+    {
+        moveSpeed += amount;
+    }
+
     // Nhận sát thương khi va chạm đòn đánh của Boss
     public void TakeDamage(int damage)
     {
