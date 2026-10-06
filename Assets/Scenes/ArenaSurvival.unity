@@ -2173,6 +2173,7 @@ MonoBehaviour:
   showArenaGizmos: 1
   zombiePrefab: {fileID: 5957661502690297034, guid: e1595c8acca7dcc4cb6f762164fc783d, type: 3}
   jumperPrefab: {fileID: 5957661502690297034, guid: 08d4ce4b68e5cb841b1adba409c9cb2f, type: 3}
+  chargerPrefab: {fileID: 726670848947842876, guid: fdac19d8dec5c8641803b3564b1a755c, type: 3}
   bossPrefab: {fileID: 5957661502690297034, guid: 0093b0db78116e143873820ece0a9e7c, type: 3}
   currentWave: 1
   waveDuration: 20
@@ -3788,6 +3789,10 @@ PrefabInstance:
       propertyPath: hpText
       value: 
       objectReference: {fileID: 2021778997}
+    - target: {fileID: 3139919137593395232, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6714081817590200170, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -3845,118 +3850,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 893659237}
   m_SourcePrefab: {fileID: 100100000, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
---- !u!114 &1345742555 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1557027599861470979, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
-  m_PrefabInstance: {fileID: 1345742554}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 893659229}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2e85c569389b8474da9b8058d09d4c30, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::OnFootPlayerController
---- !u!1 &1362433977
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1362433980}
-  - component: {fileID: 1362433979}
-  - component: {fileID: 1362433978}
-  m_Layer: 0
-  m_Name: GameManagers
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1362433978
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1362433977}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26ade9db4655f184b96f26dbac31d158, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ObstacleSpawner
-  playerTransform: {fileID: 0}
-  obstaclePrefabs:
-  - {fileID: 2707334180548891316, guid: ae3eb8da27eabd74ba9d7eaf317a5b2a, type: 3}
-  - {fileID: 8019439138853534365, guid: f0183deb73e548b4abddd89de826a14a, type: 3}
-  - {fileID: 6242101899639701818, guid: bffefe57c7911bf469aac241d67516a9, type: 3}
-  - {fileID: 2131367033949460131, guid: eb2114b0e2217a84c8560ced09c71061, type: 3}
-  - {fileID: 2434598741683321313, guid: 40baf3afcb544db418d8a12f3ce3193c, type: 3}
-  - {fileID: 1344339141157430565, guid: 00dde4efd895f654c8adcadf30efd2c6, type: 3}
-  minSpawnInterval: 2.5
-  maxSpawnInterval: 4.5
-  spawnDistanceAhead: 35
-  chanceOfDoubleObstacle: 0.35
-  isSpawningEnabled: 1
---- !u!114 &1362433979
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1362433977}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4cf84c15dc68c24ab4a62e39e7caf6b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StageLevelManager
-  playerTransform: {fileID: 0}
-  globalLight2D: {fileID: 619394801}
-  zombieSpawner: {fileID: 0}
-  onFootPlayer: {fileID: 1345742555}
-  cameraFollow: {fileID: 0}
-  mapManager: {fileID: 0}
-  obstacleSpawner: {fileID: 1362433978}
-  parallaxBackground: {fileID: 0}
-  stages:
-  - stageName: "Ch\u1EB7ng 1: S\xF4ng Ban Ng\xE0y"
-    bossSpawnDistance: 100
-    bossPrefab: {fileID: 5957661502690297034, guid: 0093b0db78116e143873820ece0a9e7c, type: 3}
-    lightColor: {r: 1, g: 1, b: 1, a: 1}
-    lightIntensity: 1
-  - stageName: "Ch\u1EB7ng 2: Ph\u1ED1 Ho\xE0ng H\xF4n"
-    bossSpawnDistance: 250
-    bossPrefab: {fileID: 5957661502690297034, guid: 0093b0db78116e143873820ece0a9e7c, type: 3}
-    lightColor: {r: 1, g: 0.6, b: 0.3, a: 1}
-    lightIntensity: 0.9
-  - stageName: "Ch\u1EB7ng 3: \u0110\xEAm T\xE0n T\xEDch"
-    bossSpawnDistance: 500
-    bossPrefab: {fileID: 5957661502690297034, guid: 0093b0db78116e143873820ece0a9e7c, type: 3}
-    lightColor: {r: 0.2, g: 0.3, b: 0.5, a: 1}
-    lightIntensity: 0.7
-  carHealthBar: {fileID: 0}
-  onFootHealthBar: {fileID: 0}
-  stageAnnouncementText: {fileID: 578079601}
-  bossWarningBanner: {fileID: 394236254}
-  bossHealthBar: {fileID: 586907213}
-  bossNameText: {fileID: 1466329157}
-  victoryPanel: {fileID: 0}
---- !u!4 &1362433980
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1362433977}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1366919665
 GameObject:
   m_ObjectHideFlags: 0
@@ -6014,6 +5907,5 @@ SceneRoots:
   - {fileID: 630596410}
   - {fileID: 760271959}
   - {fileID: 1366919666}
-  - {fileID: 1362433980}
   - {fileID: 1614455756}
   - {fileID: 376091128}
