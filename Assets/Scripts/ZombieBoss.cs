@@ -78,6 +78,21 @@ public class ZombieBoss : MonoBehaviour
         clampToArena = true;
     }
 
+    public void SetClampToArena(bool clamp)
+    {
+        clampToArena = clamp;
+    }
+
+    // Tăng chỉ số Boss theo Wave
+    public void ScaleStats(float hpMultiplier, float damageMultiplier, float speedMultiplier)
+    {
+        maxHealth = Mathf.RoundToInt(maxHealth * hpMultiplier);
+        _currentHealth = maxHealth;
+        baseAttackDamage = Mathf.RoundToInt(baseAttackDamage * damageMultiplier);
+        chargeDamage = Mathf.RoundToInt(chargeDamage * damageMultiplier);
+        moveSpeed *= Mathf.Min(1.35f, speedMultiplier);
+    }
+
     private void Awake()
     {
         _currentHealth = maxHealth;
@@ -92,6 +107,11 @@ public class ZombieBoss : MonoBehaviour
 
     private void Start()
     {
+        if (ArenaManager.Instance != null)
+        {
+            clampToArena = false; // Tắt giới hạn xa lộ để tự do di chuyển trong Đấu trường
+        }
+
         if (_playerTransform == null)
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -329,6 +349,24 @@ public class ZombieBoss : MonoBehaviour
 
         // 3. Thông báo Boss bị hạ gục
         OnBossDied?.Invoke(this);
+
+        if (ArenaManager.Instance != null)
+        {
+            ArenaManager.Instance.AddKill();
+        }
+
+        // Rơi 4 viên ngọc hoàng kim (Gold Gems) giá trị cao khi Boss bị tiêu diệt
+        if (ArenaManager.Instance != null || BrotatoLevelSystem.Instance != null)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                GameObject gem = new GameObject("BossMaterialGem");
+                Vector3 offset = new Vector3(UnityEngine.Random.Range(-1.2f, 1.2f), UnityEngine.Random.Range(-1.2f, 1.2f), 0f);
+                gem.transform.position = transform.position + offset;
+                MaterialGem mg = gem.AddComponent<MaterialGem>();
+                mg.SetGemData(10, new Color(1f, 0.85f, 0.15f), 1.35f); // 10 exp/gems mỗi viên, màu vàng ánh kim
+            }
+        }
 
         // 4. Chờ 1.5 giây sau mới xóa GameObject
         Destroy(gameObject, 1.5f);

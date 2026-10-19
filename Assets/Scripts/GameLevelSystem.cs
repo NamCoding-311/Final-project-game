@@ -74,8 +74,27 @@ public class BrotatoLevelSystem : MonoBehaviour
         if (customLevelUpPanel != null) customLevelUpPanel.SetActive(false);
     }
 
+    private int _lifetimeMaterials = 0;
+
     public float GetMagnetRadius() => magnetRadius;
     public int GetMaterials() => totalMaterials;
+    public int GetLifetimeMaterials() => _lifetimeMaterials;
+
+    public bool SpendMaterials(int amount)
+    {
+        if (totalMaterials >= amount)
+        {
+            totalMaterials -= amount;
+            UpdateCustomHUD();
+            return true;
+        }
+        return false;
+    }
+
+    public void AddMagnetRadius(float amount)
+    {
+        magnetRadius += amount;
+    }
 
     // Cập nhật giá trị hiển thị trên Canvas UI tùy chỉnh
     public void UpdateCustomHUD()
@@ -96,6 +115,7 @@ public class BrotatoLevelSystem : MonoBehaviour
     public void AddXP(int amount)
     {
         totalMaterials += amount;
+        _lifetimeMaterials += amount;
         currentXP += amount;
         UpdateCustomHUD();
 
@@ -153,7 +173,7 @@ public class BrotatoLevelSystem : MonoBehaviour
         {
             new UpgradeCard
             {
-                Title = "💥 DAMAGE",
+                Title = "BONUS DAMAGE",
                 Description = "+3 Damage per projectile",
                 ThemeColor = new Color(1f, 0.3f, 0.3f),
                 OnSelect = () => {
@@ -162,7 +182,7 @@ public class BrotatoLevelSystem : MonoBehaviour
             },
             new UpgradeCard
             {
-                Title = "⚡ ATTACK SPEED",
+                Title = "ATTACK SPEED",
                 Description = "+20% Weapon Fire Rate",
                 ThemeColor = new Color(1f, 0.85f, 0.2f),
                 OnSelect = () => {
@@ -171,7 +191,7 @@ public class BrotatoLevelSystem : MonoBehaviour
             },
             new UpgradeCard
             {
-                Title = "👟 MOVE SPEED",
+                Title = "MOVE SPEED",
                 Description = "+15% Movement Speed",
                 ThemeColor = new Color(0.3f, 0.85f, 1f),
                 OnSelect = () => {
@@ -181,7 +201,7 @@ public class BrotatoLevelSystem : MonoBehaviour
             },
             new UpgradeCard
             {
-                Title = "🩸 MAX HP",
+                Title = "MAX HP",
                 Description = "+25 Max HP & Instant Heal",
                 ThemeColor = new Color(0.2f, 1f, 0.4f),
                 OnSelect = () => {
@@ -191,7 +211,7 @@ public class BrotatoLevelSystem : MonoBehaviour
             },
             new UpgradeCard
             {
-                Title = "🧲 MAGNET RANGE",
+                Title = "MAGNET RANGE",
                 Description = "+35% Material Pickup Radius",
                 ThemeColor = new Color(0.9f, 0.4f, 1f),
                 OnSelect = () => {

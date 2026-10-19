@@ -300,11 +300,12 @@ MonoBehaviour:
   characterSpriteRenderer: {fileID: 0}
   gunHolderTransform: {fileID: 0}
   hitFlashColor: {r: 1, g: 0, b: 0, a: 1}
-  useArenaBounds: 0
-  minX: -1000
-  maxX: 1000
-  minY: -1.2
-  maxY: 3.2
+  useArenaBounds: 1
+  clampYToRoad: 0
+  minX: -15
+  maxX: 15
+  minY: -15
+  maxY: 15
 --- !u!114 &4211076331969194362
 MonoBehaviour:
   m_ObjectHideFlags: 0

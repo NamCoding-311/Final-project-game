@@ -22,6 +22,7 @@ public class PlayerHealth : MonoBehaviour
 
     // Panel Game Over hiển thị khi chết
     [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private float damageReduction = 0f;
 
     private int _currentHP;
     private bool _isDead;
@@ -43,12 +44,18 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
+    public void AddDamageReduction(float percentage)
+    {
+        damageReduction = Mathf.Clamp(damageReduction + percentage, 0f, 0.75f);
+    }
+
     // Nhận sát thương khi bị Zombie cắn hoặc đâm phải chướng ngại vật
     public void TakeDamage(int amount)
     {
         if (_isDead) return;
 
-        _currentHP -= amount;
+        int finalDamage = Mathf.Max(1, Mathf.RoundToInt(amount * (1f - damageReduction)));
+        _currentHP -= finalDamage;
         _currentHP = Mathf.Clamp(_currentHP, 0, maxHP);
         UpdateHPBar();
 
@@ -95,8 +102,12 @@ public class PlayerHealth : MonoBehaviour
     {
         _isDead = true;
 
-        // Hiển thị kết quả điểm số và Kỷ lục quãng đường
-        if (distanceTracker != null)
+        // Hiển thị kết quả điểm số và màn hình Game Over
+        if (ArenaGameOverSystem.Instance != null)
+        {
+            ArenaGameOverSystem.Instance.TriggerGameOver();
+        }
+        else if (distanceTracker != null)
         {
             distanceTracker.ShowGameOverResults();
         }

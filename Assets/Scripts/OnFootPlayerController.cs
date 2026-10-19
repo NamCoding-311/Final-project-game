@@ -19,11 +19,12 @@ public class OnFootPlayerController : MonoBehaviour
 
     [Header("Arena Boundaries (Giới hạn di chuyển trong sàn đấu Boss)")]
     // Mặc định tắt để có thể di chuyển tự do, chỉ kích hoạt khi vào sàn đấu Boss
-    [SerializeField] private bool useArenaBounds = false;
-    [SerializeField] private float minX = -1000f;
-    [SerializeField] private float maxX = 1000f;
-    [SerializeField] private float minY = -1.2f;
-    [SerializeField] private float maxY = 3.2f;
+    [SerializeField] private bool useArenaBounds = true;
+    [SerializeField] private bool clampYToRoad = false;
+    [SerializeField] private float minX = -15f;
+    [SerializeField] private float maxX = 15f;
+    [SerializeField] private float minY = -15f;
+    [SerializeField] private float maxY = 15f;
 
     private Rigidbody2D _rb;
     private Vector2 _input;
@@ -101,13 +102,14 @@ public class OnFootPlayerController : MonoBehaviour
     {
         Vector2 nextPos = (Vector2)transform.position + (_input * moveSpeed * Time.fixedDeltaTime);
 
-        // Luôn giữ nhân vật nằm trong mặt đường (trục Y)
-        nextPos.y = Mathf.Clamp(nextPos.y, minY, maxY);
-
-        // Chỉ kẹp trục X khi đang trong sàn đấu Boss (Arena)
-        if (useArenaBounds)
+        if (clampYToRoad)
+        {
+            nextPos.y = Mathf.Clamp(nextPos.y, -1.2f, 3.2f);
+        }
+        else if (useArenaBounds)
         {
             nextPos.x = Mathf.Clamp(nextPos.x, minX, maxX);
+            nextPos.y = Mathf.Clamp(nextPos.y, minY, maxY);
         }
 
         if (_rb != null)
@@ -134,7 +136,7 @@ public class OnFootPlayerController : MonoBehaviour
         characterSpriteRenderer.flipX = !aimRight;
     }
 
-    // Cài đặt ranh giới đấu trường khi bước xuống xe
+    // Cài đặt ranh giới đấu trường khi bước xuống xe hoặc trong Arena
     public void SetArenaBounds(float leftX, float rightX, float bottomY, float topY)
     {
         minX = leftX;
@@ -142,6 +144,7 @@ public class OnFootPlayerController : MonoBehaviour
         minY = bottomY;
         maxY = topY;
         useArenaBounds = true;
+        clampYToRoad = false;
     }
 
     // Tăng tốc độ chạy (Dùng cho nâng cấp Brotato)

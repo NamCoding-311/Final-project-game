@@ -18,6 +18,10 @@ public class StageSystemSetupTool : EditorWindow
         {
             if (Application.isPlaying) return;
 
+            // Chỉ cho phép chạy tự động trên Scene "MainGame", bỏ qua Scene ArenaSurvival hoặc Main lobby
+            string currentScene = EditorSceneManager.GetActiveScene().name;
+            if (currentScene != "MainGame") return;
+
             StageLevelManager existing = Object.FindAnyObjectByType<StageLevelManager>(FindObjectsInactive.Include);
             if (existing == null)
             {
@@ -34,6 +38,19 @@ public class StageSystemSetupTool : EditorWindow
 
     public static void SetupStageAndBossSystem(bool silent = false)
     {
+        // Chỉ chạy trên Scene "MainGame"
+        string currentScene = EditorSceneManager.GetActiveScene().name;
+        if (currentScene != "MainGame")
+        {
+            if (!silent)
+            {
+                EditorUtility.DisplayDialog("Scene không phù hợp",
+                    $"Công cụ này dành riêng cho Scene 'MainGame'. Scene hiện tại là '{currentScene}'.\nVui lòng mở Scene 'MainGame' để cài đặt.",
+                    "OK");
+            }
+            return;
+        }
+
         // 1. Tìm hoặc tạo Prefab Boss từ Zombie hiện có
         string bossPrefabPath = "Assets/PreFab/Zombie Boss.prefab";
         GameObject bossPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(bossPrefabPath);

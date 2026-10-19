@@ -14,23 +14,55 @@ public class ArenaCanvasSetupTool : EditorWindow
     [MenuItem("GameObject/UI/Tự Động Tạo và Gán Arena Canvas (1-Click)", false, 0)]
     [MenuItem("CONTEXT/ArenaManager/Tự Động Tạo và Gán Canvas (1-Click)")]
     [MenuItem("CONTEXT/BrotatoLevelSystem/Tự Động Tạo và Gán Canvas (1-Click)")]
+    [MenuItem("CONTEXT/ArenaShopSystem/Tự Động Tạo và Gán Canvas (1-Click)")]
+    [MenuItem("CONTEXT/ArenaGameOverSystem/Tự Động Tạo và Gán Canvas (1-Click)")]
     public static void SetupArenaCanvasUI()
+    {
+        SetupArenaCanvasUIInternal(silent: false);
+    }
+
+    [InitializeOnLoadMethod]
+    private static void AutoRunOnce()
+    {
+        EditorApplication.delayCall += () =>
+        {
+            string currentScene = EditorSceneManager.GetActiveScene().name;
+            if (currentScene != "ArenaSurvival") return;
+
+            GameObject canvasGo = GameObject.Find("ArenaCanvas");
+            if (canvasGo != null && canvasGo.transform.Find("Shop_Panel") != null && canvasGo.transform.Find("EndGame_Panel") != null)
+            {
+                return;
+            }
+
+            SetupArenaCanvasUIInternal(silent: true);
+        };
+    }
+
+    public static void SetupArenaCanvasUIInternal(bool silent)
     {
         // 1. Kiểm tra Scene hiện tại
         string currentScene = EditorSceneManager.GetActiveScene().name;
         if (currentScene != "ArenaSurvival")
         {
-            bool proceed = EditorUtility.DisplayDialog("Xác nhận Scene",
-                $"Bạn đang ở Scene '{currentScene}'. Công cụ này được thiết kế tối ưu nhất cho Scene 'ArenaSurvival'.\n\nBạn có muốn mở Scene 'ArenaSurvival' trước khi thiết lập không?",
-                "Mở ArenaSurvival & Thiết Lập", "Tiếp tục ở Scene hiện tại");
-            
-            if (proceed)
+            if (!silent)
             {
-                string scenePath = "Assets/Scenes/ArenaSurvival.unity";
-                if (System.IO.File.Exists(scenePath))
+                bool proceed = EditorUtility.DisplayDialog("Xác nhận Scene",
+                    $"Bạn đang ở Scene '{currentScene}'. Công cụ này được thiết kế tối ưu nhất cho Scene 'ArenaSurvival'.\n\nBạn có muốn mở Scene 'ArenaSurvival' trước khi thiết lập không?",
+                    "Mở ArenaSurvival & Thiết Lập", "Tiếp tục ở Scene hiện tại");
+                
+                if (proceed)
                 {
-                    EditorSceneManager.OpenScene(scenePath);
+                    string scenePath = "Assets/Scenes/ArenaSurvival.unity";
+                    if (System.IO.File.Exists(scenePath))
+                    {
+                        EditorSceneManager.OpenScene(scenePath);
+                    }
                 }
+            }
+            else
+            {
+                return;
             }
         }
 
@@ -109,7 +141,7 @@ public class ArenaCanvasSetupTool : EditorWindow
             matBoxTrans = mbGo.transform;
         }
 
-        TextMeshProUGUI materialsTmp = GetOrCreateTMP(matBoxTrans, "MaterialsText", "💎 0", 32, FontStyles.Bold, new Color(0.2f, 1f, 0.55f), TextAlignmentOptions.Right, Vector2.zero, new Vector2(250, 50));
+        TextMeshProUGUI materialsTmp = GetOrCreateTMP(matBoxTrans, "MaterialsText", "0 GEMS", 30, FontStyles.Bold, new Color(0.2f, 1f, 0.55f), TextAlignmentOptions.Right, Vector2.zero, new Vector2(250, 50));
 
         // --- TOP-LEFT: Level, HP Bar, XP Bar ---
         Transform statsBoxTrans = hudTransform.Find("PlayerStats_Box");
@@ -234,7 +266,289 @@ public class ArenaCanvasSetupTool : EditorWindow
             }
         }
 
-        // 5. TỰ ĐỘNG GÁN VÀO CÁC Ô INSPECTOR (SERIALIZED PROPERTIES)
+        // 5. Xây dựng SHOP PANEL (Cửa Hàng Giữa Các Hiệp - Inter-Wave Shop)
+        Transform shopTrans = canvasGo.transform.Find("Shop_Panel");
+        GameObject shopGo = null;
+        TextMeshProUGUI shopWaveTitleTmp = null;
+        TextMeshProUGUI shopMaterialsTmp = null;
+        Button rerollBtn = null;
+        TextMeshProUGUI rerollCostTmp = null;
+        Button nextWaveBtn = null;
+        TextMeshProUGUI nextWaveBtnTmp = null;
+        List<ArenaShopSystem.ShopCardUI> shopCardsList = new List<ArenaShopSystem.ShopCardUI>();
+
+        if (shopTrans == null)
+        {
+            shopGo = new GameObject("Shop_Panel", typeof(RectTransform), typeof(Image));
+            shopGo.transform.SetParent(canvasGo.transform, false);
+            RectTransform rt = shopGo.GetComponent<RectTransform>();
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.sizeDelta = Vector2.zero;
+
+            Image bgOverlay = shopGo.GetComponent<Image>();
+            bgOverlay.color = new Color(0.04f, 0.06f, 0.08f, 0.94f); // Tối làm nổi bật shop
+
+            // Header Box
+            GameObject headerBox = new GameObject("Header_Box", typeof(RectTransform));
+            headerBox.transform.SetParent(shopGo.transform, false);
+            RectTransform hRt = headerBox.GetComponent<RectTransform>();
+            hRt.anchorMin = new Vector2(0.5f, 0.5f);
+            hRt.anchorMax = new Vector2(0.5f, 0.5f);
+            hRt.pivot = new Vector2(0.5f, 0.5f);
+            hRt.anchoredPosition = new Vector2(0, 310);
+            hRt.sizeDelta = new Vector2(1100, 130);
+
+            shopWaveTitleTmp = GetOrCreateTMP(headerBox.transform, "WaveTitleText", "WAVE 1 COMPLETED - SURVIVAL SHOP", 34, FontStyles.Bold, new Color(1f, 0.85f, 0.2f), TextAlignmentOptions.Center, new Vector2(0, 32), new Vector2(1000, 48));
+            GetOrCreateTMP(headerBox.transform, "SubtitleText", "USE GEMS TO PURCHASE NEW WEAPONS & STAT UPGRADES", 17, FontStyles.Normal, new Color(0.75f, 0.85f, 0.95f), TextAlignmentOptions.Center, new Vector2(0, -6), new Vector2(1000, 30));
+            shopMaterialsTmp = GetOrCreateTMP(headerBox.transform, "MaterialsText", "0 GEMS", 26, FontStyles.Bold, new Color(0.2f, 1f, 0.55f), TextAlignmentOptions.Center, new Vector2(0, -42), new Vector2(500, 36));
+
+            // Cards Container (4 Thẻ)
+            GameObject containerGo = new GameObject("ShopCardsContainer", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+            containerGo.transform.SetParent(shopGo.transform, false);
+            RectTransform contRt = containerGo.GetComponent<RectTransform>();
+            contRt.anchorMin = new Vector2(0.5f, 0.5f);
+            contRt.anchorMax = new Vector2(0.5f, 0.5f);
+            contRt.pivot = new Vector2(0.5f, 0.5f);
+            contRt.anchoredPosition = new Vector2(0, 0);
+            contRt.sizeDelta = new Vector2(1150, 420);
+
+            HorizontalLayoutGroup hlg = containerGo.GetComponent<HorizontalLayoutGroup>();
+            hlg.spacing = 24;
+            hlg.childAlignment = TextAnchor.MiddleCenter;
+            hlg.childControlWidth = false;
+            hlg.childControlHeight = false;
+            hlg.childForceExpandWidth = false;
+            hlg.childForceExpandHeight = false;
+
+            for (int i = 0; i < 4; i++)
+            {
+                ArenaShopSystem.ShopCardUI scUI = CreateShopCardElement(containerGo.transform, i);
+                shopCardsList.Add(scUI);
+            }
+
+            // Bottom Actions Box
+            GameObject bottomBox = new GameObject("BottomActions_Box", typeof(RectTransform));
+            bottomBox.transform.SetParent(shopGo.transform, false);
+            RectTransform bRt = bottomBox.GetComponent<RectTransform>();
+            bRt.anchorMin = new Vector2(0.5f, 0.5f);
+            bRt.anchorMax = new Vector2(0.5f, 0.5f);
+            bRt.pivot = new Vector2(0.5f, 0.5f);
+            bRt.anchoredPosition = new Vector2(0, -290);
+            bRt.sizeDelta = new Vector2(1100, 75);
+
+            // Reroll Button
+            GameObject rerollGo = new GameObject("RerollButton", typeof(RectTransform), typeof(Image), typeof(Button));
+            rerollGo.transform.SetParent(bottomBox.transform, false);
+            RectTransform rrRt = rerollGo.GetComponent<RectTransform>();
+            rrRt.anchorMin = new Vector2(0f, 0.5f);
+            rrRt.anchorMax = new Vector2(0f, 0.5f);
+            rrRt.pivot = new Vector2(0f, 0.5f);
+            rrRt.anchoredPosition = new Vector2(30, 0);
+            rrRt.sizeDelta = new Vector2(300, 56);
+            rerollGo.GetComponent<Image>().color = new Color(0.9f, 0.55f, 0.15f, 1f);
+            rerollBtn = rerollGo.GetComponent<Button>();
+            rerollCostTmp = GetOrCreateTMP(rerollGo.transform, "RerollCostText", "Reroll (15)", 20, FontStyles.Bold, Color.white, TextAlignmentOptions.Center, Vector2.zero, new Vector2(280, 50));
+
+            // Next Wave Button
+            GameObject nextGo = new GameObject("NextWaveButton", typeof(RectTransform), typeof(Image), typeof(Button));
+            nextGo.transform.SetParent(bottomBox.transform, false);
+            RectTransform nxRt = nextGo.GetComponent<RectTransform>();
+            nxRt.anchorMin = new Vector2(1f, 0.5f);
+            nxRt.anchorMax = new Vector2(1f, 0.5f);
+            nxRt.pivot = new Vector2(1f, 0.5f);
+            nxRt.anchoredPosition = new Vector2(-30, 0);
+            nxRt.sizeDelta = new Vector2(300, 56);
+            nextGo.GetComponent<Image>().color = new Color(0.15f, 0.65f, 0.95f, 1f);
+            nextWaveBtn = nextGo.GetComponent<Button>();
+            nextWaveBtnTmp = GetOrCreateTMP(nextGo.transform, "NextWaveText", "NEXT WAVE >", 20, FontStyles.Bold, Color.white, TextAlignmentOptions.Center, Vector2.zero, new Vector2(280, 50));
+
+            shopGo.SetActive(false); // Ẩn mặc định, chỉ mở khi hết Wave
+        }
+        else
+        {
+            shopGo = shopTrans.gameObject;
+            Transform headerBox = shopTrans.Find("Header_Box");
+            if (headerBox != null)
+            {
+                shopWaveTitleTmp = headerBox.Find("WaveTitleText")?.GetComponent<TextMeshProUGUI>();
+                shopMaterialsTmp = headerBox.Find("MaterialsText")?.GetComponent<TextMeshProUGUI>();
+            }
+
+            Transform container = shopTrans.Find("ShopCardsContainer");
+            if (container != null)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    Transform cTrans = container.Find($"ShopCard_{i}");
+                    if (cTrans != null)
+                    {
+                        ArenaShopSystem.ShopCardUI cardUI = new ArenaShopSystem.ShopCardUI();
+                        cardUI.cardRoot = cTrans.gameObject;
+                        cardUI.nameText = cTrans.Find("NameText")?.GetComponent<TextMeshProUGUI>();
+                        cardUI.descText = cTrans.Find("DescText")?.GetComponent<TextMeshProUGUI>();
+                        cardUI.priceText = cTrans.Find("PriceText")?.GetComponent<TextMeshProUGUI>();
+                        cardUI.borderOrIcon = cTrans.Find("AccentStrip")?.GetComponent<Image>() ?? cTrans.GetComponent<Image>();
+                        cardUI.buyButton = cTrans.Find("BuyButton")?.GetComponent<Button>();
+                        cardUI.buyButtonText = cTrans.Find("BuyButton/BuyButtonText")?.GetComponent<TextMeshProUGUI>();
+                        shopCardsList.Add(cardUI);
+                    }
+                }
+            }
+
+            Transform bottomBox = shopTrans.Find("BottomActions_Box");
+            if (bottomBox != null)
+            {
+                Transform rrTrans = bottomBox.Find("RerollButton");
+                if (rrTrans != null)
+                {
+                    rerollBtn = rrTrans.GetComponent<Button>();
+                    rerollCostTmp = rrTrans.Find("RerollCostText")?.GetComponent<TextMeshProUGUI>();
+                }
+
+                Transform nxTrans = bottomBox.Find("NextWaveButton");
+                if (nxTrans != null)
+                {
+                    nextWaveBtn = nxTrans.GetComponent<Button>();
+                    nextWaveBtnTmp = nxTrans.Find("NextWaveText")?.GetComponent<TextMeshProUGUI>();
+                }
+            }
+        }
+
+        // 6. Xây dựng ENDGAME PANEL (Thắng / Thua & Tổng kết trận đấu)
+        Transform endGameTrans = canvasGo.transform.Find("EndGame_Panel");
+        GameObject endGameGo = null;
+        TextMeshProUGUI endTitleTmp = null;
+        TextMeshProUGUI endSubtitleTmp = null;
+        Image endAccentImg = null;
+        TextMeshProUGUI endWaveStatTmp = null;
+        TextMeshProUGUI endTimeStatTmp = null;
+        TextMeshProUGUI endKillsStatTmp = null;
+        TextMeshProUGUI endGemsStatTmp = null;
+        TextMeshProUGUI endWeaponsStatTmp = null;
+        Button endRestartBtn = null;
+        Button endEndlessBtn = null;
+        Button endMenuBtn = null;
+
+        if (endGameTrans == null)
+        {
+            endGameGo = new GameObject("EndGame_Panel", typeof(RectTransform), typeof(Image));
+            endGameGo.transform.SetParent(canvasGo.transform, false);
+            RectTransform rt = endGameGo.GetComponent<RectTransform>();
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.sizeDelta = Vector2.zero;
+
+            Image bgOverlay = endGameGo.GetComponent<Image>();
+            bgOverlay.color = new Color(0.02f, 0.03f, 0.06f, 0.92f); // Nền tối làm nổi bật bảng kết quả
+
+            // Hộp trung tâm (Center Modal Dialog)
+            GameObject dialogGo = new GameObject("EndGame_Dialog", typeof(RectTransform), typeof(Image), typeof(Outline));
+            dialogGo.transform.SetParent(endGameGo.transform, false);
+            RectTransform dRt = dialogGo.GetComponent<RectTransform>();
+            dRt.anchorMin = new Vector2(0.5f, 0.5f);
+            dRt.anchorMax = new Vector2(0.5f, 0.5f);
+            dRt.pivot = new Vector2(0.5f, 0.5f);
+            dRt.anchoredPosition = Vector2.zero;
+            dRt.sizeDelta = new Vector2(680, 580);
+
+            Image dImg = dialogGo.GetComponent<Image>();
+            dImg.color = new Color(0.10f, 0.13f, 0.19f, 0.98f);
+
+            Outline dOutline = dialogGo.GetComponent<Outline>();
+            dOutline.effectColor = new Color(0.35f, 0.55f, 0.85f, 0.6f);
+            dOutline.effectDistance = new Vector2(3, -3);
+
+            // Viền Accent Strip trên đỉnh hộp
+            GameObject headerStripGo = new GameObject("AccentStrip", typeof(RectTransform), typeof(Image));
+            headerStripGo.transform.SetParent(dialogGo.transform, false);
+            RectTransform hRt = headerStripGo.GetComponent<RectTransform>();
+            hRt.anchorMin = new Vector2(0, 1);
+            hRt.anchorMax = new Vector2(1, 1);
+            hRt.pivot = new Vector2(0.5f, 1);
+            hRt.anchoredPosition = Vector2.zero;
+            hRt.sizeDelta = new Vector2(0, 8);
+            endAccentImg = headerStripGo.GetComponent<Image>();
+            endAccentImg.color = new Color(1f, 0.85f, 0.2f, 1f);
+
+            // Tiêu đề Thắng / Thua
+            endTitleTmp = GetOrCreateTMP(dialogGo.transform, "TitleText", "VICTORY!", 34, FontStyles.Bold, new Color(1f, 0.85f, 0.2f), TextAlignmentOptions.Center, new Vector2(0, 220), new Vector2(640, 50));
+
+            // Phụ đề
+            endSubtitleTmp = GetOrCreateTMP(dialogGo.transform, "SubtitleText", "YOU SURVIVED ALL 10 WAVES AND CLEARED THE ZOMBIE APOCALYPSE!", 15, FontStyles.Normal, new Color(0.85f, 0.92f, 1f), TextAlignmentOptions.Center, new Vector2(0, 165), new Vector2(620, 50));
+            endSubtitleTmp.enableWordWrapping = true;
+
+            // Khung chứa các dòng thống kê (Stats Container)
+            GameObject statsBox = new GameObject("Stats_Container", typeof(RectTransform));
+            statsBox.transform.SetParent(dialogGo.transform, false);
+            RectTransform sRt = statsBox.GetComponent<RectTransform>();
+            sRt.anchorMin = new Vector2(0.5f, 0.5f);
+            sRt.anchorMax = new Vector2(0.5f, 0.5f);
+            sRt.pivot = new Vector2(0.5f, 0.5f);
+            sRt.anchoredPosition = new Vector2(0, 15);
+            sRt.sizeDelta = new Vector2(580, 220);
+
+            float rowStartY = 85f;
+            float rowGap = 42f;
+
+            endWaveStatTmp = CreateStatRow(statsBox.transform, "Wave_Row", "WAVES SURVIVED:", "10 (COMPLETED)", Color.cyan, new Vector2(0, rowStartY));
+            endTimeStatTmp = CreateStatRow(statsBox.transform, "Time_Row", "BATTLE TIME:", "05:20", Color.white, new Vector2(0, rowStartY - rowGap));
+            endKillsStatTmp = CreateStatRow(statsBox.transform, "Kills_Row", "ZOMBIES KILLED:", "180 Kills", new Color(1f, 0.45f, 0.45f), new Vector2(0, rowStartY - rowGap * 2));
+            endGemsStatTmp = CreateStatRow(statsBox.transform, "Gems_Row", "GEMS COLLECTED:", "350 Gems", new Color(0.2f, 1f, 0.55f), new Vector2(0, rowStartY - rowGap * 3));
+            endWeaponsStatTmp = CreateStatRow(statsBox.transform, "Weapons_Row", "WEAPONS OWNED:", "6/6 Weapons", new Color(1f, 0.75f, 0.2f), new Vector2(0, rowStartY - rowGap * 4));
+
+            // Khung chứa các nút bấm (Buttons Container)
+            GameObject btnBox = new GameObject("Buttons_Container", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+            btnBox.transform.SetParent(dialogGo.transform, false);
+            RectTransform bRt = btnBox.GetComponent<RectTransform>();
+            bRt.anchorMin = new Vector2(0.5f, 0.5f);
+            bRt.anchorMax = new Vector2(0.5f, 0.5f);
+            bRt.pivot = new Vector2(0.5f, 0.5f);
+            bRt.anchoredPosition = new Vector2(0, -225);
+            bRt.sizeDelta = new Vector2(620, 56);
+
+            HorizontalLayoutGroup bHlg = btnBox.GetComponent<HorizontalLayoutGroup>();
+            bHlg.spacing = 20;
+            bHlg.childAlignment = TextAnchor.MiddleCenter;
+            bHlg.childControlWidth = false;
+            bHlg.childControlHeight = false;
+            bHlg.childForceExpandWidth = false;
+            bHlg.childForceExpandHeight = false;
+
+            endRestartBtn = CreateActionButton(btnBox.transform, "RestartButton", "RESTART", new Color(0.18f, 0.65f, 0.35f, 1f), new Vector2(180, 52));
+            endEndlessBtn = CreateActionButton(btnBox.transform, "EndlessButton", "ENDLESS >", new Color(0.92f, 0.70f, 0.15f, 1f), new Vector2(180, 52));
+            endMenuBtn = CreateActionButton(btnBox.transform, "MenuButton", "MAIN MENU", new Color(0.35f, 0.45f, 0.62f, 1f), new Vector2(180, 52));
+
+            endGameGo.SetActive(false); // Ẩn mặc định
+        }
+        else
+        {
+            endGameGo = endGameTrans.gameObject;
+            Transform dialogTrans = endGameTrans.Find("EndGame_Dialog") ?? endGameTrans;
+            endTitleTmp = dialogTrans.Find("TitleText")?.GetComponent<TextMeshProUGUI>();
+            endSubtitleTmp = dialogTrans.Find("SubtitleText")?.GetComponent<TextMeshProUGUI>();
+            endAccentImg = dialogTrans.Find("AccentStrip")?.GetComponent<Image>();
+
+            Transform statsBox = dialogTrans.Find("Stats_Container");
+            if (statsBox != null)
+            {
+                endWaveStatTmp = statsBox.Find("Wave_Row/Value")?.GetComponent<TextMeshProUGUI>();
+                endTimeStatTmp = statsBox.Find("Time_Row/Value")?.GetComponent<TextMeshProUGUI>();
+                endKillsStatTmp = statsBox.Find("Kills_Row/Value")?.GetComponent<TextMeshProUGUI>();
+                endGemsStatTmp = statsBox.Find("Gems_Row/Value")?.GetComponent<TextMeshProUGUI>();
+                endWeaponsStatTmp = statsBox.Find("Weapons_Row/Value")?.GetComponent<TextMeshProUGUI>();
+            }
+
+            Transform btnBox = dialogTrans.Find("Buttons_Container");
+            if (btnBox != null)
+            {
+                endRestartBtn = btnBox.Find("RestartButton")?.GetComponent<Button>();
+                endEndlessBtn = btnBox.Find("EndlessButton")?.GetComponent<Button>();
+                endMenuBtn = btnBox.Find("MenuButton")?.GetComponent<Button>();
+            }
+        }
+
+        // 7. TỰ ĐỘNG GÁN VÀO CÁC Ô INSPECTOR (SERIALIZED PROPERTIES)
         // A. Gán vào ArenaManager
         ArenaManager arenaManager = Object.FindAnyObjectByType<ArenaManager>();
         if (arenaManager != null)
@@ -295,19 +609,115 @@ public class ArenaCanvasSetupTool : EditorWindow
             soPlayer.ApplyModifiedProperties();
         }
 
+        // D. Gán vào ArenaShopSystem
+        ArenaShopSystem shopSystem = Object.FindAnyObjectByType<ArenaShopSystem>();
+        if (shopSystem == null && arenaManager != null)
+        {
+            shopSystem = arenaManager.GetComponent<ArenaShopSystem>();
+            if (shopSystem == null) shopSystem = arenaManager.gameObject.AddComponent<ArenaShopSystem>();
+        }
+
+        if (shopSystem != null)
+        {
+            SerializedObject soShop = new SerializedObject(shopSystem);
+            soShop.Update();
+            soShop.FindProperty("shopPanel").objectReferenceValue = shopGo;
+            soShop.FindProperty("waveTitleText").objectReferenceValue = shopWaveTitleTmp;
+            soShop.FindProperty("materialsText").objectReferenceValue = shopMaterialsTmp;
+            soShop.FindProperty("rerollButton").objectReferenceValue = rerollBtn;
+            soShop.FindProperty("rerollCostText").objectReferenceValue = rerollCostTmp;
+            soShop.FindProperty("nextWaveButton").objectReferenceValue = nextWaveBtn;
+            soShop.FindProperty("nextWaveButtonText").objectReferenceValue = nextWaveBtnTmp;
+
+            SerializedProperty shopCardsProp = soShop.FindProperty("shopCardsUI");
+            if (shopCardsProp != null)
+            {
+                shopCardsProp.arraySize = shopCardsList.Count;
+                for (int i = 0; i < shopCardsList.Count; i++)
+                {
+                    SerializedProperty elem = shopCardsProp.GetArrayElementAtIndex(i);
+                    elem.FindPropertyRelative("cardRoot").objectReferenceValue = shopCardsList[i].cardRoot;
+                    elem.FindPropertyRelative("nameText").objectReferenceValue = shopCardsList[i].nameText;
+                    elem.FindPropertyRelative("descText").objectReferenceValue = shopCardsList[i].descText;
+                    elem.FindPropertyRelative("priceText").objectReferenceValue = shopCardsList[i].priceText;
+                    elem.FindPropertyRelative("borderOrIcon").objectReferenceValue = shopCardsList[i].borderOrIcon;
+                    elem.FindPropertyRelative("buyButton").objectReferenceValue = shopCardsList[i].buyButton;
+                    elem.FindPropertyRelative("buyButtonText").objectReferenceValue = shopCardsList[i].buyButtonText;
+                }
+            }
+
+            // Gán các file WeaponData từ Assets/Weapon
+            SerializedProperty weaponsProp = soShop.FindProperty("availableWeapons");
+            if (weaponsProp != null)
+            {
+                string[] weaponGuids = AssetDatabase.FindAssets("t:WeaponData", new[] { "Assets/Weapon" });
+                if (weaponGuids != null && weaponGuids.Length > 0)
+                {
+                    weaponsProp.arraySize = weaponGuids.Length;
+                    for (int i = 0; i < weaponGuids.Length; i++)
+                    {
+                        string path = AssetDatabase.GUIDToAssetPath(weaponGuids[i]);
+                        WeaponData wd = AssetDatabase.LoadAssetAtPath<WeaponData>(path);
+                        weaponsProp.GetArrayElementAtIndex(i).objectReferenceValue = wd;
+                    }
+                }
+            }
+
+            soShop.ApplyModifiedProperties();
+        }
+
+        // E. Gán vào ArenaGameOverSystem
+        ArenaGameOverSystem gameOverSystem = Object.FindAnyObjectByType<ArenaGameOverSystem>();
+        if (gameOverSystem == null && arenaManager != null)
+        {
+            gameOverSystem = arenaManager.GetComponent<ArenaGameOverSystem>();
+            if (gameOverSystem == null) gameOverSystem = arenaManager.gameObject.AddComponent<ArenaGameOverSystem>();
+        }
+
+        if (gameOverSystem != null)
+        {
+            SerializedObject soGameOver = new SerializedObject(gameOverSystem);
+            soGameOver.Update();
+            soGameOver.FindProperty("endGamePanel").objectReferenceValue = endGameGo;
+            soGameOver.FindProperty("titleText").objectReferenceValue = endTitleTmp;
+            soGameOver.FindProperty("subtitleText").objectReferenceValue = endSubtitleTmp;
+            soGameOver.FindProperty("accentStrip").objectReferenceValue = endAccentImg;
+
+            soGameOver.FindProperty("waveStatText").objectReferenceValue = endWaveStatTmp;
+            soGameOver.FindProperty("timeStatText").objectReferenceValue = endTimeStatTmp;
+            soGameOver.FindProperty("killsStatText").objectReferenceValue = endKillsStatTmp;
+            soGameOver.FindProperty("gemsStatText").objectReferenceValue = endGemsStatTmp;
+            soGameOver.FindProperty("weaponsStatText").objectReferenceValue = endWeaponsStatTmp;
+
+            soGameOver.FindProperty("restartButton").objectReferenceValue = endRestartBtn;
+            soGameOver.FindProperty("menuButton").objectReferenceValue = endMenuBtn;
+            soGameOver.FindProperty("endlessButton").objectReferenceValue = endEndlessBtn;
+
+            soGameOver.ApplyModifiedProperties();
+        }
+
         // Đánh dấu Scene thay đổi và Lưu lại
         EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
         EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
 
-        EditorUtility.DisplayDialog("Tạo Canvas Thành Công!",
-            "Đã tự động tạo và gán 100% Canvas UI cho chế độ Đấu trường Sinh Tồn (Brotato):\n\n" +
-            "✔ Top-Left: Thanh Máu (HP Bar + Text), Thanh Kinh Nghiệm (XP Bar + Text), Cấp độ (Level)\n" +
-            "✔ Top-Center: Đợt Sóng (Wave) & Đồng hồ đếm ngược (Timer)\n" +
-            "✔ Top-Right: Số Ngọc/Vật liệu nhặt được (💎 Materials)\n" +
-            "✔ Center Banner: Thông báo hoàn thành Wave\n" +
-            "✔ Pop-up Level Up: Bảng 3 Thẻ Bài Nâng Cấp Kỹ Năng đẹp mắt (Tự động mở khi lên cấp)\n" +
-            "✔ Đã gán kết nối thẳng vào ArenaManager, BrotatoLevelSystem và PlayerHealth!",
-            "Tuyệt Vời!");
+        if (!silent)
+        {
+            EditorUtility.DisplayDialog("Tạo Canvas Thành Công!",
+                "Đã tự động tạo và gán 100% Canvas UI cho chế độ Đấu trường Sinh Tồn (Brotato):\n\n" +
+                "✔ Top-Left: Thanh Máu (HP Bar + Text), Thanh Kinh Nghiệm (XP Bar + Text), Cấp độ (Level)\n" +
+                "✔ Top-Center: Đợt Sóng (Wave) & Đồng hồ đếm ngược (Timer)\n" +
+                "✔ Top-Right: Số Ngọc/Vật liệu nhặt được (Materials)\n" +
+                "✔ Center Banner: Thông báo hoàn thành Wave\n" +
+                "✔ Pop-up Level Up: Bảng 3 Thẻ Bài Nâng Cấp Kỹ Năng đẹp mắt (Tự động mở khi lên cấp)\n" +
+                "✔ Cửa Hàng Giữa Các Hiệp (Shop Panel): 4 Thẻ mua súng mới & nâng cấp chỉ số, Nút Reroll và Next Wave!\n" +
+                "✔ Bảng Thắng / Thua & Tổng Kết (EndGame Panel): Thống kê Wave, Thời gian, Kills, Gems, Súng & Nút Chơi Lại / Vô Tận / Menu!\n" +
+                "✔ Đã gán kết nối thẳng vào ArenaManager, BrotatoLevelSystem, PlayerHealth, ArenaShopSystem và ArenaGameOverSystem!",
+                "Tuyệt Vời!");
+        }
+        else
+        {
+            Debug.Log("<color=#00FFAA>[ArenaCanvasSetupTool] Đã tự động tạo và gán 100% Canvas UI (HUD + Level Up + Shop_Panel + EndGame_Panel)!</color>");
+        }
     }
 
     private static BrotatoLevelSystem.CustomCardUI CreateCardElement(Transform container, int index)
@@ -371,6 +781,75 @@ public class ArenaCanvasSetupTool : EditorWindow
         cardUI.selectButton = btn;
 
         return cardUI;
+    }
+
+    private static ArenaShopSystem.ShopCardUI CreateShopCardElement(Transform container, int index)
+    {
+        GameObject cardGo = new GameObject($"ShopCard_{index}", typeof(RectTransform), typeof(Image), typeof(Outline));
+        cardGo.transform.SetParent(container, false);
+        RectTransform rt = cardGo.GetComponent<RectTransform>();
+        rt.sizeDelta = new Vector2(250, 400);
+
+        Image bgImg = cardGo.GetComponent<Image>();
+        bgImg.color = new Color(0.11f, 0.14f, 0.20f, 0.98f);
+
+        Outline outline = cardGo.GetComponent<Outline>();
+        outline.effectColor = new Color(0.3f, 0.5f, 0.8f, 0.8f);
+        outline.effectDistance = new Vector2(2, -2);
+
+        // Header / Accent strip
+        GameObject headerGo = new GameObject("AccentStrip", typeof(RectTransform), typeof(Image));
+        headerGo.transform.SetParent(cardGo.transform, false);
+        RectTransform hRt = headerGo.GetComponent<RectTransform>();
+        hRt.anchorMin = new Vector2(0, 1);
+        hRt.anchorMax = new Vector2(1, 1);
+        hRt.pivot = new Vector2(0.5f, 1);
+        hRt.anchoredPosition = Vector2.zero;
+        hRt.sizeDelta = new Vector2(0, 6);
+        Image accentImg = headerGo.GetComponent<Image>();
+        accentImg.color = new Color(1f, 0.6f, 0.2f, 1f);
+
+        // Tên vật phẩm
+        TextMeshProUGUI nameTmp = GetOrCreateTMP(cardGo.transform, "NameText", "[GUN] SHOTGUN", 20, FontStyles.Bold, Color.white, TextAlignmentOptions.Center, new Vector2(0, 140), new Vector2(230, 48));
+
+        // Mô tả vật phẩm
+        TextMeshProUGUI descTmp = GetOrCreateTMP(cardGo.transform, "DescText", "Adds 1 orbiting gun that auto-aims and fires!", 15, FontStyles.Normal, new Color(0.85f, 0.9f, 0.95f), TextAlignmentOptions.Center, new Vector2(0, 40), new Vector2(230, 120));
+        descTmp.enableWordWrapping = true;
+
+        // Giá tiền
+        TextMeshProUGUI priceTmp = GetOrCreateTMP(cardGo.transform, "PriceText", "65 GEMS", 22, FontStyles.Bold, new Color(0.2f, 1f, 0.55f), TextAlignmentOptions.Center, new Vector2(0, -60), new Vector2(220, 36));
+
+        // Nút Mua
+        GameObject btnGo = new GameObject("BuyButton", typeof(RectTransform), typeof(Image), typeof(Button));
+        btnGo.transform.SetParent(cardGo.transform, false);
+        RectTransform btnRt = btnGo.GetComponent<RectTransform>();
+        btnRt.anchorMin = new Vector2(0.5f, 0f);
+        btnRt.anchorMax = new Vector2(0.5f, 0f);
+        btnRt.pivot = new Vector2(0.5f, 0f);
+        btnRt.anchoredPosition = new Vector2(0, 22);
+        btnRt.sizeDelta = new Vector2(210, 50);
+
+        Image btnImg = btnGo.GetComponent<Image>();
+        btnImg.color = new Color(0.18f, 0.65f, 0.35f, 1f); // Nút màu xanh lá
+
+        Button btn = btnGo.GetComponent<Button>();
+        ColorBlock cb = btn.colors;
+        cb.highlightedColor = new Color(0.25f, 0.8f, 0.45f, 1f);
+        cb.pressedColor = new Color(0.12f, 0.5f, 0.25f, 1f);
+        btn.colors = cb;
+
+        TextMeshProUGUI btnTextTmp = GetOrCreateTMP(btnGo.transform, "BuyButtonText", "BUY", 19, FontStyles.Bold, Color.white, TextAlignmentOptions.Center, Vector2.zero, new Vector2(190, 44));
+
+        ArenaShopSystem.ShopCardUI shopCard = new ArenaShopSystem.ShopCardUI();
+        shopCard.cardRoot = cardGo;
+        shopCard.nameText = nameTmp;
+        shopCard.descText = descTmp;
+        shopCard.priceText = priceTmp;
+        shopCard.borderOrIcon = accentImg;
+        shopCard.buyButton = btn;
+        shopCard.buyButtonText = btnTextTmp;
+
+        return shopCard;
     }
 
     private static TextMeshProUGUI GetOrCreateTMP(Transform parent, string name, string defaultText, float fontSize, FontStyles style, Color color, TextAlignmentOptions alignment, Vector2 pos, Vector2 size)
@@ -452,6 +931,44 @@ public class ArenaCanvasSetupTool : EditorWindow
         slider.value = 1f;
 
         return slider;
+    }
+
+    private static TextMeshProUGUI CreateStatRow(Transform container, string rowName, string labelText, string defaultValue, Color valColor, Vector2 pos)
+    {
+        GameObject rowGo = new GameObject(rowName, typeof(RectTransform));
+        rowGo.transform.SetParent(container, false);
+        RectTransform rt = rowGo.GetComponent<RectTransform>();
+        rt.anchoredPosition = pos;
+        rt.sizeDelta = new Vector2(560, 36);
+
+        // Label bên trái
+        GetOrCreateTMP(rowGo.transform, "Label", labelText, 17, FontStyles.Bold, new Color(0.80f, 0.86f, 0.92f), TextAlignmentOptions.Left, new Vector2(-135, 0), new Vector2(270, 34));
+
+        // Value bên phải
+        TextMeshProUGUI val = GetOrCreateTMP(rowGo.transform, "Value", defaultValue, 18, FontStyles.Bold, valColor, TextAlignmentOptions.Right, new Vector2(135, 0), new Vector2(270, 34));
+
+        return val;
+    }
+
+    private static Button CreateActionButton(Transform parent, string name, string labelText, Color btnColor, Vector2 size)
+    {
+        GameObject btnGo = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button));
+        btnGo.transform.SetParent(parent, false);
+        RectTransform rt = btnGo.GetComponent<RectTransform>();
+        rt.sizeDelta = size;
+
+        Image img = btnGo.GetComponent<Image>();
+        img.color = btnColor;
+
+        Button btn = btnGo.GetComponent<Button>();
+        ColorBlock cb = btn.colors;
+        cb.highlightedColor = new Color(Mathf.Min(1f, btnColor.r * 1.15f), Mathf.Min(1f, btnColor.g * 1.15f), Mathf.Min(1f, btnColor.b * 1.15f), 1f);
+        cb.pressedColor = new Color(btnColor.r * 0.85f, btnColor.g * 0.85f, btnColor.b * 0.85f, 1f);
+        btn.colors = cb;
+
+        GetOrCreateTMP(btnGo.transform, "BtnText", labelText, 19, FontStyles.Bold, Color.white, TextAlignmentOptions.Center, Vector2.zero, size);
+
+        return btn;
     }
 }
 #endif

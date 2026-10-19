@@ -63,6 +63,30 @@ public class ZombieCharger : MonoBehaviour
     private Rigidbody2D _rb;
     private Collider2D _col;
     private Color _originalColor = Color.white;
+    private bool _isElite = false;
+
+    // Tăng chỉ số theo Wave (Độ khó tăng dần)
+    public void ScaleStats(float hpMultiplier, float damageMultiplier, float speedMultiplier)
+    {
+        maxHP = Mathf.RoundToInt(maxHP * hpMultiplier);
+        _currentHP = maxHP;
+        touchDamage = Mathf.RoundToInt(touchDamage * damageMultiplier);
+        chargeDamage = Mathf.RoundToInt(chargeDamage * damageMultiplier);
+        walkSpeed *= speedMultiplier;
+        chargeSpeed *= Mathf.Min(1.3f, speedMultiplier);
+    }
+
+    // Biến thành Charger Tinh Anh
+    public void MakeElite(float bonusHp = 2.2f, float bonusDamage = 1.25f)
+    {
+        _isElite = true;
+        maxHP = Mathf.RoundToInt(maxHP * bonusHp);
+        _currentHP = maxHP;
+        chargeDamage = Mathf.RoundToInt(chargeDamage * bonusDamage);
+        touchDamage = Mathf.RoundToInt(touchDamage * bonusDamage);
+        transform.localScale *= 1.3f;
+        windupColor = new Color(1f, 0.15f, 0.5f, 1f); // Hồng tím cảnh báo cực nguy hiểm
+    }
 
     private void Awake()
     {
@@ -105,8 +129,8 @@ public class ZombieCharger : MonoBehaviour
             if (_playerTransform == null) return;
         }
 
-        // Tự hủy nếu xe đã vượt qua quá xa trong màn lái xe
-        if (_playerTransform.position.x - transform.position.x > 30f)
+        // Tự hủy nếu xe đã vượt qua quá xa trong màn lái xe (chỉ áp dụng khi không chơi Arena)
+        if (ArenaManager.Instance == null && _playerTransform.position.x - transform.position.x > 30f)
         {
             Destroy(gameObject);
             return;
@@ -332,12 +356,25 @@ public class ZombieCharger : MonoBehaviour
             tracker.AddZombieKill();
         }
 
+        if (ArenaManager.Instance != null)
+        {
+            ArenaManager.Instance.AddKill();
+        }
+
         // Rơi ngọc kinh nghiệm nếu ở chế độ Đấu trường (Brotato)
         if (ArenaManager.Instance != null || BrotatoLevelSystem.Instance != null)
         {
             GameObject gem = new GameObject("MaterialGem");
             gem.transform.position = transform.position;
-            gem.AddComponent<MaterialGem>();
+            MaterialGem mg = gem.AddComponent<MaterialGem>();
+            if (_isElite)
+            {
+                mg.SetGemData(5, new Color(0.85f, 0.25f, 1f), 1.2f); // Ngọc tím 5 exp/gems cho Charger tinh anh
+            }
+            else
+            {
+                mg.SetGemData(2, new Color(0.2f, 0.8f, 1f), 0.9f); // Ngọc xanh dương 2 exp/gems cho Charger thường
+            }
         }
 
         // Animation chết hoặc biến mất

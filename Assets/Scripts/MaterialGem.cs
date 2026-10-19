@@ -49,6 +49,18 @@ public class MaterialGem : MonoBehaviour
         _currentSpeed = baseMagnetSpeed;
     }
 
+    // Tùy biến giá trị và màu sắc ngọc (dùng cho quái tinh anh & Boss)
+    public void SetGemData(int value, Color color, float scale = 0.75f)
+    {
+        xpValue = value;
+        transform.localScale = new Vector3(scale, scale, 1f);
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        if (sr != null)
+        {
+            sr.color = color;
+        }
+    }
+
     private void Start()
     {
         FindPlayer();

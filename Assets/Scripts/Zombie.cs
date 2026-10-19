@@ -46,11 +46,24 @@ public class Zombie : MonoBehaviour
     private bool _hasDealtAttackDamage;
 
     private float _nextAttackTime;
+    private bool _hasSpeedParam = false;
 
     private void Awake()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _animator = GetComponent<Animator>();
+
+        if (_animator != null)
+        {
+            foreach (var p in _animator.parameters)
+            {
+                if (p.name == "Speed")
+                {
+                    _hasSpeedParam = true;
+                    break;
+                }
+            }
+        }
     }
 
     private void Start()
@@ -164,6 +177,38 @@ public class Zombie : MonoBehaviour
             }
         }
     }
+
+    public void SetClampToRoad(bool clamp)
+    {
+        clampToRoad = clamp;
+    }
+
+    private bool _isElite = false;
+
+    // Tăng chỉ số theo Wave (Độ khó tăng dần)
+    public void ScaleStats(float hpMultiplier, float damageMultiplier, float speedMultiplier)
+    {
+        maxHP = Mathf.RoundToInt(maxHP * hpMultiplier);
+        _currentHP = maxHP;
+        attackDamage = Mathf.RoundToInt(attackDamage * damageMultiplier);
+        moveSpeed *= speedMultiplier;
+    }
+
+    // Biến thành Quái Tinh Anh (to hơn, máu trâu gấp 2.5x, rơi ngọc tím xịn)
+    public void MakeElite(float bonusHp = 2.5f, float bonusDamage = 1.3f)
+    {
+        _isElite = true;
+        maxHP = Mathf.RoundToInt(maxHP * bonusHp);
+        _currentHP = maxHP;
+        attackDamage = Mathf.RoundToInt(attackDamage * bonusDamage);
+        transform.localScale *= 1.35f;
+
+        if (_spriteRenderer != null)
+        {
+            _spriteRenderer.color = new Color(1f, 0.35f, 0.35f, 1f); // Đỏ cam đột biến
+        }
+    }
+
 
     // =========================================================
     // UPDATE DIRECTION
@@ -392,10 +437,13 @@ public class Zombie : MonoBehaviour
                 _moveDirection.y
             );
 
-            _animator.SetFloat(
-                "Speed",
-                _moveDirection.sqrMagnitude
-            );
+            if (_hasSpeedParam)
+            {
+                _animator.SetFloat(
+                    "Speed",
+                    _moveDirection.sqrMagnitude
+                );
+            }
 
             return;
         }
@@ -491,6 +539,11 @@ public class Zombie : MonoBehaviour
             tracker.AddZombieKill();
         }
 
+        if (ArenaManager.Instance != null)
+        {
+            ArenaManager.Instance.AddKill();
+        }
+
         // Roi ngoc Material/XP
         SpawnMaterialGem();
 
@@ -529,7 +582,11 @@ public class Zombie : MonoBehaviour
         {
             GameObject gem = new GameObject("MaterialGem");
             gem.transform.position = transform.position;
-            gem.AddComponent<MaterialGem>();
+            MaterialGem mg = gem.AddComponent<MaterialGem>();
+            if (_isElite)
+            {
+                mg.SetGemData(4, new Color(0.85f, 0.25f, 1f), 1.1f); // Ngọc tím giá trị 4 cho quái tinh anh
+            }
         }
     }
 }

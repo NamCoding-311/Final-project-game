@@ -47,9 +47,9 @@ public class StageLevelManager : MonoBehaviour
     [Header("Stages Setup (3 Chặng Sáng - Chiều - Tối)")]
     [SerializeField] private LevelStageInfo[] stages = new LevelStageInfo[]
     {
-        new LevelStageInfo { stageName = "Chặng 1: Sông Ban Ngày", bossSpawnDistance = 250f, lightColor = Color.white, lightIntensity = 1f },
-        new LevelStageInfo { stageName = "Chặng 2: Phố Hoàng Hôn", bossSpawnDistance = 500f, lightColor = new Color(1f, 0.6f, 0.3f), lightIntensity = 0.9f },
-        new LevelStageInfo { stageName = "Chặng 3: Đêm Tàn Tích", bossSpawnDistance = 800f, lightColor = new Color(0.2f, 0.3f, 0.5f), lightIntensity = 0.7f }
+        new LevelStageInfo { stageName = "Stage 1: Daytime Riverbank", bossSpawnDistance = 250f, lightColor = Color.white, lightIntensity = 1f },
+        new LevelStageInfo { stageName = "Stage 2: Sunset Boulevard", bossSpawnDistance = 500f, lightColor = new Color(1f, 0.6f, 0.3f), lightIntensity = 0.9f },
+        new LevelStageInfo { stageName = "Stage 3: Ruined Night", bossSpawnDistance = 800f, lightColor = new Color(0.2f, 0.3f, 0.5f), lightIntensity = 0.7f }
     };
 
     [Header("Player Health Bars (Thanh máu Xe & Người)")]
@@ -391,7 +391,7 @@ public class StageLevelManager : MonoBehaviour
     // Người chơi bước lên lại xe, mở khóa đấu trường và chuyển sang chặng tiếp theo
     private IEnumerator RemountVehicleAndProceed()
     {
-        ShowStageAnnouncement("⚔️ HẠ GỤC TRÙM!\nBƯỚC LÊN XE TIẾP TỤC HÀNH TRÌNH");
+        ShowStageAnnouncement("BOSS DEFEATED!\nRETURN TO VEHICLE AND PROCEED");
 
         yield return new WaitForSeconds(1.2f);
 
@@ -512,7 +512,7 @@ public class StageLevelManager : MonoBehaviour
     {
         _currentState = LevelState.LevelWon;
 
-        ShowStageAnnouncement("🎉 CHIẾN THẮNG! BẠN ĐÃ SỐNG SÓT QUA ĐÊM!");
+        ShowStageAnnouncement("VICTORY! YOU SURVIVED THE NIGHT!");
 
         if (zombieSpawner != null) zombieSpawner.SetSpawningActive(false);
 

@@ -99,17 +99,32 @@ public class ZombieJumper : MonoBehaviour
         transform.position = targetPos;
         _isJumping = false;
     }
+    // Tăng chỉ số theo Wave
+    public void ScaleStats(float hpMultiplier, float damageMultiplier, float speedMultiplier)
+    {
+        maxHP = Mathf.RoundToInt(maxHP * hpMultiplier);
+        _currentHP = maxHP;
+        jumpDamage = Mathf.RoundToInt(jumpDamage * damageMultiplier);
+        moveSpeed *= speedMultiplier;
+    }
+
     // Nhận sát thương khi bị bắn
     public void TakeDamage(int damage)
     {
         _currentHP -= damage;
         if (_currentHP <= 0)
         {
+            if (ArenaManager.Instance != null)
+            {
+                ArenaManager.Instance.AddKill();
+            }
+
             if (ArenaManager.Instance != null || BrotatoLevelSystem.Instance != null)
             {
                 GameObject gem = new GameObject("MaterialGem");
                 gem.transform.position = transform.position;
-                gem.AddComponent<MaterialGem>();
+                MaterialGem mg = gem.AddComponent<MaterialGem>();
+                mg.SetGemData(2, new Color(0.2f, 0.8f, 1f), 0.9f); // Ngọc xanh dương 2 exp/gems
             }
             Destroy(gameObject);
         }
