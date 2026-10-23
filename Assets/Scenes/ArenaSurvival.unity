@@ -20558,8 +20558,9 @@ MonoBehaviour:
   availableWeapons:
   - {fileID: 11400000, guid: 5a90003f3d4312a45b22c06fae775c70, type: 2}
   - {fileID: 11400000, guid: 6c4d4d940172f0842b9c4b2608e311ff, type: 2}
-  - {fileID: 11400000, guid: 29a3dec7fa496e14bb9f2834695aa7c7, type: 2}
-  - {fileID: 11400000, guid: af23ffb89fd2695469a0b85b1361ba35, type: 2}
+  - {fileID: 11400000, guid: a78882d1d1f5cd748b23b090cc80a242, type: 2}
+  - {fileID: 11400000, guid: 82e9fd30d8269aa4093630d03f11dda3, type: 2}
+  - {fileID: 11400000, guid: af2a494ba56fc434690de3afcf51f5d2, type: 2}
 --- !u!114 &630596413
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22220,7 +22221,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0a87ba282992044eac9be4ff21795ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArenaAutoShooting
-  currentWeapon: {fileID: 11400000, guid: 5a90003f3d4312a45b22c06fae775c70, type: 2}
+  currentWeapon: {fileID: 11400000, guid: a78882d1d1f5cd748b23b090cc80a242, type: 2}
   extraStartingWeapons: []
   maxWeapons: 6
   orbitRadius: 1.2
@@ -22232,7 +22233,11 @@ MonoBehaviour:
   bonusDamage: 0
   attackSpeedMultiplier: 1
   enableTestHotkeys: 1
-  testWeaponsPool: []
+  testWeaponsPool:
+  - {fileID: 11400000, guid: 5a90003f3d4312a45b22c06fae775c70, type: 2}
+  - {fileID: 11400000, guid: 6c4d4d940172f0842b9c4b2608e311ff, type: 2}
+  - {fileID: 11400000, guid: a78882d1d1f5cd748b23b090cc80a242, type: 2}
+  - {fileID: 11400000, guid: 82e9fd30d8269aa4093630d03f11dda3, type: 2}
   baseGunHolder: {fileID: 0}
 --- !u!1 &895171840
 GameObject:
@@ -24588,8 +24593,7 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 4211076331969194362, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:

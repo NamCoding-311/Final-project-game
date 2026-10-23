@@ -1,10 +1,10 @@
 using UnityEngine;
 
-// Điều khiển khẩu súng xoay 360 độ theo con trỏ chuột và bắn đạn từ FirePoint
+// Điều khiển khẩu súng xoay 360 độ theo con trỏ chuột, hỗ trợ hoạt ảnh bắn (Muzzle Flash, vỏ đạn, giật nòng) và bắn đạn từ FirePoint
 public class PlayerShooting : MonoBehaviour
 {
     [Header("Weapon Configuration")]
-    // Dữ liệu loại súng đang cầm (AR, Shotgun, Sniper, Pistol)
+    // Dữ liệu loại súng đang cầm (AR, Shotgun, Sniper, Pistol...)
     [SerializeField] private WeaponData currentWeapon;
 
     [Header("Gun Transforms")]
@@ -14,8 +14,11 @@ public class PlayerShooting : MonoBehaviour
     // Vị trí đầu nòng súng nơi đạn sinh ra (nằm bên trong GunHolder)
     [SerializeField] private Transform firePoint;
 
-    // SpriteRenderer của khẩu súng (để lật súng khi quay sang trái)
+    // SpriteRenderer của khẩu súng (để hiển thị và lật súng khi quay sang trái)
     [SerializeField] private SpriteRenderer gunSpriteRenderer;
+
+    // Bộ điều khiển hoạt ảnh lóe lửa, vỏ đạn và giật nòng của súng
+    [SerializeField] private GunVisualAnimator gunVisualAnimator;
 
     private float _nextFireTime;
     private Camera _cam;
@@ -43,7 +46,21 @@ public class PlayerShooting : MonoBehaviour
                 Transform foundFp = gunHolder.Find("FirePoint");
                 if (foundFp != null) firePoint = foundFp;
             }
+
+            if (gunVisualAnimator == null)
+            {
+                gunVisualAnimator = gunHolder.GetComponentInChildren<GunVisualAnimator>();
+            }
         }
+
+        // Tự động khởi tạo hoạt ảnh và nòng súng ban đầu nếu có dữ liệu vũ khí
+        if (gunVisualAnimator != null && currentWeapon != null)
+        {
+            gunVisualAnimator.Initialize(currentWeapon, gunSpriteRenderer);
+        }
+
+        // Cập nhật vị trí FirePoint theo cấu hình nòng súng của WeaponData
+        UpdateFirePointOffset(false);
     }
 
     private void Update()
@@ -53,11 +70,11 @@ public class PlayerShooting : MonoBehaviour
         // 1. Xoay khẩu súng và FirePoint theo con trỏ chuột
         RotateGun();
 
-        // 2. Xử lý bắn đạn
+        // 2. Xử lý bắn đạn khi người chơi bấm chuột
         HandleShooting();
     }
 
-    // Xoay súng hướng về vị trí con trỏ chuột
+    // Xoay súng hướng về vị trí con trỏ chuột và lật dọc khi ngắm bên trái
     private void RotateGun()
     {
         if (gunHolder == null || _cam == null) return;
@@ -74,11 +91,31 @@ public class PlayerShooting : MonoBehaviour
         float angle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
         gunHolder.rotation = Quaternion.Euler(0f, 0f, angle);
 
-        // Lật súng theo trục Y khi ngắm sang bên trái để súng không bị lộn ngược đầu
-        if (gunSpriteRenderer != null)
+        // Kiểm tra xem chuột đang ở bên trái nhân vật hay không để lật súng
+        bool isFlipped = mouseWorld.x < transform.position.x;
+        if (gunVisualAnimator != null)
         {
-            gunSpriteRenderer.flipY = mouseWorld.x < transform.position.x;
+            gunVisualAnimator.SetFlipped(isFlipped);
         }
+        else if (gunSpriteRenderer != null)
+        {
+            gunSpriteRenderer.flipY = isFlipped;
+        }
+
+        // Cập nhật vị trí đầu nòng tương thích khi súng bị lật trục Y
+        UpdateFirePointOffset(isFlipped);
+    }
+
+    // Căn chỉnh vị trí đầu nòng FirePoint chuẩn xác theo độ cao nòng khi lật
+    private void UpdateFirePointOffset(bool isFlipped)
+    {
+        if (firePoint == null || currentWeapon == null) return;
+
+        Vector2 offset = currentWeapon.firePointOffset != Vector2.zero
+            ? currentWeapon.firePointOffset
+            : new Vector2(0.65f, 0.05f);
+
+        firePoint.localPosition = new Vector3(offset.x, isFlipped ? -offset.y : offset.y, 0f);
     }
 
     // Xử lý bắn đạn khi người chơi bấm chuột trái
@@ -97,10 +134,16 @@ public class PlayerShooting : MonoBehaviour
         }
     }
 
-    // Sinh đạn bay thẳng theo hướng nòng súng đang chỉ
+    // Sinh đạn bay thẳng theo hướng nòng súng đang chỉ và kích hoạt hoạt ảnh bắn
     private void FireBullets()
     {
         if (currentWeapon.bulletPrefab == null) return;
+
+        // Kích hoạt hoạt ảnh bắn (Muzzle Flash lóe lửa, văng vỏ đạn, giật nòng Recoil)
+        if (gunVisualAnimator != null)
+        {
+            gunVisualAnimator.PlayShootAnimation();
+        }
 
         // Vị trí xuất phát của đạn là FirePoint ở đầu nòng
         Vector3 spawnPos = firePoint != null ? firePoint.position : transform.position;
@@ -145,5 +188,14 @@ public class PlayerShooting : MonoBehaviour
         return new Vector2(v.x * cos - v.y * sin, v.x * sin + v.y * cos);
     }
 
-    public void EquipWeapon(WeaponData newWeapon) => currentWeapon = newWeapon;
+    // Thay đổi vũ khí mới và đồng bộ lại hình ảnh hoạt ảnh
+    public void EquipWeapon(WeaponData newWeapon)
+    {
+        currentWeapon = newWeapon;
+        if (gunVisualAnimator != null && currentWeapon != null)
+        {
+            gunVisualAnimator.Initialize(currentWeapon, gunSpriteRenderer);
+        }
+        UpdateFirePointOffset(false);
+    }
 }

@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f9bad88fd75ec0479354655d8e0dd17, type: 3}
+  m_Name: MP5_Data
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponData
+  weaponName: MP5A3 Submachine
+  bulletPrefab: {fileID: 2131882094584562652, guid: ca945c39793af4d489e0166fc97c8796, type: 3}
+  fireRate: 0.1
+  pelletsPerShot: 1
+  spreadAngle: 8
+  damage: 9
+  isAutomatic: 1
+  weaponSprite: {fileID: 3224441897746060511, guid: 0c5fcfcab7194b144af651f1bdc991c4, type: 3}
+  weaponColor: {r: 1, g: 1, b: 1, a: 1}
+  shootAnimationFrames:
+  - {fileID: 5971602702493330840, guid: f93db808812e26b42bfde11357eb22b5, type: 3}
+  - {fileID: -3678349480402464100, guid: f93db808812e26b42bfde11357eb22b5, type: 3}
+  - {fileID: 8599400546032068888, guid: f93db808812e26b42bfde11357eb22b5, type: 3}
+  - {fileID: 1429262486455452129, guid: f93db808812e26b42bfde11357eb22b5, type: 3}
+  - {fileID: -372909925239144479, guid: f93db808812e26b42bfde11357eb22b5, type: 3}
+  - {fileID: -7601442142890323640, guid: f93db808812e26b42bfde11357eb22b5, type: 3}
+  - {fileID: 2374302108028126420, guid: f93db808812e26b42bfde11357eb22b5, type: 3}
+  - {fileID: 9064639591221485047, guid: f93db808812e26b42bfde11357eb22b5, type: 3}
+  - {fileID: 802306063635277195, guid: f93db808812e26b42bfde11357eb22b5, type: 3}
+  - {fileID: 5016859915745543646, guid: f93db808812e26b42bfde11357eb22b5, type: 3}
+  - {fileID: -2693881849797567069, guid: f93db808812e26b42bfde11357eb22b5, type: 3}
+  - {fileID: -6220881534314624784, guid: f93db808812e26b42bfde11357eb22b5, type: 3}
+  animationFps: 38
+  firePointOffset: {x: 0.72, y: 0.05}
+  recoilDistance: 0.08

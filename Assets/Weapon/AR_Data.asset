@@ -12,10 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f9bad88fd75ec0479354655d8e0dd17, type: 3}
   m_Name: AR_Data
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
-  weaponName: AK_47
+  weaponName: AK-47
   bulletPrefab: {fileID: 2131882094584562652, guid: ca945c39793af4d489e0166fc97c8796, type: 3}
-  fireRate: 0.1
+  fireRate: 0.16
   pelletsPerShot: 1
   spreadAngle: 5
-  damage: 10
+  damage: 12
   isAutomatic: 1
+  weaponSprite: {fileID: 4565813657897213748, guid: 81880e3d4553aaf438cc5a7517abe7e5, type: 3}
+  weaponColor: {r: 1, g: 1, b: 1, a: 1}
+  shootAnimationFrames:
+  - {fileID: -1012155676130576839, guid: 5fb1b52ade3de8f47ba979fb57a0512a, type: 3}
+  - {fileID: -2102482830042224946, guid: 5fb1b52ade3de8f47ba979fb57a0512a, type: 3}
+  - {fileID: -1202104386272269270, guid: 5fb1b52ade3de8f47ba979fb57a0512a, type: 3}
+  - {fileID: -347068019967073651, guid: 5fb1b52ade3de8f47ba979fb57a0512a, type: 3}
+  - {fileID: -5293375770019537999, guid: 5fb1b52ade3de8f47ba979fb57a0512a, type: 3}
+  - {fileID: -8204936948132652358, guid: 5fb1b52ade3de8f47ba979fb57a0512a, type: 3}
+  - {fileID: -8249517396859056848, guid: 5fb1b52ade3de8f47ba979fb57a0512a, type: 3}
+  - {fileID: 3296695954782862581, guid: 5fb1b52ade3de8f47ba979fb57a0512a, type: 3}
+  - {fileID: -973987266554396344, guid: 5fb1b52ade3de8f47ba979fb57a0512a, type: 3}
+  - {fileID: 9083692550259285991, guid: 5fb1b52ade3de8f47ba979fb57a0512a, type: 3}
+  - {fileID: 6450806508920747961, guid: 5fb1b52ade3de8f47ba979fb57a0512a, type: 3}
+  - {fileID: 8142609066581661361, guid: 5fb1b52ade3de8f47ba979fb57a0512a, type: 3}
+  animationFps: 32
+  firePointOffset: {x: 0.85, y: 0.05}
+  recoilDistance: 0.12

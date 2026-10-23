@@ -124,7 +124,8 @@ public class ZombieJumper : MonoBehaviour
                 GameObject gem = new GameObject("MaterialGem");
                 gem.transform.position = transform.position;
                 MaterialGem mg = gem.AddComponent<MaterialGem>();
-                mg.SetGemData(2, new Color(0.2f, 0.8f, 1f), 0.9f); // Ngọc xanh dương 2 exp/gems
+                mg.SetGemData(2, new Color(0.2f, 0.8f, 1f), 0.9f);
+                ArenaPowerUp.TryDropRandom(transform.position, 8f);
             }
             Destroy(gameObject);
         }

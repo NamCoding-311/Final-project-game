@@ -373,8 +373,9 @@ public class ZombieCharger : MonoBehaviour
             }
             else
             {
-                mg.SetGemData(2, new Color(0.2f, 0.8f, 1f), 0.9f); // Ngọc xanh dương 2 exp/gems cho Charger thường
+                mg.SetGemData(2, new Color(0.2f, 0.8f, 1f), 0.9f);
             }
+            ArenaPowerUp.TryDropRandom(transform.position, _isElite ? 35f : 12f);
         }
 
         // Animation chết hoặc biến mất

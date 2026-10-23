@@ -5,7 +5,9 @@ using UnityEngine;
 // 1. Cho phép người chơi mang tối đa 6 khẩu súng cùng lúc bay lơ lửng xoay quanh nhân vật.
 // 2. Mỗi khẩu súng tự động tìm kiếm mục tiêu riêng biệt và xả đạn độc lập 360 độ.
 // 3. Tự động dàn đều vị trí các súng thành vòng tròn xung quanh nhân vật theo số lượng súng đang có.
-// 4. Đồng bộ các chỉ số nâng cấp Brotato: Bonus Damage, Attack Speed.
+// 4. Phân tầng Hierarchy 2 lớp (Slot Pivot -> Visual): Giữ vững quỹ đạo bay (Orbit) quanh nhân vật 100%,
+//    không bị trôi hay xung đột vị trí khi nhân vật di chuyển và súng giật bắn (Recoil).
+// 5. Đồng bộ các chỉ số nâng cấp Brotato: Bonus Damage, Attack Speed.
 public class ArenaAutoShooting : MonoBehaviour
 {
     public static ArenaAutoShooting Instance { get; private set; }
@@ -46,6 +48,7 @@ public class ArenaAutoShooting : MonoBehaviour
         public Transform gunTransform;
         public Transform firePoint;
         public SpriteRenderer spriteRenderer;
+        public GunVisualAnimator visualAnimator;
         public float nextFireTime;
         public Transform currentTarget;
         public float baseAngleOffset;
@@ -76,6 +79,17 @@ public class ArenaAutoShooting : MonoBehaviour
             baseGunHolder.gameObject.SetActive(false);
         }
 
+        // Xóa sạch các slot súng cũ nếu có còn sót lại trước khi bắt đầu
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            Transform child = transform.GetChild(i);
+            if (child != null && child.name.StartsWith("GunSlot_"))
+            {
+                Destroy(child.gameObject);
+            }
+        }
+        _activeGuns.Clear();
+
         // Trang bị súng ban đầu
         if (currentWeapon != null)
         {
@@ -99,7 +113,7 @@ public class ArenaAutoShooting : MonoBehaviour
             HandleTestingKeys();
         }
 
-        // 2. Cập nhật vị trí bập bùng quanh nhân vật
+        // 2. Cập nhật vị trí bập bùng quanh nhân vật (chạy trên localPosition để gắn chặt theo nhân vật)
         UpdateGunOrbitPositions();
 
         // 3. Mỗi súng độc lập quét mục tiêu và xả đạn
@@ -127,22 +141,38 @@ public class ArenaAutoShooting : MonoBehaviour
     public int GetCurrentWeaponCount() => _activeGuns.Count;
     public int GetMaxWeaponCount() => maxWeapons;
 
-    // Tạo GameObject slot súng mới
+    // Tạo GameObject slot súng mới theo mô hình phân tầng chuẩn 2 lớp:
+    // SlotObj (Bay theo quỹ đạo, xoay ngắm) -> Visual (Hiển thị nòng + Hoạt ảnh bắn + Recoil) + FirePoint
     private GunSlot CreateGunSlot(WeaponData weapon)
     {
+        // 1. Khung Slot chính: Con trực tiếp của Player, giữ vị trí local orbit quanh Player
         GameObject slotObj = new GameObject($"GunSlot_{_activeGuns.Count + 1}_{weapon.weaponName}");
-        slotObj.transform.SetParent(transform);
+        slotObj.transform.SetParent(transform, false);
+        slotObj.transform.localPosition = Vector3.zero;
+        slotObj.transform.localRotation = Quaternion.identity;
+        slotObj.transform.localScale = Vector3.one;
 
-        // Tạo nòng súng
-        SpriteRenderer sr = slotObj.AddComponent<SpriteRenderer>();
+        // 2. GameObject Visual con: Chuyên quản lý hình ảnh Sprite và độ giật nòng (Recoil)
+        GameObject visualObj = new GameObject("Visual");
+        visualObj.transform.SetParent(slotObj.transform, false);
+        visualObj.transform.localPosition = Vector3.zero;
+        visualObj.transform.localRotation = Quaternion.identity;
+        visualObj.transform.localScale = Vector3.one;
+
+        SpriteRenderer sr = visualObj.AddComponent<SpriteRenderer>();
         sr.sprite = weapon.weaponSprite != null ? weapon.weaponSprite : _defaultGunSprite;
         sr.color = weapon.weaponColor;
         sr.sortingOrder = 16; // Hiển thị đè lên nhân vật
 
-        // Tạo FirePoint ở đầu nòng
+        // Gắn bộ điều khiển hoạt ảnh bắn vào Visual con (để giật cục bộ mà không kéo lệch slotObj)
+        GunVisualAnimator animator = visualObj.AddComponent<GunVisualAnimator>();
+        animator.Initialize(weapon, sr);
+
+        // 3. FirePoint ở đầu nòng (Con của slotObj, đồng bộ xoay theo súng)
         GameObject fpObj = new GameObject("FirePoint");
-        fpObj.transform.SetParent(slotObj.transform);
-        fpObj.transform.localPosition = new Vector3(0.6f, 0f, 0f);
+        fpObj.transform.SetParent(slotObj.transform, false);
+        Vector2 offset = weapon.firePointOffset != Vector2.zero ? weapon.firePointOffset : new Vector2(0.65f, 0.05f);
+        fpObj.transform.localPosition = new Vector3(offset.x, offset.y, 0f);
 
         GunSlot slot = new GunSlot
         {
@@ -151,6 +181,7 @@ public class ArenaAutoShooting : MonoBehaviour
             gunTransform = slotObj.transform,
             firePoint = fpObj.transform,
             spriteRenderer = sr,
+            visualAnimator = animator,
             nextFireTime = Time.time + Random.Range(0f, 0.2f),
             currentTarget = null,
             baseAngleOffset = 0f
@@ -172,7 +203,7 @@ public class ArenaAutoShooting : MonoBehaviour
         }
     }
 
-    // Cập nhật vị trí của các súng bay lơ lửng quanh nhân vật
+    // Cập nhật vị trí của các súng bay lơ lửng quanh nhân vật (cực kỳ ổn định theo localPosition)
     private void UpdateGunOrbitPositions()
     {
         float time = Time.time * orbitFloatSpeed;
@@ -182,12 +213,12 @@ public class ArenaAutoShooting : MonoBehaviour
             GunSlot slot = _activeGuns[i];
             if (slot.slotObject == null) continue;
 
-            float angleRad = (slot.baseAngleOffset) * Mathf.Deg2Rad;
+            float angleRad = slot.baseAngleOffset * Mathf.Deg2Rad;
             // Bập bùng nhẹ theo hình sin
             float currentRadius = orbitRadius + Mathf.Sin(time + i) * 0.08f;
 
-            Vector3 offset = new Vector3(Mathf.Cos(angleRad) * currentRadius, Mathf.Sin(angleRad) * currentRadius, 0f);
-            slot.slotObject.transform.position = transform.position + offset;
+            Vector3 localOffset = new Vector3(Mathf.Cos(angleRad) * currentRadius, Mathf.Sin(angleRad) * currentRadius, 0f);
+            slot.slotObject.transform.localPosition = localOffset;
         }
     }
 
@@ -231,11 +262,23 @@ public class ArenaAutoShooting : MonoBehaviour
             }
             else
             {
-                // Khi không có quái: súng hướng nhẹ ra ngoài theo góc xoay
+                // Khi không có quái: súng hướng nhẹ ra ngoài theo góc xoay quỹ đạo
                 slot.gunTransform.rotation = Quaternion.Euler(0f, 0f, slot.baseAngleOffset);
-                if (slot.spriteRenderer != null)
+                bool isFlipped = Mathf.Cos(slot.baseAngleOffset * Mathf.Deg2Rad) < 0f;
+                if (slot.visualAnimator != null)
                 {
-                    slot.spriteRenderer.flipY = Mathf.Cos(slot.baseAngleOffset * Mathf.Deg2Rad) < 0f;
+                    slot.visualAnimator.SetFlipped(isFlipped);
+                }
+                else if (slot.spriteRenderer != null)
+                {
+                    slot.spriteRenderer.flipY = isFlipped;
+                }
+
+                // Căn chỉnh FirePoint theo trục lật
+                if (slot.firePoint != null && slot.weaponData != null)
+                {
+                    Vector2 fpOffset = slot.weaponData.firePointOffset != Vector2.zero ? slot.weaponData.firePointOffset : new Vector2(0.65f, 0.05f);
+                    slot.firePoint.localPosition = new Vector3(fpOffset.x, isFlipped ? -fpOffset.y : fpOffset.y, 0f);
                 }
             }
         }
@@ -282,9 +325,21 @@ public class ArenaAutoShooting : MonoBehaviour
         float angle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
         slot.gunTransform.rotation = Quaternion.Euler(0f, 0f, angle);
 
-        if (slot.spriteRenderer != null)
+        bool isFlipped = targetPos.x < slot.gunTransform.position.x;
+        if (slot.visualAnimator != null)
         {
-            slot.spriteRenderer.flipY = targetPos.x < slot.gunTransform.position.x;
+            slot.visualAnimator.SetFlipped(isFlipped);
+        }
+        else if (slot.spriteRenderer != null)
+        {
+            slot.spriteRenderer.flipY = isFlipped;
+        }
+
+        // Cập nhật lại vị trí đầu nòng FirePoint tương thích khi lật dọc (Flip Y)
+        if (slot.firePoint != null && slot.weaponData != null)
+        {
+            Vector2 fpOffset = slot.weaponData.firePointOffset != Vector2.zero ? slot.weaponData.firePointOffset : new Vector2(0.65f, 0.05f);
+            slot.firePoint.localPosition = new Vector3(fpOffset.x, isFlipped ? -fpOffset.y : fpOffset.y, 0f);
         }
     }
 
@@ -296,6 +351,12 @@ public class ArenaAutoShooting : MonoBehaviour
         // Tính tốc độ bắn của súng kèm hệ số Brotato
         float rate = Mathf.Max(0.05f, weapon.fireRate / Mathf.Max(0.1f, attackSpeedMultiplier));
         slot.nextFireTime = Time.time + rate;
+
+        // Kích hoạt hoạt ảnh bắn (Muzzle Flash, giật nòng, văng vỏ đạn)
+        if (slot.visualAnimator != null)
+        {
+            slot.visualAnimator.PlayShootAnimation();
+        }
 
         Vector3 spawnPos = slot.firePoint != null ? slot.firePoint.position : slot.gunTransform.position;
         Vector2 baseDir = slot.gunTransform.right;
@@ -328,12 +389,12 @@ public class ArenaAutoShooting : MonoBehaviour
         return new Vector2(v.x * cos - v.y * sin, v.x * sin + v.y * cos);
     }
 
-    // Phím tắt bàn phím để test trang bị nhanh nhiều súng (Bấm 1, 2, 3, 4 để thêm súng)
+    // Phím tắt bàn phím để test trang bị nhanh nhiều súng (Bấm 1, 2 để thêm súng, P để thả Power-up)
     private void HandleTestingKeys()
     {
+        // Phím 1: Thêm súng ngẫu nhiên
         if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1))
         {
-            // Thử thêm súng từ danh sách test
             if (testWeaponsPool.Count > 0)
             {
                 int rnd = Random.Range(0, testWeaponsPool.Count);
@@ -341,8 +402,29 @@ public class ArenaAutoShooting : MonoBehaviour
             }
             else if (currentWeapon != null)
             {
-                EquipNewWeapon(currentWeapon); // Thêm nhân bản súng hiện tại
+                EquipNewWeapon(currentWeapon);
             }
+        }
+
+        // Phím 2: Thử ngay khẩu Molotov Launcher
+        if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2))
+        {
+            foreach (var w in testWeaponsPool)
+            {
+                if (w != null && w.weaponName.Contains("Molotov"))
+                {
+                    EquipNewWeapon(w);
+                    break;
+                }
+            }
+        }
+
+        // Phím P: Test thả nhanh túi cứu thương (Medkit) ngay cạnh chân
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            Vector3 pos = transform.position + new Vector3(1.2f, 0.5f, 0f);
+            ArenaPowerUp.Spawn(pos);
+            Debug.Log("<color=#55FF55>[Testing Hotkey] Spawned Medkit drop!</color>");
         }
     }
 

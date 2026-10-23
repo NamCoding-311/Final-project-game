@@ -136,7 +136,6 @@ GameObject:
   - component: {fileID: 1886864200380361974}
   - component: {fileID: 1872399760677332670}
   - component: {fileID: 1557027599861470979}
-  - component: {fileID: 4211076331969194362}
   - component: {fileID: 1271624221941885574}
   m_Layer: 0
   m_Name: OnFootPlayer
@@ -306,22 +305,6 @@ MonoBehaviour:
   maxX: 15
   minY: -15
   maxY: 15
---- !u!114 &4211076331969194362
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9041413689841410236}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 762476eeae240e349812152ffef1ef06, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerShooting
-  currentWeapon: {fileID: 11400000, guid: 5a90003f3d4312a45b22c06fae775c70, type: 2}
-  gunHolder: {fileID: 8004809067395672273}
-  firePoint: {fileID: 3289152941593314561}
-  gunSpriteRenderer: {fileID: 5660489463672630612}
 --- !u!114 &1271624221941885574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -336,5 +319,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   maxHP: 100
   hpBar: {fileID: 0}
+  hpText: {fileID: 0}
   distanceTracker: {fileID: 0}
   gameOverPanel: {fileID: 0}
+  damageReduction: 0

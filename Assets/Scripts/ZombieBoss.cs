@@ -364,8 +364,9 @@ public class ZombieBoss : MonoBehaviour
                 Vector3 offset = new Vector3(UnityEngine.Random.Range(-1.2f, 1.2f), UnityEngine.Random.Range(-1.2f, 1.2f), 0f);
                 gem.transform.position = transform.position + offset;
                 MaterialGem mg = gem.AddComponent<MaterialGem>();
-                mg.SetGemData(10, new Color(1f, 0.85f, 0.15f), 1.35f); // 10 exp/gems mỗi viên, màu vàng ánh kim
+                mg.SetGemData(10, new Color(1f, 0.85f, 0.15f), 1.35f);
             }
+            ArenaPowerUp.TryDropRandom(transform.position, 100f);
         }
 
         // 4. Chờ 1.5 giây sau mới xóa GameObject

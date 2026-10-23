@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f9bad88fd75ec0479354655d8e0dd17, type: 3}
+  m_Name: Bazooka_Data
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponData
+  weaponName: Bazooka M20
+  bulletPrefab: {fileID: 4006896386512036457, guid: b2ee064d0c0af204ba55f2f4d81d0b26, type: 3}
+  fireRate: 1.35
+  pelletsPerShot: 1
+  spreadAngle: 0
+  damage: 60
+  isAutomatic: 0
+  weaponSprite: {fileID: 3638761059678437864, guid: 61806f54fe93bc646832b59f46d89632, type: 3}
+  weaponColor: {r: 1, g: 1, b: 1, a: 1}
+  shootAnimationFrames:
+  - {fileID: 1398959134610802891, guid: d6e4bfb4a4585f1469aaf8c46a3e53fa, type: 3}
+  - {fileID: -7389147721043230008, guid: d6e4bfb4a4585f1469aaf8c46a3e53fa, type: 3}
+  - {fileID: -6878686086181167442, guid: d6e4bfb4a4585f1469aaf8c46a3e53fa, type: 3}
+  - {fileID: -4682417819834532143, guid: d6e4bfb4a4585f1469aaf8c46a3e53fa, type: 3}
+  - {fileID: 4730518242406072392, guid: d6e4bfb4a4585f1469aaf8c46a3e53fa, type: 3}
+  - {fileID: 1902751194855481132, guid: d6e4bfb4a4585f1469aaf8c46a3e53fa, type: 3}
+  - {fileID: -4035753335553304402, guid: d6e4bfb4a4585f1469aaf8c46a3e53fa, type: 3}
+  - {fileID: -4683063784453657964, guid: d6e4bfb4a4585f1469aaf8c46a3e53fa, type: 3}
+  - {fileID: -7384922697367943728, guid: d6e4bfb4a4585f1469aaf8c46a3e53fa, type: 3}
+  - {fileID: -7362835111737506053, guid: d6e4bfb4a4585f1469aaf8c46a3e53fa, type: 3}
+  animationFps: 22
+  firePointOffset: {x: 1.25, y: 0.05}
+  recoilDistance: 0.28

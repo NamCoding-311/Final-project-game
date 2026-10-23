@@ -585,8 +585,10 @@ public class Zombie : MonoBehaviour
             MaterialGem mg = gem.AddComponent<MaterialGem>();
             if (_isElite)
             {
-                mg.SetGemData(4, new Color(0.85f, 0.25f, 1f), 1.1f); // Ngọc tím giá trị 4 cho quái tinh anh
+                mg.SetGemData(4, new Color(0.85f, 0.25f, 1f), 1.1f);
             }
+            float dropChance = _isElite ? 22f : 3.5f;
+            ArenaPowerUp.TryDropRandom(transform.position, dropChance);
         }
     }
 }

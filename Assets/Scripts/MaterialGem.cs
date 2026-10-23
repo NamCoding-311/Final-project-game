@@ -61,6 +61,26 @@ public class MaterialGem : MonoBehaviour
         }
     }
 
+    // Hút cưỡng bức toàn bộ ngọc khi nhặt được vật phẩm Nam Châm (Magnet Power-up)
+    public void ForceMagnetize()
+    {
+        _isBeingMagnetized = true;
+        _currentSpeed = Mathf.Max(_currentSpeed, baseMagnetSpeed * 1.8f);
+    }
+
+    // Hàm gọi tĩnh: Tự động gom toàn bộ ngọc trên khắp sàn đấu bay về phía người chơi
+    public static void MagnetizeAllGems()
+    {
+        MaterialGem[] allGems = FindObjectsByType<MaterialGem>(FindObjectsSortMode.None);
+        foreach (var gem in allGems)
+        {
+            if (gem != null)
+            {
+                gem.ForceMagnetize();
+            }
+        }
+    }
+
     private void Start()
     {
         FindPlayer();

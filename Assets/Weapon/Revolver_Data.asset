@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f9bad88fd75ec0479354655d8e0dd17, type: 3}
+  m_Name: Revolver_Data
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponData
+  weaponName: Colt 45 Revolver
+  bulletPrefab: {fileID: 2131882094584562652, guid: ca945c39793af4d489e0166fc97c8796, type: 3}
+  fireRate: 0.45
+  pelletsPerShot: 1
+  spreadAngle: 0
+  damage: 28
+  isAutomatic: 0
+  weaponSprite: {fileID: -2606765578528506932, guid: 47d5a8e7fc75af54b834f5af7831620b, type: 3}
+  weaponColor: {r: 1, g: 1, b: 1, a: 1}
+  shootAnimationFrames:
+  - {fileID: 3445778344423202111, guid: 6eda3faf148ef5645a874a35c56e3631, type: 3}
+  - {fileID: -2309072266037916008, guid: 6eda3faf148ef5645a874a35c56e3631, type: 3}
+  - {fileID: 5792933076587486325, guid: 6eda3faf148ef5645a874a35c56e3631, type: 3}
+  - {fileID: -7485195713890137446, guid: 6eda3faf148ef5645a874a35c56e3631, type: 3}
+  - {fileID: 2213678073698984158, guid: 6eda3faf148ef5645a874a35c56e3631, type: 3}
+  - {fileID: -2427218438966852487, guid: 6eda3faf148ef5645a874a35c56e3631, type: 3}
+  - {fileID: -4976737383432855288, guid: 6eda3faf148ef5645a874a35c56e3631, type: 3}
+  - {fileID: 6380985626244623850, guid: 6eda3faf148ef5645a874a35c56e3631, type: 3}
+  - {fileID: -8978588794473898802, guid: 6eda3faf148ef5645a874a35c56e3631, type: 3}
+  - {fileID: 765335493520426766, guid: 6eda3faf148ef5645a874a35c56e3631, type: 3}
+  - {fileID: -2633844436987709455, guid: 6eda3faf148ef5645a874a35c56e3631, type: 3}
+  - {fileID: 2483550923425156376, guid: 6eda3faf148ef5645a874a35c56e3631, type: 3}
+  animationFps: 28
+  firePointOffset: {x: 0.55, y: 0.05}
+  recoilDistance: 0.18

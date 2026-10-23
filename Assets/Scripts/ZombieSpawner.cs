@@ -1,9 +1,10 @@
 using UnityEngine;
 
-// Tự động sinh Zombie HỢP LOGIC BỐI CẢNH:
-// - CHỈ sinh ở 3 hướng: Phía Trước (Phải), Phía Sau (Trái), và Vỉa Hè (Dưới).
-// - TUYỆT ĐỐI KHÔNG sinh ở Phía Trên (Lan can bờ sông / bầu trời).
-// - Luôn khóa chặt vị trí nằm trọn trên mặt đường và vỉa hè, không bao giờ bị off-road.
+// Tự động sinh Zombie hợp bối cảnh đường phố kết hợp cơ chế Bầy quái chốt chặn (Roadblock Hordes):
+// 1. Sinh quái lẻ tẻ rải rác đón đầu trên làn đường và vỉa hè.
+// 2. Định kỳ kích hoạt Bầy quái (Zombie Horde) dàn hàng ngang chắn các làn đường phía trước từ xa.
+// 3. Giúp người chơi có đủ thời gian (4-5 giây) để quan sát, lia chuột xả súng dọn đường trước khi xe chạy tới.
+// 4. TUYỆT ĐỐI KHÔNG sinh ở Phía Trên (Lan can bờ sông / bầu trời).
 public class ZombieSpawner : MonoBehaviour
 {
     [Header("Prefabs & Target")]
@@ -20,23 +21,23 @@ public class ZombieSpawner : MonoBehaviour
     // Transform của Player/Xe
     [SerializeField] private Transform playerTransform;
 
-    [Header("Spawn Timing")]
-    // Thời gian cách nhau giữa mỗi lần sinh Zombie (giây)
-    [SerializeField] private float spawnInterval = 1.2f;
+    [Header("Spawn Timing (Sinh quái lẻ thông thường)")]
+    // Thời gian cách nhau giữa mỗi lần sinh Zombie lẻ (giây)
+    [SerializeField] private float spawnInterval = 1.8f;
 
     [Header("Spawn Direction Weights (Tỉ lệ xuất hiện 3 hướng: Trước, Dưới, Sau)")]
     [Range(0, 100)]
-    [SerializeField] private int frontSpawnWeight = 60;  // 60% đón đầu phía trước (Bên Phải)
+    [SerializeField] private int frontSpawnWeight = 65;  // 65% đón đầu phía trước (Bên Phải)
     [Range(0, 100)]
     [SerializeField] private int bottomSpawnWeight = 25; // 25% trồi từ vỉa hè dưới lên (Phía Dưới)
     [Range(0, 100)]
-    [SerializeField] private int backSpawnWeight = 15;   // 15% rượt đuổi từ phía sau (Bên Trái)
+    [SerializeField] private int backSpawnWeight = 10;   // 10% rượt đuổi từ phía sau (Bên Trái)
 
     [Header("Spawn Distances (Khoảng cách trước và sau xe)")]
-    [SerializeField] private float minDistanceAhead = 15f;
-    [SerializeField] private float maxDistanceAhead = 25f;
+    [SerializeField] private float minDistanceAhead = 18f;
+    [SerializeField] private float maxDistanceAhead = 26f;
     [SerializeField] private float minDistanceBehind = 8f;
-    [SerializeField] private float maxDistanceBehind = 16f;
+    [SerializeField] private float maxDistanceBehind = 15f;
 
     [Header("Road Boundaries (Khóa cứng mặt đường - TUYỆT ĐỐI KHÔNG SPAWN LÊN BỜ SÔNG)")]
     // Mép lan can trên cùng (giáp bờ sông) - CHẶN CỨNG không bao giờ sinh cao hơn mốc này
@@ -49,19 +50,37 @@ public class ZombieSpawner : MonoBehaviour
     [SerializeField] private float bottomSpawnY = -1.4f;
 
     [Header("Difficulty / Multi-Spawn")]
-    // Số lượng Zombie tối đa sinh ra trong 1 đợt
+    // Số lượng Zombie tối đa sinh ra trong 1 đợt lẻ
     [SerializeField] private int maxZombiesPerWave = 2;
+
+    [Header("Zombie Horde Settings (Cơ chế Bầy quái chốt chặn dàn hàng ngang)")]
+    // Bật / tắt cơ chế sinh bầy quái chốt chặn
+    [SerializeField] private bool enableHordeWaves = true;
+
+    // Thời gian giãn cách giữa các đợt bầy quái xuất hiện (giây)
+    [SerializeField] private float hordeInterval = 8.0f;
+
+    // Số lượng quái tối thiểu và tối đa trong một đợt bầy quái
+    [SerializeField] private int minHordeZombies = 4;
+    [SerializeField] private int maxHordeZombies = 7;
+
+    // Khoảng cách đón đầu phía trước mặt xe khi bầy quái xuất hiện
+    [SerializeField] private float hordeSpawnDistance = 24f;
 
     // Trạng thái cho phép sinh Zombie (tạm dừng khi đánh Boss hoặc chuyển cảnh)
     private bool _isSpawningActive = true;
     private Player3LaneMovement _laneMovement;
+    private float _nextHordeTime;
 
     private void Start()
     {
         FindPlayer();
 
-        // Bắt đầu chu kỳ sinh Zombie liên tục
-        InvokeRepeating(nameof(SpawnZombiesAroundPlayer), 1f, spawnInterval);
+        // Đặt mốc thời gian xuất hiện đợt bầy quái đầu tiên
+        _nextHordeTime = Time.time + hordeInterval;
+
+        // Bắt đầu chu kỳ sinh Zombie lẻ đều đặn
+        InvokeRepeating(nameof(SpawnZombiesAroundPlayer), 1.5f, spawnInterval);
     }
 
     private void Update()
@@ -70,6 +89,13 @@ public class ZombieSpawner : MonoBehaviour
         if (playerTransform == null || !playerTransform.gameObject.activeInHierarchy)
         {
             FindPlayer();
+        }
+
+        // Kiểm tra thời điểm kích hoạt Bầy quái chốt chặn (Roadblock Horde)
+        if (_isSpawningActive && enableHordeWaves && Time.time >= _nextHordeTime)
+        {
+            _nextHordeTime = Time.time + hordeInterval;
+            SpawnZombieHorde();
         }
     }
 
@@ -97,7 +123,7 @@ public class ZombieSpawner : MonoBehaviour
         _isSpawningActive = active;
     }
 
-    // Sinh Zombie ngẫu nhiên theo 3 hướng hợp lệ (Phía Trước, Phía Dưới, Phía Sau)
+    // Sinh Zombie lẻ ngẫu nhiên theo 3 hướng hợp lệ (Phía Trước, Phía Dưới, Phía Sau)
     private void SpawnZombiesAroundPlayer()
     {
         if (!_isSpawningActive) return;
@@ -111,15 +137,7 @@ public class ZombieSpawner : MonoBehaviour
             Vector3 spawnPosition = CalculateSpawnPosition();
 
             // Xác định loại Zombie sẽ sinh (Jumper hay Thường)
-            GameObject prefabToSpawn = zombiePrefab;
-            if (jumperPrefab != null && Random.Range(0, 100) < jumperSpawnChance)
-            {
-                prefabToSpawn = jumperPrefab;
-            }
-            else if (prefabToSpawn == null)
-            {
-                prefabToSpawn = jumperPrefab;
-            }
+            GameObject prefabToSpawn = GetRandomZombiePrefab();
 
             if (prefabToSpawn != null)
             {
@@ -128,7 +146,53 @@ public class ZombieSpawner : MonoBehaviour
         }
     }
 
-    // Tính toán tọa độ sinh: CHỈ sinh ở Bên Phải, Bên Trái hoặc Phía Dưới; TUYỆT ĐỐI KHÔNG SINH Ở TRÊN BỜ SÔNG
+    // Sinh một Bầy Quái (Zombie Horde) dàn hàng ngang chắn các làn đường phía trước từ xa
+    private void SpawnZombieHorde()
+    {
+        if (playerTransform == null) return;
+
+        float baseSpawnX = playerTransform.position.x + hordeSpawnDistance;
+        int hordeCount = Random.Range(minHordeZombies, maxHordeZombies + 1);
+
+        // Lấy danh sách tọa độ các làn đường
+        float[] lanes = _laneMovement != null ? _laneMovement.GetAllLanePositions() : null;
+
+        for (int i = 0; i < hordeCount; i++)
+        {
+            // Trải đều quái trên các làn đường để tạo thành bức tường chốt chặn
+            float spawnY;
+            if (lanes != null && lanes.Length > 0)
+            {
+                spawnY = lanes[i % lanes.Length];
+            }
+            else
+            {
+                spawnY = Mathf.Lerp(roadMinY, roadMaxY, (float)i / Mathf.Max(1, hordeCount - 1));
+            }
+
+            // Dãn nhẹ tọa độ X để đàn quái không bị chồng lên nhau
+            float offsetX = Random.Range(-1.5f, 2.5f);
+            Vector3 spawnPos = new Vector3(baseSpawnX + offsetX, spawnY, 0f);
+
+            GameObject prefabToSpawn = GetRandomZombiePrefab();
+            if (prefabToSpawn != null)
+            {
+                Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
+            }
+        }
+    }
+
+    // Lựa chọn ngẫu nhiên loại Zombie dựa theo tỉ lệ Jumper
+    private GameObject GetRandomZombiePrefab()
+    {
+        if (jumperPrefab != null && Random.Range(0, 100) < jumperSpawnChance)
+        {
+            return jumperPrefab;
+        }
+        return zombiePrefab != null ? zombiePrefab : jumperPrefab;
+    }
+
+    // Tính toán tọa độ sinh quái lẻ: CHỈ sinh ở Bên Phải, Bên Trái hoặc Phía Dưới
     private Vector3 CalculateSpawnPosition()
     {
         Vector3 playerPos = playerTransform.position;
@@ -177,33 +241,5 @@ public class ZombieSpawner : MonoBehaviour
             }
         }
         return Random.Range(roadMinY, roadMaxY);
-    }
-
-    // Vẽ vùng sinh Zombie trong Scene view để bạn dễ quan sát
-    private void OnDrawGizmosSelected()
-    {
-        Vector3 center = playerTransform != null ? playerTransform.position : transform.position;
-
-        // Vùng Phía Trước (Xanh lá cây)
-        Gizmos.color = Color.green;
-        Vector3 frontCenter = new Vector3(center.x + (minDistanceAhead + maxDistanceAhead) * 0.5f, (roadMinY + roadMaxY) * 0.5f, 0f);
-        Vector3 frontSize = new Vector3(maxDistanceAhead - minDistanceAhead, roadMaxY - roadMinY, 0f);
-        Gizmos.DrawWireCube(frontCenter, frontSize);
-
-        // Vùng Phía Dưới (Vàng)
-        Gizmos.color = Color.yellow;
-        Vector3 bottomCenter = new Vector3(center.x + 6f, bottomSpawnY, 0f);
-        Vector3 bottomSize = new Vector3(20f, 0.4f, 0f);
-        Gizmos.DrawWireCube(bottomCenter, bottomSize);
-
-        // Vùng Phía Sau (Đỏ cam)
-        Gizmos.color = new Color(1f, 0.5f, 0f);
-        Vector3 backCenter = new Vector3(center.x - (minDistanceBehind + maxDistanceBehind) * 0.5f, (roadMinY + roadMaxY) * 0.5f, 0f);
-        Vector3 backSize = new Vector3(maxDistanceBehind - minDistanceBehind, roadMaxY - roadMinY, 0f);
-        Gizmos.DrawWireCube(backCenter, backSize);
-
-        // Đường ranh giới lan can bờ sông (Đỏ cảnh báo)
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(new Vector3(center.x - 30f, roadMaxY, 0f), new Vector3(center.x + 35f, roadMaxY, 0f));
     }
 }

@@ -4,14 +4,14 @@ using UnityEngine;
 public class Player3LaneMovement : MonoBehaviour
 {
     [Header("Movement Settings")]
-    // Tốc độ chạy thẳng cơ bản về phía trước theo trục X
-    [SerializeField] private float forwardSpeed = 9f;
+    // Tốc độ chạy thẳng cơ bản về phía trước theo trục X (đã tối ưu để người chơi kịp ngắm bắn)
+    [SerializeField] private float forwardSpeed = 6f;
 
     // Tốc độ tối đa khi tăng tốc tự nhiên
-    [SerializeField] private float maxSpeed = 16f;
+    [SerializeField] private float maxSpeed = 8.5f;
 
-    // Gia tốc tự động tăng dần theo thời gian
-    [SerializeField] private float acceleration = 0.05f;
+    // Gia tốc tự động tăng dần theo thời gian (giữ mức nhẹ để xe không bị vọt đi quá nhanh)
+    [SerializeField] private float acceleration = 0.02f;
 
     [Header("Dash Settings (Kỹ năng Lướt bằng phím Shift)")]
     // Tốc độ cực đại khi nhấn Shift để Dash
@@ -52,10 +52,16 @@ public class Player3LaneMovement : MonoBehaviour
     [SerializeField] private float maxYLimit = 3.3f;  // Lề đường trên (giáp bờ sông)
 
     [Header("Combat & Collision")]
-    // Sát thương gây ra khi đâm trực diện Zombie lúc bình thường
-    [SerializeField] private int normalRamDamage = 80;
+    // Tốc độ của xe khi bị Zombie cản đường lúc chạy bình thường (không Dash)
+    [SerializeField] private float zombieBlockSpeed = 1.8f;
 
-    // Giảm nhẹ tốc độ khi va chạm Zombie lúc chạy bình thường
+    // Khoảng cách từ tâm xe đến cản trước (mũi xe) để ủi Zombie dính trước mũi xe
+    [SerializeField] private float frontBumperOffset = 1.75f;
+
+    // Sát thương gây ra khi đâm Zombie lúc chạy bình thường (0 = không đâm chết, để Zombie cản xe)
+    [SerializeField] private int normalRamDamage = 0;
+
+    // Mức giảm tốc độ khi va chạm Zombie lúc chạy bình thường
     [SerializeField] private float speedLossOnRam = 1.0f;
 
     // Index làn hiện tại (0 là làn dưới cùng, tăng dần lên làn trên)
@@ -250,22 +256,36 @@ public class Player3LaneMovement : MonoBehaviour
         }
     }
 
-    // Xử lý va chạm húc Zombie
+    // Xử lý va chạm với Zombie (khi mới chạm vào)
     private void OnTriggerEnter2D(Collider2D other)
+    {
+        HandleZombieCollision(other);
+    }
+
+    // Xử lý cản trở khi Zombie vẫn đang đứng chắn trước đầu xe
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        HandleZombieCollision(other);
+    }
+
+    // Cơ chế cản trở và húc tiêu diệt Zombie theo trạng thái Dash
+    private void HandleZombieCollision(Collider2D other)
     {
         Zombie zombie = other.GetComponent<Zombie>();
         if (zombie != null)
         {
             if (_isDashing)
             {
-                // Khi đang Dash: Sát thương cực đại và KHÔNG bị giảm tốc độ
+                // Khi đang Dash: Đủ xung lực và sát thương cực đại để đâm chết Zombie ngay lập tức
                 zombie.TakeDamage(dashRamDamage);
             }
             else
             {
-                // Khi chạy bình thường: Gây sát thương cơ bản và giảm nhẹ tốc độ
-                zombie.TakeDamage(normalRamDamage);
-                _currentSpeed = Mathf.Max(forwardSpeed * 0.6f, _currentSpeed - speedLossOnRam);
+                // Khi chạy bình thường: KHÔNG đâm chết Zombie, Zombie cản lại làm xe khựng chậm
+                _currentSpeed = Mathf.Min(_currentSpeed, zombieBlockSpeed);
+
+                // Ghim Zombie trước cản trước mũi xe, tuyệt đối không cho chui lọt vào lòng xe
+                PinZombieToFrontBumper(other.transform, other.attachedRigidbody);
             }
             return;
         }
@@ -279,8 +299,8 @@ public class Player3LaneMovement : MonoBehaviour
             }
             else
             {
-                charger.TakeDamage(normalRamDamage);
-                _currentSpeed = Mathf.Max(forwardSpeed * 0.5f, _currentSpeed - speedLossOnRam * 1.5f);
+                _currentSpeed = Mathf.Min(_currentSpeed, zombieBlockSpeed * 0.75f);
+                PinZombieToFrontBumper(other.transform, other.attachedRigidbody);
             }
             return;
         }
@@ -294,10 +314,28 @@ public class Player3LaneMovement : MonoBehaviour
             }
             else
             {
-                jumper.TakeDamage(normalRamDamage);
-                _currentSpeed = Mathf.Max(forwardSpeed * 0.6f, _currentSpeed - speedLossOnRam);
+                _currentSpeed = Mathf.Min(_currentSpeed, zombieBlockSpeed);
+                PinZombieToFrontBumper(other.transform, other.attachedRigidbody);
             }
             return;
+        }
+    }
+
+    // Đẩy ghim Zombie luôn nằm ngay phía trước cản trước của xe
+    private void PinZombieToFrontBumper(Transform zombieTransform, Rigidbody2D zombieRb)
+    {
+        if (zombieTransform == null) return;
+
+        float frontBumperX = transform.position.x + frontBumperOffset;
+        if (zombieTransform.position.x < frontBumperX)
+        {
+            Vector3 pinnedPos = new Vector3(frontBumperX, zombieTransform.position.y, zombieTransform.position.z);
+            zombieTransform.position = pinnedPos;
+
+            if (zombieRb != null)
+            {
+                zombieRb.position = new Vector2(frontBumperX, zombieRb.position.y);
+            }
         }
     }
 

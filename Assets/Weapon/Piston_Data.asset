@@ -12,10 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f9bad88fd75ec0479354655d8e0dd17, type: 3}
   m_Name: Piston_Data
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
-  weaponName: 
-  bulletPrefab: {fileID: 0}
-  fireRate: 0.3
+  weaponName: Glock P80
+  bulletPrefab: {fileID: 2131882094584562652, guid: ca945c39793af4d489e0166fc97c8796, type: 3}
+  fireRate: 0.32
   pelletsPerShot: 1
   spreadAngle: 0
-  damage: 9
+  damage: 15
   isAutomatic: 1
+  weaponSprite: {fileID: -7415738577025623356, guid: 562765c35ae138e46b3116d22cef6604, type: 3}
+  weaponColor: {r: 1, g: 1, b: 1, a: 1}
+  shootAnimationFrames:
+  - {fileID: -2750554185132296353, guid: e56d86eae5721a34181cbb6c59bc2a7c, type: 3}
+  - {fileID: 5041596655674575914, guid: e56d86eae5721a34181cbb6c59bc2a7c, type: 3}
+  - {fileID: -4508856213514539070, guid: e56d86eae5721a34181cbb6c59bc2a7c, type: 3}
+  - {fileID: -3030188482734725766, guid: e56d86eae5721a34181cbb6c59bc2a7c, type: 3}
+  - {fileID: 1335725277724842379, guid: e56d86eae5721a34181cbb6c59bc2a7c, type: 3}
+  - {fileID: 4891893757683288428, guid: e56d86eae5721a34181cbb6c59bc2a7c, type: 3}
+  - {fileID: 5708308888837294148, guid: e56d86eae5721a34181cbb6c59bc2a7c, type: 3}
+  - {fileID: 3677190168972782166, guid: e56d86eae5721a34181cbb6c59bc2a7c, type: 3}
+  - {fileID: 2246188286472873098, guid: e56d86eae5721a34181cbb6c59bc2a7c, type: 3}
+  - {fileID: 5396780247328415767, guid: e56d86eae5721a34181cbb6c59bc2a7c, type: 3}
+  - {fileID: 1541576289468219910, guid: e56d86eae5721a34181cbb6c59bc2a7c, type: 3}
+  - {fileID: -6181527221221086585, guid: e56d86eae5721a34181cbb6c59bc2a7c, type: 3}
+  animationFps: 30
+  firePointOffset: {x: 0.48, y: 0.05}
+  recoilDistance: 0.1
