@@ -69827,7 +69827,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1557027599861470979, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
   m_PrefabInstance: {fileID: 6907977229253981388}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1520467819}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2e85c569389b8474da9b8058d09d4c30, type: 3}
@@ -71131,6 +71131,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 727603038}
   m_CullTransparentMesh: 1
+--- !u!4 &840756399 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3289152941593314561, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
+  m_PrefabInstance: {fileID: 6907977229253981388}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &867348810
 GameObject:
   m_ObjectHideFlags: 0
@@ -71146,7 +71151,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &867348811
 Transform:
   m_ObjectHideFlags: 0
@@ -71969,6 +71974,28 @@ MonoScript:
   m_ClassName: ChunkIdentifier
   m_Namespace: 
   m_AssemblyName: Assembly-CSharp
+--- !u!1 &1520467819 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9041413689841410236, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
+  m_PrefabInstance: {fileID: 6907977229253981388}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1520467825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1520467819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 762476eeae240e349812152ffef1ef06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerShooting
+  currentWeapon: {fileID: 11400000, guid: 5a90003f3d4312a45b22c06fae775c70, type: 2}
+  gunHolder: {fileID: 2035723040}
+  firePoint: {fileID: 840756399}
+  gunSpriteRenderer: {fileID: 2035723041}
+  gunVisualAnimator: {fileID: 2035723042}
 --- !u!1 &1523197401
 GameObject:
   m_ObjectHideFlags: 0
@@ -73125,6 +73152,33 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &2035723039 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3139919137593395232, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
+  m_PrefabInstance: {fileID: 6907977229253981388}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2035723040 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8004809067395672273, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
+  m_PrefabInstance: {fileID: 6907977229253981388}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &2035723041 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 5660489463672630612, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
+  m_PrefabInstance: {fileID: 6907977229253981388}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2035723042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2035723039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad6f96d954db8624399f38bd914bf5b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GunVisualAnimator
 --- !u!1 &2048674862
 GameObject:
   m_ObjectHideFlags: 0
@@ -73627,7 +73681,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 9041413689841410236, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1520467825}
+    - targetCorrespondingSourceObject: {fileID: 3139919137593395232, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2035723042}
   m_SourcePrefab: {fileID: 100100000, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
