@@ -624,6 +624,7 @@ GameObject:
   m_Component:
   - component: {fileID: 209340445}
   - component: {fileID: 209340446}
+  - component: {fileID: 209340447}
   m_Layer: 0
   m_Name: Map2StageManager
   m_TagString: Untagged
@@ -698,22 +699,6 @@ MonoBehaviour:
     onFootPromptText: 'STAGE 2 CHECKPOINT!
 
       CLEAR 18 MUTATED HUNTERS & CHARGERS!'
-  - stageName: 'STAGE 3 : CRIMSON NIGHTFALL'
-    stageDistance: 500
-    onFootZombieCount: 24
-    zombieHpMultiplier: 2.4
-    spawnInterval: 0.8
-    minHorde: 8
-    maxHorde: 12
-    lightColor: {r: 0.42, g: 0.22, b: 0.32, a: 1}
-    lightIntensity: 0.65
-    jumperSpawnChance: 35
-    chargerSpawnChance: 35
-    onFootSpecialChance: 75
-    onFootPromptText: 'FINAL STAND!
-
-      ELIMINATE 24 APEX INFECTED TO SURVIVE
-      MAP 2!'
   carHealthBar: {fileID: 0}
   onFootHealthBar: {fileID: 0}
   stageAnnouncementText: {fileID: 727045519}
@@ -721,6 +706,35 @@ MonoBehaviour:
   mapVictoryText: 'VICTORY!
 
     YOU SURVIVED MAP 2: SUNSET WASTELAND!'
+--- !u!114 &209340447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 209340444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44f98ae6ac7673d41a0ee8b4ef02d80b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InfiniteParallaxBackground
+  targetCamera: {fileID: 0}
+  playerTransform: {fileID: 0}
+  parallaxEffect: 0.5
+  stages:
+  - stageName: 
+    startDistance: 0
+    stageSprite: {fileID: 689283645380311244, guid: a4bf339dfe6c1234f8f195cd45124d63, type: 3}
+    yOffset: 0
+    scaleFactor: 0
+  - stageName: 
+    startDistance: 0
+    stageSprite: {fileID: 2204347455319450415, guid: fbcff4a6e21d8e94ba1c755aa2c2d2e7, type: 3}
+    yOffset: 0
+    scaleFactor: 0
+  syncWithStageLevelManager: 1
+  globalYOffset: 2.2
+  backgroundLayers: []
 --- !u!1 &334585627
 GameObject:
   m_ObjectHideFlags: 0
