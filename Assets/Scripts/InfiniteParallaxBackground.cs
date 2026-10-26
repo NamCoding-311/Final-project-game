@@ -179,15 +179,18 @@ public class InfiniteParallaxBackground : MonoBehaviour
         // 3. Tái chế và luân chuyển các tấm ảnh con khi bị tụt lại phía sau Camera
         if (backgroundLayers != null && backgroundLayers.Length > 1)
         {
+            float camHalfWidth = targetCamera.orthographicSize * targetCamera.aspect;
+            float recycleThreshold = camHalfWidth + 3.0f; // Vừa ra khỏi mép trái camera 3m là tái chế đón đầu ngay
+
             for (int i = 0; i < backgroundLayers.Length; i++)
             {
                 Transform seg = backgroundLayers[i];
+                if (seg == null) continue;
                 SpriteRenderer sr = seg.GetComponent<SpriteRenderer>();
-                float currentSegWidth = (sr != null && sr.sprite != null) ? sr.bounds.size.x : 17.74f;
+                float currentSegWidth = (sr != null && sr.sprite != null) ? sr.bounds.size.x : 21.42f;
 
-                // Chỉ tái chế khi tấm ảnh đã nằm lại rất xa phía sau Camera (> 2.2 lần chiều rộng ~ 40m)
-                // Giúp vùng phía sau xe luôn có ảnh nền hoàng hôn bao phủ, không bao giờ bị cắt cụt lộ khoảng trống xám
-                if (cameraX - seg.position.x > currentSegWidth * 2.2f)
+                // Tái chế ngay khi mép phải của tấm ảnh vừa khuất khỏi mép trái màn hình Camera
+                if (cameraX - seg.position.x > (currentSegWidth * 0.5f + recycleThreshold))
                 {
                     // Tìm tấm ảnh nằm xa nhất phía trước
                     Transform furthestSeg = backgroundLayers[0];
@@ -195,15 +198,15 @@ public class InfiniteParallaxBackground : MonoBehaviour
 
                     for (int j = 0; j < backgroundLayers.Length; j++)
                     {
-                        if (backgroundLayers[j] != seg && backgroundLayers[j].position.x > maxRightX)
+                        if (backgroundLayers[j] != null && backgroundLayers[j] != seg && backgroundLayers[j].position.x > maxRightX)
                         {
                             maxRightX = backgroundLayers[j].position.x;
                             furthestSeg = backgroundLayers[j];
                         }
                     }
 
-                    // Đo chiều rộng của tấm nằm xa nhất để nối tiếp chính xác (không chồng chéo, không nhân đôi trăng)
-                    SpriteRenderer furthestSr = furthestSeg.GetComponent<SpriteRenderer>();
+                    // Đo chiều rộng của tấm nằm xa nhất để nối tiếp chính xác
+                    SpriteRenderer furthestSr = furthestSeg != null ? furthestSeg.GetComponent<SpriteRenderer>() : null;
                     float furthestWidth = (furthestSr != null && furthestSr.sprite != null) ? furthestSr.bounds.size.x : currentSegWidth;
 
                     // Đổi sang Sprite của chặng hiện tại
@@ -216,13 +219,13 @@ public class InfiniteParallaxBackground : MonoBehaviour
                         float newHalfHeight = sr.bounds.extents.y;
                         float stageYOffset = GetStageYOffset(_currentStageIndex);
 
-                        // KHÓA ĐÁY ẢNH VÀO BỜ KÈ VỚI Y OFFSET VÀ SCALE CHUẨN
+                        // KHÓA ĐÁY ẢNH VÀO BỜ KÈ VỚI Y OFFSET VÀ SCALE CHUẨN (chồng lấn 0.08f chống hở mối nối)
                         float lockedPosY = _initialBottomY + newHalfHeight + stageYOffset;
-                        seg.position = new Vector3(maxRightX + furthestWidth, lockedPosY, seg.position.z);
+                        seg.position = new Vector3(maxRightX + furthestWidth - 0.08f, lockedPosY, seg.position.z);
                     }
                     else
                     {
-                        seg.position = new Vector3(maxRightX + furthestWidth, seg.position.y, seg.position.z);
+                        seg.position = new Vector3(maxRightX + furthestWidth - 0.08f, seg.position.y, seg.position.z);
                     }
                 }
             }
@@ -251,8 +254,8 @@ public class InfiniteParallaxBackground : MonoBehaviour
                 if (i > 0)
                 {
                     SpriteRenderer prevSr = backgroundLayers[i - 1].GetComponent<SpriteRenderer>();
-                    float prevWidth = (prevSr != null && prevSr.sprite != null) ? prevSr.bounds.size.x : 17.74f;
-                    curr.position = new Vector3(backgroundLayers[i - 1].position.x + prevWidth, lockedPosY, curr.position.z);
+                    float prevWidth = (prevSr != null && prevSr.sprite != null) ? prevSr.bounds.size.x : 21.42f;
+                    curr.position = new Vector3(backgroundLayers[i - 1].position.x + prevWidth - 0.08f, lockedPosY, curr.position.z);
                 }
                 else
                 {
@@ -390,10 +393,13 @@ public class InfiniteParallaxBackground : MonoBehaviour
         // Hoàn tất crossfade: Gán chính thức ảnh mới cho các tấm chính
         ApplyStageSprites(newStageIndex);
 
-        // Ẩn overlay
+        // Xóa hoàn toàn overlay tạm để không bị lưu rác vào scene hay đè hình
         foreach (var ov in overlays)
         {
-            if (ov != null) ov.gameObject.SetActive(false);
+            if (ov != null)
+            {
+                Destroy(ov.gameObject);
+            }
         }
     }
 
