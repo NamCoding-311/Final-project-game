@@ -342,8 +342,11 @@ public class Player3LaneMovement : MonoBehaviour
     public void SetSpeed(float newSpeed) => _currentSpeed = newSpeed;
     public float GetCurrentSpeed() => _currentSpeed;
 
-    // Kiểm tra xem xe có đang trong trạng thái Dash không
+    // Kiem tra xem xe co dang trong trang thai Dash khong
     public bool IsDashing() => _isDashing;
+
+    public float GetMinYLimit() => minYLimit;
+    public float GetMaxYLimit() => maxYLimit;
 
     // Vẽ các đường làn màu xanh và mép đường màu đỏ trên Scene view
     private void OnDrawGizmosSelected()

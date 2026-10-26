@@ -49,7 +49,7 @@ public class PlayerHealth : MonoBehaviour
         damageReduction = Mathf.Clamp(damageReduction + percentage, 0f, 0.75f);
     }
 
-    // Nhận sát thương khi bị Zombie cắn hoặc đâm phải chướng ngại vật
+    // Nhan sat thuong khi bi Zombie can hoac dam phai chuong ngai vat
     public void TakeDamage(int amount)
     {
         if (_isDead) return;
@@ -57,6 +57,9 @@ public class PlayerHealth : MonoBehaviour
         int finalDamage = Mathf.Max(1, Mathf.RoundToInt(amount * (1f - damageReduction)));
         _currentHP -= finalDamage;
         _currentHP = Mathf.Clamp(_currentHP, 0, maxHP);
+
+        Debug.Log($"[PlayerHealth] ({gameObject.name}) Took {finalDamage} damage! HP: {_currentHP}/{maxHP}");
+
         UpdateHPBar();
 
         if (_currentHP <= 0)

@@ -5,7 +5,8 @@ description: |-
   language, operators, sources (scene objects, assets, scenes, prefabs, console logs, Editor state), Editor operations
   (create, add components, scenes, prefabs, assets, selection, Play Mode) and what installed extensions add.
 metadata:
-  generated-by: mcp-plugin-dotnet
+  generated-by: unity-mcp
+  ai-game-dev: exclude
 ---
 # RQL — query and change the Unity Editor
 
@@ -98,3 +99,8 @@ Scenes, prefabs, assets, Editor state:
 - `com.IvanMurzak.Unity.MCP.Editor.Rql.Mathematics.MathematicsModule`
 - `com.IvanMurzak.Unity.MCP.Editor.Rql.Lighting.LightingModule`
 - `com.IvanMurzak.Unity.MCP.Editor.Rql.Physics3D.PhysicsModule`
+
+
+> CLI installation and usage: see the `unity-cli` skill.
+> If this task needs unavailable asset-generation or Blender tools, consult `ai-game-dev-app` for an optional integrated workflow.
+

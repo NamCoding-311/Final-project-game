@@ -1,99 +1,155 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
-// Dữ liệu cấu hình cho 1 Chặng
+// Dữ liệu cấu hình cho 1 Chặng trong Map 1
 [Serializable]
 public class LevelStageInfo
 {
-    public string stageName = "Chặng 1: Sông Ban Ngày";
-    public float bossSpawnDistance = 250f;      // Quãng đường xe chạy đến thì Boss xuất hiện
-    public GameObject bossPrefab;               // Prefab của Boss chặng này
-    public Color lightColor = Color.white;      // Màu ánh sáng Global Light 2D
-    public float lightIntensity = 1f;           // Cường độ sáng
+    [Tooltip("Tên định danh của chặng")]
+    public string stageName = "Stage 1 : Daytime Riverbank";
+
+    [Tooltip("Quãng đường xe chạy đến thì kết thúc chặng (xe đỗ lại để xuống xe)")]
+    public float stageDistance = 180f;
+
+    [Tooltip("Số lượng Zombie cần tiêu diệt khi xuống xe ở cuối chặng")]
+    public int onFootZombieCount = 10;
+
+    [Tooltip("Hệ số máu Zombie ở chặng này (Chặng sau trâu hơn chặng trước)")]
+    public float zombieHpMultiplier = 1.0f;
+
+    [Tooltip("Nhịp độ sinh Zombie lẻ lúc lái xe (giây/con, càng thấp càng đông)")]
+    public float spawnInterval = 1.8f;
+
+    [Tooltip("Số lượng Zombie tối thiểu và tối đa trong 1 đợt bầy quái chốt chặn")]
+    public int minHorde = 4;
+    public int maxHorde = 6;
+
+    [Tooltip("Màu sắc và cường độ ánh sáng môi trường của chặng")]
+    public Color lightColor = Color.white;
+    public float lightIntensity = 1f;
+
+    [Tooltip("Tỉ lệ xuất hiện Zombie Jumper khi lái xe (0-100%)")]
+    [Range(0, 100)] public int jumperSpawnChance = 0;
+
+    [Tooltip("Tỉ lệ xuất hiện Zombie Charger khi lái xe (0-100%)")]
+    [Range(0, 100)] public int chargerSpawnChance = 0;
+
+    [Tooltip("Tỉ lệ quái dị thường trong đợt sóng On-Foot cuối chặng (0-100%)")]
+    [Range(0, 100)] public int onFootSpecialChance = 0;
+
+    [Tooltip("Tùy chọn thông báo nhiệm vụ khi xuống xe ở cuối chặng")]
+    public string onFootPromptText = "";
 }
 
 // Trạng thái của màn chơi
 public enum LevelState
 {
-    NormalDriving,      // Đang chạy đường trường
-    BossWarning,        // Còi báo động Boss sắp xuất hiện
-    BossFight,          // Đang giao chiến với Boss
+    NormalDriving,      // Đang lái xe đường trường
+    ParkingVehicle,     // Xe đang giảm tốc tấp vào lề
+    OnFootDefense,      // Người chơi xuống xe chiến đấu với bầy Zombie
     TransitionCutscene, // Cutscene tăng tốc chuyển giao sang chặng tiếp theo
-    LevelWon            // Chiến thắng hoàn thành cả 3 chặng
+    LevelWon            // Hoàn thành xuất sắc cả 3 chặng của Map 1
 }
 
-// Quản lý tiến trình 3 Chặng (Sáng -> Chiều -> Tối), đấu Trùm và Cutscene chuyển cảnh trên 1 Scene duy nhất
+// Quản lý tiến trình 3 Chặng (Sáng -> Chiều -> Tối) của Map 1:
+// - Lái xe đường dài, càng về cuối chặng Zombie càng đông.
+// - Đến cuối chặng: Xe dừng lại tấp lề, người chơi xuống xe quét sạch bầy Zombie.
+// - Qua mỗi chặng: Zombie được tăng chỉ số HP (trâu hơn).
+// - Hoàn thành chặng 3: Hiện UI chiến thắng chuyển sang Map 2.
 public class StageLevelManager : MonoBehaviour
 {
     [Header("Player & Light References")]
-    [SerializeField] private Transform playerTransform;
-    [SerializeField] private Light2D globalLight2D;
-    [SerializeField] private ZombieSpawner zombieSpawner;
+    [SerializeField] protected Transform playerTransform;
+    [SerializeField] protected Light2D globalLight2D;
+    [SerializeField] protected ZombieSpawner zombieSpawner;
 
     [Header("On-Foot Player & Arena Setup")]
     // Nhân vật người đi bộ khi xuống xe
-    [SerializeField] private OnFootPlayerController onFootPlayer;
+    [SerializeField] protected OnFootPlayerController onFootPlayer;
 
-    // Tham chiếu Camera, Bản đồ và Spawner để khóa/mở khóa đấu trường
-    [SerializeField] private CameraFollow cameraFollow;
-    [SerializeField] private EndlessMapManager mapManager;
-    [SerializeField] private ObstacleSpawner obstacleSpawner;
-    [SerializeField] private InfiniteParallaxBackground parallaxBackground;
+    [SerializeField] protected CameraFollow cameraFollow;
+    [SerializeField] protected EndlessMapManager mapManager;
+    [SerializeField] protected ObstacleSpawner obstacleSpawner;
+    [SerializeField] protected InfiniteParallaxBackground parallaxBackground;
 
     [Header("Stages Setup (3 Chặng Sáng - Chiều - Tối)")]
-    [SerializeField] private LevelStageInfo[] stages = new LevelStageInfo[]
+    [SerializeField] protected LevelStageInfo[] stages = new LevelStageInfo[]
     {
-        new LevelStageInfo { stageName = "Stage 1: Daytime Riverbank", bossSpawnDistance = 250f, lightColor = Color.white, lightIntensity = 1f },
-        new LevelStageInfo { stageName = "Stage 2: Sunset Boulevard", bossSpawnDistance = 500f, lightColor = new Color(1f, 0.6f, 0.3f), lightIntensity = 0.9f },
-        new LevelStageInfo { stageName = "Stage 3: Ruined Night", bossSpawnDistance = 800f, lightColor = new Color(0.2f, 0.3f, 0.5f), lightIntensity = 0.7f }
+        new LevelStageInfo
+        {
+            stageName = "Stage 1 : Morning",
+            stageDistance = 180f,
+            onFootZombieCount = 10,
+            zombieHpMultiplier = 1.0f, // Máu cơ bản 50 HP
+            spawnInterval = 1.8f,
+            minHorde = 4,
+            maxHorde = 6,
+            lightColor = Color.white,
+            lightIntensity = 1f
+        },
+        new LevelStageInfo
+        {
+            stageName = "Stage 2 : Dawn",
+            stageDistance = 420f,
+            onFootZombieCount = 16,
+            zombieHpMultiplier = 1.6f, // Máu trâu hơn: ~80 HP
+            spawnInterval = 1.2f,     // Spawn dày đặc hơn
+            minHorde = 6,
+            maxHorde = 9,
+            lightColor = new Color(1f, 0.65f, 0.35f),
+            lightIntensity = 0.9f
+        },
+        new LevelStageInfo
+        {
+            stageName = "Stage 3 : Night",
+            stageDistance = 700f,
+            onFootZombieCount = 22,
+            zombieHpMultiplier = 2.4f, // Máu cực trâu: ~120 HP
+            spawnInterval = 0.9f,     // Spawn dày đặc nhất
+            minHorde = 7,
+            maxHorde = 11,
+            lightColor = new Color(0.25f, 0.35f, 0.55f),
+            lightIntensity = 0.7f
+        }
     };
 
     [Header("Player Health Bars (Thanh máu Xe & Người)")]
-    // Thanh máu của Xe (sẽ ẩn khi đánh Boss)
-    [SerializeField] private GameObject carHealthBar;
-
-    // Thanh máu của Người đi bộ (Trashcan - chỉ hiện khi xuống xe đánh Boss)
-    [SerializeField] private GameObject onFootHealthBar;
+    [SerializeField] protected GameObject carHealthBar;
+    [SerializeField] protected GameObject onFootHealthBar;
 
     [Header("UI Announcements")]
-    // Text thông báo tên chặng
-    [SerializeField] private TextMeshProUGUI stageAnnouncementText;
+    [SerializeField] protected TextMeshProUGUI stageAnnouncementText;
+    [SerializeField] protected LevelCompleteUI levelCompleteUI;
+    [SerializeField] protected string mapVictoryText = "VICTORY!\nYOU SURVIVED MAP 1: RIVER CITY!";
 
-    // Banner cảnh báo Boss xuất hiện
-    [SerializeField] private GameObject bossWarningBanner;
+    protected int _currentStageIndex = 0;
+    protected LevelState _currentState = LevelState.NormalDriving;
+    protected float _startPlayerX;
+    protected Player3LaneMovement _playerMovement;
 
-    // Thanh máu của Boss trên đỉnh màn hình
-    [SerializeField] private Slider bossHealthBar;
-    [SerializeField] private TextMeshProUGUI bossNameText;
+    // Quản lý đợt Zombie khi xuống xe
+    protected int _remainingWaveZombies = 0;
+    protected int _totalWaveZombies = 0;
+    protected bool _isClimaxSpawnActive = false;
 
-    // Màn hình Chiến Thắng
-    [SerializeField] private GameObject victoryPanel;
-
-    private int _currentStageIndex = 0;
-    private LevelState _currentState = LevelState.NormalDriving;
-    private float _startPlayerX;
-    private ZombieBoss _activeBoss;
-    private Player3LaneMovement _playerMovement;
-
-    private void OnEnable()
+    protected virtual void OnEnable()
     {
-        ZombieBoss.OnBossHealthChanged += UpdateBossHealthUI;
-        ZombieBoss.OnBossDied += HandleBossDefeated;
+        Zombie.OnZombieDied += HandleWaveZombieDied;
     }
 
-    private void OnDisable()
+    protected virtual void OnDisable()
     {
-        ZombieBoss.OnBossHealthChanged -= UpdateBossHealthUI;
-        ZombieBoss.OnBossDied -= HandleBossDefeated;
+        Zombie.OnZombieDied -= HandleWaveZombieDied;
     }
 
-    private void Awake()
+    protected virtual void Awake()
     {
-        // Tự động tắt hoàn toàn nếu đang ở trong chế độ Đấu trường Sinh Tồn (Brotato)
+        // Tự động tắt nếu đang ở chế độ Đấu trường Sinh Tồn (Brotato)
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "ArenaSurvival" || FindAnyObjectByType<ArenaManager>() != null)
         {
             enabled = false;
@@ -101,9 +157,10 @@ public class StageLevelManager : MonoBehaviour
         }
     }
 
-    private void Start()
+    protected virtual void Start()
     {
         if (!enabled) return;
+
         if (playerTransform == null)
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -116,15 +173,8 @@ public class StageLevelManager : MonoBehaviour
             _playerMovement = playerTransform.GetComponent<Player3LaneMovement>();
         }
 
-        if (globalLight2D == null)
-        {
-            globalLight2D = FindAnyObjectByType<Light2D>();
-        }
-
-        if (zombieSpawner == null)
-        {
-            zombieSpawner = FindAnyObjectByType<ZombieSpawner>();
-        }
+        if (globalLight2D == null) globalLight2D = FindAnyObjectByType<Light2D>();
+        if (zombieSpawner == null) zombieSpawner = FindAnyObjectByType<ZombieSpawner>();
 
         if (onFootPlayer == null)
         {
@@ -132,51 +182,24 @@ public class StageLevelManager : MonoBehaviour
         }
         if (onFootPlayer != null)
         {
-            onFootPlayer.gameObject.SetActive(false); // Ẩn lúc đang lái xe
+            onFootPlayer.gameObject.SetActive(false); // Luôn ẩn lúc đang lái xe
         }
 
-        if (cameraFollow == null)
-        {
-            cameraFollow = FindAnyObjectByType<CameraFollow>();
-        }
+        if (cameraFollow == null) cameraFollow = FindAnyObjectByType<CameraFollow>();
+        if (mapManager == null) mapManager = FindAnyObjectByType<EndlessMapManager>();
+        if (obstacleSpawner == null) obstacleSpawner = FindAnyObjectByType<ObstacleSpawner>();
+        if (parallaxBackground == null) parallaxBackground = FindAnyObjectByType<InfiniteParallaxBackground>();
+        if (levelCompleteUI == null) levelCompleteUI = FindAnyObjectByType<LevelCompleteUI>();
 
-        if (mapManager == null)
-        {
-            mapManager = FindAnyObjectByType<EndlessMapManager>();
-        }
-
-        if (obstacleSpawner == null)
-        {
-            obstacleSpawner = FindAnyObjectByType<ObstacleSpawner>();
-        }
-
-        if (parallaxBackground == null)
-        {
-            parallaxBackground = FindAnyObjectByType<InfiniteParallaxBackground>();
-        }
-
-        // Cài đặt trạng thái hiển thị thanh máu ban đầu (Hiện máu xe, ẩn máu người đi bộ)
-        if (carHealthBar == null)
-        {
-            GameObject hpGo = GameObject.Find("HPBar");
-            if (hpGo != null) carHealthBar = hpGo;
-        }
-        if (onFootHealthBar == null)
-        {
-            GameObject onFootHpGo = GameObject.Find("OnFootHPBar");
-            if (onFootHpGo != null) onFootHealthBar = onFootHpGo;
-        }
+        // Thiết lập hiển thị thanh máu
+        if (carHealthBar == null) carHealthBar = GameObject.Find("HPBar");
+        if (onFootHealthBar == null) onFootHealthBar = GameObject.Find("OnFootHPBar");
 
         if (carHealthBar != null) carHealthBar.SetActive(true);
         if (onFootHealthBar != null) onFootHealthBar.SetActive(false);
 
-        // Tắt các UI không cần thiết lúc bắt đầu
-        if (bossWarningBanner != null) bossWarningBanner.SetActive(false);
-        if (bossHealthBar != null) bossHealthBar.gameObject.SetActive(false);
-        if (victoryPanel != null) victoryPanel.SetActive(false);
-
-        // Khởi tạo ánh sáng và background chặng 1
-        ApplyInitialStage();
+        // Áp dụng cấu hình chặng 1
+        ApplyStageSettings(_currentStageIndex, isInstant: true);
     }
 
     private void Update()
@@ -185,63 +208,85 @@ public class StageLevelManager : MonoBehaviour
 
         float currentDistance = playerTransform.position.x - _startPlayerX;
 
-        // Kiểm tra xem đã đến mốc đấu Boss của chặng hiện tại chưa
         if (_currentStageIndex < stages.Length)
         {
-            if (currentDistance >= stages[_currentStageIndex].bossSpawnDistance)
+            LevelStageInfo stage = stages[_currentStageIndex];
+
+            // Khi còn cách cuối chặng 45m: Kích hoạt đợt Zombie tràn ra ồ ạt đón đầu (Cao trào cuối chặng)
+            if (!_isClimaxSpawnActive && currentDistance >= stage.stageDistance - 45f)
             {
-                StartCoroutine(TriggerBossEncounterSequence());
+                _isClimaxSpawnActive = true;
+                if (zombieSpawner != null)
+                {
+                    zombieSpawner.SetClimaxSpawnRate(0.55f); // Tăng tốc độ sinh quái gấp đôi
+                }
+            }
+
+            // Khi xe chạm mốc kết thúc chặng: Tấp xe vào lề và cho người chơi xuống xe
+            if (currentDistance >= stage.stageDistance)
+            {
+                StartCoroutine(TriggerOnFootEncounterSequence());
             }
         }
     }
 
-    // Thiết lập ánh sáng, background và thông báo chặng 1
-    private void ApplyInitialStage()
+    // Áp dụng thông số (Ánh sáng, background, độ khó zombie) của chặng
+    private void ApplyStageSettings(int stageIndex, bool isInstant)
     {
-        if (stages.Length > 0)
+        if (stageIndex < 0 || stageIndex >= stages.Length) return;
+        LevelStageInfo stage = stages[stageIndex];
+
+        // 1. Cập nhật độ khó Zombie Spawner
+        if (zombieSpawner != null)
         {
-            if (globalLight2D != null)
-            {
-                globalLight2D.color = stages[0].lightColor;
-                globalLight2D.intensity = stages[0].lightIntensity;
-            }
-
-            if (parallaxBackground != null)
-            {
-                parallaxBackground.ApplyStageSprites(0);
-            }
-
-            ShowStageAnnouncement(stages[0].stageName);
+            zombieSpawner.SetStageDifficulty(
+                stageIndex,
+                stage.zombieHpMultiplier,
+                stage.spawnInterval,
+                stage.minHorde,
+                stage.maxHorde
+            );
+            zombieSpawner.SetSpecialSpawnChances(stage.jumperSpawnChance, stage.chargerSpawnChance);
         }
+
+        // 2. Cập nhật ánh sáng
+        if (globalLight2D != null && isInstant)
+        {
+            globalLight2D.color = stage.lightColor;
+            globalLight2D.intensity = stage.lightIntensity;
+        }
+
+        // 3. Cập nhật Background
+        if (parallaxBackground != null && isInstant)
+        {
+            parallaxBackground.ApplyStageSprites(stageIndex);
+        }
+
+        ShowStageAnnouncement(stage.stageName);
+        _isClimaxSpawnActive = false;
     }
 
-    // Chuỗi dừng xe, tấp lề góc trên bên trái, người chơi xuống xe và khóa đấu trường Boss
-    private IEnumerator TriggerBossEncounterSequence()
+    // Chuỗi dừng xe, tấp lề góc trên bên trái, người chơi xuống xe bắn Zombie
+    private IEnumerator TriggerOnFootEncounterSequence()
     {
-        _currentState = LevelState.BossWarning;
+        _currentState = LevelState.ParkingVehicle;
 
-        // Tắt điều khiển người chơi trên xe
-        if (_playerMovement != null)
-        {
-            _playerMovement.enabled = false;
-        }
-
-        // Tắt súng trên xe để không bắn tự động khi người chơi đã xuống xe
+        // Tắt điều khiển xe và súng xe
+        if (_playerMovement != null) _playerMovement.enabled = false;
         PlayerShooting carShooting = playerTransform != null ? playerTransform.GetComponent<PlayerShooting>() : null;
         if (carShooting != null) carShooting.enabled = false;
 
-        // 1. Tự động lái xe tấp vào lề đường ở góc trên bên trái (Top-Left Parking)
-        float topParkY = 2.4f; // Làn trên cùng sát lề đường
+        // 1. Tự động tấp xe vào lề trên bên trái (Làn trên cùng)
+        float topParkY = 2.4f;
         if (_playerMovement != null)
         {
             topParkY = _playerMovement.GetLaneY(_playerMovement.GetTotalLanes() - 1);
         }
 
         Vector3 startCarPos = playerTransform != null ? playerTransform.position : Vector3.zero;
-        float targetParkX = startCarPos.x + 8f; // Xe giảm tốc trôi nhẹ 8m về phía trước rồi đỗ hẳn
+        float targetParkX = startCarPos.x + 8f; // Trôi nhẹ 8m rồi dừng hẳn
         Vector3 targetParkPos = new Vector3(targetParkX, topParkY, startCarPos.z);
 
-        // Hiệu ứng xe giảm tốc và tấp dần lên lề trên bên trái trong 0.8 giây
         float parkElapsed = 0f;
         float parkDuration = 0.8f;
         while (parkElapsed < parkDuration)
@@ -254,36 +299,32 @@ public class StageLevelManager : MonoBehaviour
             }
             yield return null;
         }
-        if (playerTransform != null)
-        {
-            playerTransform.position = targetParkPos;
-        }
+        if (playerTransform != null) playerTransform.position = targetParkPos;
 
-        // 2. Tính toán phạm vi đấu trường (Arena) quanh vị trí đỗ xe ở góc trên bên trái
+        // 2. Thiết lập phạm vi đấu trường (tự động tương thích với mép đường của từng Map)
         float arenaLeft = targetParkPos.x - 4f;
         float arenaRight = targetParkPos.x + 22f;
-        float arenaBottom = -1.2f;
-        float arenaTop = 3.2f;
+        float arenaBottom = _playerMovement != null ? _playerMovement.GetMinYLimit() : (zombieSpawner != null ? zombieSpawner.GetRoadMinY() : -1.2f);
+        float arenaTop = _playerMovement != null ? _playerMovement.GetMaxYLimit() : (zombieSpawner != null ? zombieSpawner.GetRoadMaxY() : 3.2f);
+        float centerArenaY = (arenaBottom + arenaTop) * 0.5f;
 
-        // Tạm ngưng bản đồ và quái thường
+        // Tạm dừng sinh quái thường và vật cản
         if (mapManager != null) mapManager.SetSpawningPaused(true);
         if (zombieSpawner != null) zombieSpawner.SetSpawningActive(false);
         if (obstacleSpawner != null) obstacleSpawner.enabled = false;
 
-        // Tiêu diệt toàn bộ Zombie con tàn dư trên màn hình để đấu trường sạch sẽ cho trận đánh Boss
-        Zombie[] leftoverZombies = FindObjectsByType<Zombie>();
+        // Dọn dẹp quái lẻ cũ trên đường
+        Zombie[] leftoverZombies = FindObjectsByType<Zombie>(FindObjectsSortMode.None);
         foreach (var z in leftoverZombies)
         {
-            if (z != null)
-            {
-                Destroy(z.gameObject);
-            }
+            if (z != null) Destroy(z.gameObject);
         }
 
-        // 3. Cho người chơi bước xuống xe (Kích hoạt OnFootPlayer ngay dưới mép xe đỗ)
+        // 3. Cho người chơi bước xuống xe
         if (onFootPlayer != null)
         {
-            Vector3 spawnPos = new Vector3(targetParkPos.x + 1.2f, targetParkPos.y - 1.2f, 0f);
+            float playerSpawnY = Mathf.Clamp(targetParkPos.y - 0.8f, arenaBottom + 0.3f, arenaTop - 0.3f);
+            Vector3 spawnPos = new Vector3(targetParkPos.x + 1.2f, playerSpawnY, 0f);
             onFootPlayer.transform.position = spawnPos;
             onFootPlayer.SetArenaBounds(arenaLeft, arenaRight, arenaBottom, arenaTop);
             onFootPlayer.gameObject.SetActive(true);
@@ -291,129 +332,100 @@ public class StageLevelManager : MonoBehaviour
             PlayerShooting footShooting = onFootPlayer.GetComponent<PlayerShooting>();
             if (footShooting != null) footShooting.enabled = true;
 
-            // Chuyển Camera sang bám theo người đi bộ và khóa khung nhìn trong đấu trường
+            // Khóa Camera bám theo người đi bộ ở trung tâm làn đường
             if (cameraFollow != null)
             {
                 cameraFollow.SetTarget(onFootPlayer.transform);
-                cameraFollow.SetArenaLock(true, targetParkPos.x + 4f, targetParkPos.x + 18f, 0f);
+                cameraFollow.SetArenaLock(true, targetParkPos.x + 4f, targetParkPos.x + 18f, centerArenaY);
             }
 
-            // Ẩn thanh máu của xe, hiện thanh máu của nhân vật đi bộ (Trashcan)
+            // Đổi thanh máu
             if (carHealthBar != null) carHealthBar.SetActive(false);
             if (onFootHealthBar != null) onFootHealthBar.SetActive(true);
-
-            // Chuyển toàn bộ Zombie thường và Boss sang tập trung rượt đuổi người chơi đi bộ thay vì cái xe
-            RedirectAllZombiesTo(onFootPlayer.transform);
         }
 
-        // 4. Nhấp nháy cảnh báo Boss
-        if (bossWarningBanner != null) bossWarningBanner.SetActive(true);
+        _currentState = LevelState.OnFootDefense;
 
-        yield return new WaitForSeconds(2.0f);
-
-        if (bossWarningBanner != null) bossWarningBanner.SetActive(false);
-
-        // 5. Sinh Boss ra phía đối diện trong sàn đấu
-        SpawnBossForCurrentStage(arenaLeft, arenaRight, arenaBottom, arenaTop);
-
-        _currentState = LevelState.BossFight;
-    }
-
-    // Sinh Boss và gán mục tiêu tấn công là nhân vật đi bộ
-    private void SpawnBossForCurrentStage(float leftX, float rightX, float bottomY, float topY)
-    {
         LevelStageInfo currentStage = stages[_currentStageIndex];
+        _totalWaveZombies = currentStage.onFootZombieCount;
+        _remainingWaveZombies = _totalWaveZombies;
 
-        Transform targetTransform = onFootPlayer != null && onFootPlayer.gameObject.activeInHierarchy
-            ? onFootPlayer.transform
-            : playerTransform;
-
-        // Vị trí sinh Boss:  xuất hiện ngay mép phải màn hình
-        Vector3 spawnPos = new Vector3(targetTransform.position.x + 14f, targetTransform.position.y, 0f);
-
-        GameObject bossObj = null;
-        if (currentStage.bossPrefab != null)
-        {
-            bossObj = Instantiate(currentStage.bossPrefab, spawnPos, Quaternion.identity);
-        }
-        else
-        {
-            // Dự phòng: Nếu chưa tạo riêng Prefab Boss, tự động lấy Zombie thường phóng to 1.8x và tăng máu
-            GameObject zombieObj = GameObject.FindGameObjectWithTag("Zombie");
-            if (zombieObj != null)
+        // Thông báo nhiệm vụ bằng tiếng Anh
+        string waveNotice = !string.IsNullOrEmpty(currentStage.onFootPromptText)
+            ? currentStage.onFootPromptText
+            : _currentStageIndex switch
             {
-                bossObj = Instantiate(zombieObj, spawnPos, Quaternion.identity);
-                bossObj.transform.localScale *= 1.8f;
-                ZombieBoss zb = bossObj.AddComponent<ZombieBoss>();
-                zb.TakeDamage(-1); // Kích hoạt sự kiện
-            }
+                0 => $"STAGE 1 CHECKPOINT!\nDISMOUNT AND CLEAR {_totalWaveZombies} ZOMBIES TO PROCEED!",
+                1 => $"STAGE 2 CHECKPOINT!\nCLEAR {_totalWaveZombies} MUTATED ZOMBIES!",
+                _ => $"FINAL OUTBREAK!\nELIMINATE {_totalWaveZombies} ZOMBIES TO ESCAPE THE CITY!"
+            };
+        ShowStageAnnouncement(waveNotice, 4f);
+
+        yield return new WaitForSeconds(1.5f);
+
+        // Nếu Zombie Spawner bị tắt thì tự động bỏ qua đợt quái
+        if (zombieSpawner == null || !zombieSpawner.enabled || !zombieSpawner.gameObject.activeInHierarchy || !zombieSpawner.IsSpawningEnabled())
+        {
+            yield return new WaitForSeconds(1.0f);
+            StartCoroutine(RemountVehicleAndProceed());
+            yield break;
         }
 
-        if (bossObj != null)
+        // 4. Sinh đợt Zombie bao vây với chỉ số máu và tỉ lệ dị thường của chặng này
+        Transform target = onFootPlayer != null ? onFootPlayer.transform : playerTransform;
+        if (zombieSpawner != null)
         {
-            _activeBoss = bossObj.GetComponent<ZombieBoss>();
-            if (_activeBoss != null)
-            {
-                _activeBoss.SetTarget(targetTransform);
-                _activeBoss.SetArenaBounds(leftX, rightX, bottomY, topY);
-            }
-
-            if (bossHealthBar != null)
-            {
-                bossHealthBar.gameObject.SetActive(true);
-                if (_activeBoss != null && bossNameText != null)
-                {
-                    bossNameText.text = _activeBoss.GetBossName();
-                }
-            }
+            zombieSpawner.SpawnOnFootWave(
+                target,
+                _totalWaveZombies,
+                arenaLeft,
+                arenaRight,
+                arenaBottom,
+                arenaTop,
+                currentStage.zombieHpMultiplier,
+                currentStage.onFootSpecialChance
+            );
         }
     }
 
-    // Cập nhật thanh máu Boss
-    private void UpdateBossHealthUI(ZombieBoss boss, int currentHp, int maxHp)
+    // Xử lý khi 1 Zombie trong đợt sóng bị hạ gục
+    private void HandleWaveZombieDied(Zombie zombie)
     {
-        if (bossHealthBar != null)
+        if (_currentState != LevelState.OnFootDefense) return;
+
+        _remainingWaveZombies = Mathf.Max(0, _remainingWaveZombies - 1);
+        UpdateWaveCountAnnouncement();
+
+        // Khi toàn bộ Zombie trong đợt bị tiêu diệt
+        if (_remainingWaveZombies <= 0)
         {
-            bossHealthBar.maxValue = maxHp;
-            bossHealthBar.value = currentHp;
+            StartCoroutine(RemountVehicleAndProceed());
         }
     }
 
-    // Xử lý khi Boss bị tiêu diệt
-    private void HandleBossDefeated(ZombieBoss boss)
+    private void UpdateWaveCountAnnouncement()
     {
-        if (bossHealthBar != null) bossHealthBar.gameObject.SetActive(false);
-
-        // Kích hoạt chuỗi bước lên xe và tiếp tục hành trình
-        StartCoroutine(RemountVehicleAndProceed());
+        if (_remainingWaveZombies > 0)
+        {
+            ShowStageAnnouncement($"ZOMBIES: {_remainingWaveZombies} / {_totalWaveZombies}", 1.5f);
+        }
     }
 
-    // Người chơi bước lên lại xe, mở khóa đấu trường và chuyển sang chặng tiếp theo
+    // Người chơi bước lên lại xe, hoàn thành chặng và chuyển sang chặng tiếp theo
     private IEnumerator RemountVehicleAndProceed()
     {
-        ShowStageAnnouncement("BOSS DEFEATED!\nRETURN TO VEHICLE AND PROCEED");
+        _currentState = LevelState.ParkingVehicle;
 
+        ShowStageAnnouncement("HORDE CLEARED!\nRETURN TO VEHICLE AND PROCEED!", 2.5f);
         yield return new WaitForSeconds(1.2f);
 
-        // 1. Ẩn nhân vật người đi bộ
-        if (onFootPlayer != null)
-        {
-            onFootPlayer.gameObject.SetActive(false);
-        }
-
-        // Ẩn thanh máu của người đi bộ, hiện lại thanh máu của xe
+        // 1. Ẩn người đi bộ, hiện lại thanh máu xe
+        if (onFootPlayer != null) onFootPlayer.gameObject.SetActive(false);
         if (onFootHealthBar != null) onFootHealthBar.SetActive(false);
         if (carHealthBar != null) carHealthBar.SetActive(true);
 
-        // Chuyển toàn bộ Zombie nhắm lại vào xe
-        RedirectAllZombiesTo(playerTransform);
-
         // 2. Bật lại điều khiển xe và súng trên xe
-        if (_playerMovement != null)
-        {
-            _playerMovement.enabled = true;
-        }
-
+        if (_playerMovement != null) _playerMovement.enabled = true;
         PlayerShooting carShooting = playerTransform != null ? playerTransform.GetComponent<PlayerShooting>() : null;
         if (carShooting != null) carShooting.enabled = true;
 
@@ -424,34 +436,23 @@ public class StageLevelManager : MonoBehaviour
             cameraFollow.SetArenaLock(false);
         }
 
-        // 4. Mở khóa bản đồ và chướng ngại vật
+        // 4. Mở khóa bản đồ và vật cản
         if (mapManager != null) mapManager.SetSpawningPaused(false);
         if (obstacleSpawner != null) obstacleSpawner.enabled = true;
 
-        // 5. Nếu là Boss cuối cùng (Chặng 3) -> CHIẾN THẮNG
+        // 5. Kiểm tra xem đã hoàn thành chặng cuối (Chặng 3) chưa
         if (_currentStageIndex >= stages.Length - 1)
         {
             StartCoroutine(TriggerVictorySequence());
         }
         else
         {
-            // Nếu là Chặng 1 hoặc 2 -> Cutscene tăng tốc chuyển sang chặng tiếp theo
+            // Nếu là Chặng 1 hoặc 2 -> Cutscene chuyển sang chặng tiếp theo
             StartCoroutine(TriggerStageTransitionCutscene());
         }
     }
 
-    // Chuyển hướng toàn bộ Zombie thường đang có trong Scene sang nhắm vào mục tiêu mới
-    public void RedirectAllZombiesTo(Transform newTarget)
-    {
-        if (newTarget == null) return;
-        Zombie[] allZombies = FindObjectsByType<Zombie>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-        foreach (var z in allZombies)
-        {
-            if (z != null) z.SetTarget(newTarget);
-        }
-    }
-
-    // Cutscene chuyển chặng: Xe tăng tốc Nitro, ánh sáng đổi màu, thông báo chặng mới
+    // Cutscene chuyển chặng: Xe phóng nhanh Nitro, ánh sáng & background fade mượt mà
     private IEnumerator TriggerStageTransitionCutscene()
     {
         _currentState = LevelState.TransitionCutscene;
@@ -459,21 +460,21 @@ public class StageLevelManager : MonoBehaviour
         int nextStageIndex = _currentStageIndex + 1;
         LevelStageInfo nextStage = stages[nextStageIndex];
 
-        ShowStageAnnouncement($"HOÀN THÀNH CHẶNG {_currentStageIndex + 1}!\nTIẾN VÀO {nextStage.stageName.ToUpper()}");
+        ShowStageAnnouncement($"STAGE {_currentStageIndex + 1} COMPLETE!\nENTERING {nextStage.stageName.ToUpper()}", 3.5f);
 
-        // 1. Kích hoạt xe tăng tốc phóng nhanh lướt qua xác Boss
+        // 1. Xe tăng tốc Nitro phóng vút qua
         if (_playerMovement != null)
         {
-            _playerMovement.SetSpeed(24f);
+            _playerMovement.SetSpeed(22f);
         }
 
-        // 2. Chuyển đổi Background Parallax sang chặng mới (Crossfade mượt mà 2.0s)
+        // 2. Đổi Background Parallax (Fade 2.0s)
         if (parallaxBackground != null)
         {
             parallaxBackground.SwitchToStage(nextStageIndex, fadeDuration: 2.0f);
         }
 
-        // 3. Chuyển đổi màu ánh sáng Global Light 2D mượt mà (Fade sang màu của chặng mới)
+        // 3. Fade màu ánh sáng Global Light 2D sang chặng mới
         if (globalLight2D != null)
         {
             Color startColor = globalLight2D.color;
@@ -498,41 +499,49 @@ public class StageLevelManager : MonoBehaviour
             yield return new WaitForSeconds(2.5f);
         }
 
-        // 3. Chuyển sang chặng mới
+        // 4. Áp dụng độ khó và máu mới cho Zombie ở chặng mới
         _currentStageIndex = nextStageIndex;
+        ApplyStageSettings(_currentStageIndex, isInstant: false);
 
-        // Bật lại sinh zombie thường
-        if (zombieSpawner != null) zombieSpawner.SetSpawningActive(true);
+        if (zombieSpawner != null)
+        {
+            zombieSpawner.SetSpawningActive(true);
+        }
 
         _currentState = LevelState.NormalDriving;
     }
 
-    // Chuỗi sự kiện Chiến Thắng Màn Chơi (Victory)
+    // Chuỗi sự kiện Chiến Thắng Map 1 (Hoàn thành cả 3 chặng)
     private IEnumerator TriggerVictorySequence()
     {
         _currentState = LevelState.LevelWon;
 
-        ShowStageAnnouncement("VICTORY! YOU SURVIVED THE NIGHT!");
+        ShowStageAnnouncement(mapVictoryText, 4f);
 
         if (zombieSpawner != null) zombieSpawner.SetSpawningActive(false);
 
         yield return new WaitForSeconds(2.0f);
 
-        if (victoryPanel != null)
+        // Hiện bảng Level Complete để bấm sang Map 2
+        if (levelCompleteUI != null)
         {
-            victoryPanel.SetActive(true);
+            levelCompleteUI.ShowCompletePanel();
+        }
+        else
+        {
+            GameObject lcGo = GameObject.Find("LevelCompletePanel");
+            if (lcGo != null) lcGo.SetActive(true);
         }
     }
 
-    // Hiển thị dòng chữ thông báo trên màn hình
-    private void ShowStageAnnouncement(string message)
+    private void ShowStageAnnouncement(string message, float duration = 3f)
     {
         if (stageAnnouncementText != null)
         {
             stageAnnouncementText.text = message;
             stageAnnouncementText.gameObject.SetActive(true);
             CancelInvoke(nameof(HideStageAnnouncement));
-            Invoke(nameof(HideStageAnnouncement), 3f);
+            Invoke(nameof(HideStageAnnouncement), duration);
         }
     }
 
@@ -550,39 +559,21 @@ public class StageLevelManager : MonoBehaviour
     [ContextMenu("TEST: Chuyển Sang Chặng 1 (Sáng)")]
     public void TestSwitchToStage1()
     {
-        if (parallaxBackground != null) parallaxBackground.SwitchToStage(0, 2f);
-        if (globalLight2D != null && stages.Length > 0)
-        {
-            globalLight2D.color = stages[0].lightColor;
-            globalLight2D.intensity = stages[0].lightIntensity;
-        }
         _currentStageIndex = 0;
-        ShowStageAnnouncement("TEST: TIẾN VÀO " + stages[0].stageName.ToUpper());
+        ApplyStageSettings(0, isInstant: true);
     }
 
     [ContextMenu("TEST: Chuyển Sang Chặng 2 (Hoàng Hôn)")]
     public void TestSwitchToStage2()
     {
-        if (parallaxBackground != null) parallaxBackground.SwitchToStage(1, 2f);
-        if (globalLight2D != null && stages.Length > 1)
-        {
-            globalLight2D.color = stages[1].lightColor;
-            globalLight2D.intensity = stages[1].lightIntensity;
-        }
         _currentStageIndex = 1;
-        ShowStageAnnouncement("TEST: TIẾN VÀO " + stages[1].stageName.ToUpper());
+        ApplyStageSettings(1, isInstant: true);
     }
 
     [ContextMenu("TEST: Chuyển Sang Chặng 3 (Đêm Tàn Tích)")]
     public void TestSwitchToStage3()
     {
-        if (parallaxBackground != null) parallaxBackground.SwitchToStage(2, 2f);
-        if (globalLight2D != null && stages.Length > 2)
-        {
-            globalLight2D.color = stages[2].lightColor;
-            globalLight2D.intensity = stages[2].lightIntensity;
-        }
         _currentStageIndex = 2;
-        ShowStageAnnouncement("TEST: TIẾN VÀO " + stages[2].stageName.ToUpper());
+        ApplyStageSettings(2, isInstant: true);
     }
 }
