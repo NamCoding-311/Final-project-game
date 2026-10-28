@@ -44,6 +44,22 @@ public class LevelStageInfo
 
     [Tooltip("Tùy chọn thông báo nhiệm vụ khi xuống xe ở cuối chặng")]
     public string onFootPromptText = "";
+
+    [Header("Boss Encounter Settings")]
+    [Tooltip("Đánh dấu chặng này là trận đấu Trùm (Boss) khi xuống xe")]
+    public bool isBossStage = false;
+
+    [Tooltip("Cho phép Boss dùng chiêu Ném Đá (Rock Throw)")]
+    public bool bossAllowRockThrow = true;
+
+    [Tooltip("Cho phép Boss dùng chiêu Húc Tốc (Charge Attack)")]
+    public bool bossAllowCharge = false;
+
+    [Tooltip("Hệ số máu của Boss ở chặng này")]
+    public float bossHpMultiplier = 1.0f;
+
+    [Tooltip("Tên định danh của Boss hiển thị khi xuất hiện")]
+    public string bossName = "TANK ZOMBIE";
 }
 
 // Trạng thái của màn chơi
@@ -122,6 +138,12 @@ public class StageLevelManager : MonoBehaviour
     [SerializeField] protected GameObject carHealthBar;
     [SerializeField] protected GameObject onFootHealthBar;
 
+    [Header("Boss Setup")]
+    [SerializeField] protected GameObject bossPrefab;
+    [SerializeField] protected Slider bossHealthBar;
+    [SerializeField] protected TextMeshProUGUI bossWarningText;
+    protected ZombieBoss _activeBossInstance;
+
     [Header("UI Announcements")]
     [SerializeField] protected TextMeshProUGUI stageAnnouncementText;
     [SerializeField] protected LevelCompleteUI levelCompleteUI;
@@ -140,11 +162,15 @@ public class StageLevelManager : MonoBehaviour
     protected virtual void OnEnable()
     {
         Zombie.OnZombieDied += HandleWaveZombieDied;
+        ZombieBoss.OnBossHealthChanged += HandleBossHealthChanged;
+        ZombieBoss.OnBossDied += HandleBossDied;
     }
 
     protected virtual void OnDisable()
     {
         Zombie.OnZombieDied -= HandleWaveZombieDied;
+        ZombieBoss.OnBossHealthChanged -= HandleBossHealthChanged;
+        ZombieBoss.OnBossDied -= HandleBossDied;
     }
 
     protected virtual void Awake()
@@ -193,10 +219,29 @@ public class StageLevelManager : MonoBehaviour
 
         // Thiết lập hiển thị thanh máu
         if (carHealthBar == null) carHealthBar = GameObject.Find("HPBar");
-        if (onFootHealthBar == null) onFootHealthBar = GameObject.Find("OnFootHPBar");
+        if (onFootHealthBar == null)
+        {
+            onFootHealthBar = GameObject.Find("OnFootBar");
+            if (onFootHealthBar == null) onFootHealthBar = GameObject.Find("OnFootHPBar");
+        }
 
         if (carHealthBar != null) carHealthBar.SetActive(true);
         if (onFootHealthBar != null) onFootHealthBar.SetActive(false);
+
+        // Thiết lập UI Trùm (Boss UI)
+        if (bossHealthBar == null)
+        {
+            GameObject barObj = GameObject.Find("BossHealthBar");
+            if (barObj != null) bossHealthBar = barObj.GetComponent<Slider>();
+        }
+        if (bossHealthBar != null) bossHealthBar.gameObject.SetActive(false);
+
+        if (bossWarningText == null)
+        {
+            GameObject warnObj = GameObject.Find("BossWarningBanner");
+            if (warnObj != null) bossWarningText = warnObj.GetComponent<TextMeshProUGUI>();
+        }
+        if (bossWarningText != null) bossWarningText.gameObject.SetActive(false);
 
         // Áp dụng cấu hình chặng 1
         ApplyStageSettings(_currentStageIndex, isInstant: true);
@@ -347,44 +392,131 @@ public class StageLevelManager : MonoBehaviour
         _currentState = LevelState.OnFootDefense;
 
         LevelStageInfo currentStage = stages[_currentStageIndex];
-        _totalWaveZombies = currentStage.onFootZombieCount;
-        _remainingWaveZombies = _totalWaveZombies;
 
-        // Thông báo nhiệm vụ bằng tiếng Anh
-        string waveNotice = !string.IsNullOrEmpty(currentStage.onFootPromptText)
-            ? currentStage.onFootPromptText
-            : _currentStageIndex switch
+        // Nếu chặng này là Trận đấu Trùm (Boss Battle)
+        if (currentStage.isBossStage)
+        {
+            string bossTitle = !string.IsNullOrEmpty(currentStage.bossName) ? currentStage.bossName : "TANK ZOMBIE";
+
+            if (bossWarningText != null)
             {
-                0 => $"STAGE 1 CHECKPOINT!\nDISMOUNT AND CLEAR {_totalWaveZombies} ZOMBIES TO PROCEED!",
-                1 => $"STAGE 2 CHECKPOINT!\nCLEAR {_totalWaveZombies} MUTATED ZOMBIES!",
-                _ => $"FINAL OUTBREAK!\nELIMINATE {_totalWaveZombies} ZOMBIES TO ESCAPE THE CITY!"
-            };
-        ShowStageAnnouncement(waveNotice, 4f);
+                bossWarningText.text = $"WARNING!\n{bossTitle.ToUpper()} APPROACHING!";
+                bossWarningText.gameObject.SetActive(true);
+            }
+            ShowStageAnnouncement($"WARNING: {bossTitle.ToUpper()} APPROACHING!", 3.5f);
 
-        yield return new WaitForSeconds(1.5f);
+            yield return new WaitForSeconds(2.0f);
 
-        // Nếu Zombie Spawner bị tắt thì tự động bỏ qua đợt quái
-        if (zombieSpawner == null || !zombieSpawner.enabled || !zombieSpawner.gameObject.activeInHierarchy || !zombieSpawner.IsSpawningEnabled())
-        {
-            yield return new WaitForSeconds(1.0f);
-            StartCoroutine(RemountVehicleAndProceed());
-            yield break;
+            if (bossWarningText != null)
+            {
+                bossWarningText.gameObject.SetActive(false);
+            }
+
+            if (bossPrefab != null)
+            {
+                Vector3 bossSpawnPos = new Vector3(arenaRight - 3f, centerArenaY, 0f);
+                GameObject bossObj = Instantiate(bossPrefab, bossSpawnPos, Quaternion.identity);
+                _activeBossInstance = bossObj.GetComponent<ZombieBoss>();
+
+                if (_activeBossInstance != null)
+                {
+                    Transform bossTarget = onFootPlayer != null ? onFootPlayer.transform : playerTransform;
+                    _activeBossInstance.SetTarget(bossTarget);
+                    _activeBossInstance.SetArenaBounds(arenaLeft, arenaRight, arenaBottom, arenaTop);
+                    _activeBossInstance.ConfigureBossSkills(
+                        currentStage.bossAllowRockThrow,
+                        currentStage.bossAllowCharge,
+                        currentStage.bossHpMultiplier
+                    );
+                }
+
+                if (bossHealthBar != null)
+                {
+                    var nameText = bossHealthBar.GetComponentInChildren<TextMeshProUGUI>(true);
+                    if (nameText != null)
+                    {
+                        nameText.text = bossTitle.ToUpper();
+                    }
+
+                    bossHealthBar.gameObject.SetActive(true);
+                    int expectedMaxHp = Mathf.RoundToInt(500 * currentStage.bossHpMultiplier);
+                    bossHealthBar.maxValue = expectedMaxHp;
+                    bossHealthBar.value = expectedMaxHp;
+                }
+            }
+            else
+            {
+                Debug.LogWarning("BossPrefab is null! Cannot spawn Boss, advancing to next stage...");
+                yield return new WaitForSeconds(1.0f);
+                StartCoroutine(RemountVehicleAndProceed());
+            }
         }
-
-        // 4. Sinh đợt Zombie bao vây với chỉ số máu và tỉ lệ dị thường của chặng này
-        Transform target = onFootPlayer != null ? onFootPlayer.transform : playerTransform;
-        if (zombieSpawner != null)
+        else
         {
-            zombieSpawner.SpawnOnFootWave(
-                target,
-                _totalWaveZombies,
-                arenaLeft,
-                arenaRight,
-                arenaBottom,
-                arenaTop,
-                currentStage.zombieHpMultiplier,
-                currentStage.onFootSpecialChance
-            );
+            _totalWaveZombies = currentStage.onFootZombieCount;
+            _remainingWaveZombies = _totalWaveZombies;
+
+            // Thông báo nhiệm vụ bằng tiếng Anh
+            string waveNotice = !string.IsNullOrEmpty(currentStage.onFootPromptText)
+                ? currentStage.onFootPromptText
+                : _currentStageIndex switch
+                {
+                    0 => $"STAGE 1 CHECKPOINT!\nDISMOUNT AND CLEAR {_totalWaveZombies} ZOMBIES TO PROCEED!",
+                    1 => $"STAGE 2 CHECKPOINT!\nCLEAR {_totalWaveZombies} MUTATED ZOMBIES!",
+                    _ => $"FINAL OUTBREAK!\nELIMINATE {_totalWaveZombies} ZOMBIES TO ESCAPE THE CITY!"
+                };
+            ShowStageAnnouncement(waveNotice, 4f);
+
+            yield return new WaitForSeconds(1.5f);
+
+            // Nếu Zombie Spawner bị tắt thì tự động bỏ qua đợt quái
+            if (zombieSpawner == null || !zombieSpawner.enabled || !zombieSpawner.gameObject.activeInHierarchy || !zombieSpawner.IsSpawningEnabled())
+            {
+                yield return new WaitForSeconds(1.0f);
+                StartCoroutine(RemountVehicleAndProceed());
+                yield break;
+            }
+
+            // 4. Sinh đợt Zombie bao vây với chỉ số máu và tỉ lệ dị thường của chặng này
+            Transform target = onFootPlayer != null ? onFootPlayer.transform : playerTransform;
+            if (zombieSpawner != null)
+            {
+                zombieSpawner.SpawnOnFootWave(
+                    target,
+                    _totalWaveZombies,
+                    arenaLeft,
+                    arenaRight,
+                    arenaBottom,
+                    arenaTop,
+                    currentStage.zombieHpMultiplier,
+                    currentStage.onFootSpecialChance
+                );
+            }
+        }
+    }
+
+    // Xử lý cập nhật máu Trùm khi nhận sát thương
+    protected virtual void HandleBossHealthChanged(ZombieBoss boss, int currentHp, int maxHp)
+    {
+        if (_currentState != LevelState.OnFootDefense) return;
+        if (boss == _activeBossInstance && bossHealthBar != null)
+        {
+            bossHealthBar.maxValue = maxHp;
+            bossHealthBar.value = currentHp;
+        }
+    }
+
+    // Xử lý khi Trùm bị tiêu diệt
+    protected virtual void HandleBossDied(ZombieBoss boss)
+    {
+        if (_currentState != LevelState.OnFootDefense) return;
+        if (boss == _activeBossInstance)
+        {
+            _activeBossInstance = null;
+            if (bossHealthBar != null) bossHealthBar.gameObject.SetActive(false);
+            if (bossWarningText != null) bossWarningText.gameObject.SetActive(false);
+            ShowStageAnnouncement("BOSS DEFEATED!\nTHREAT NEUTRALIZED!", 3f);
+            StartCoroutine(RemountVehicleAndProceed());
         }
     }
 
@@ -419,10 +551,18 @@ public class StageLevelManager : MonoBehaviour
         ShowStageAnnouncement("HORDE CLEARED!\nRETURN TO VEHICLE AND PROCEED!", 2.5f);
         yield return new WaitForSeconds(1.2f);
 
-        // 1. Ẩn người đi bộ, hiện lại thanh máu xe
+        // 1. Ẩn người đi bộ, hiện lại thanh máu xe và tắt UI Boss
         if (onFootPlayer != null) onFootPlayer.gameObject.SetActive(false);
         if (onFootHealthBar != null) onFootHealthBar.SetActive(false);
         if (carHealthBar != null) carHealthBar.SetActive(true);
+
+        if (_activeBossInstance != null)
+        {
+            Destroy(_activeBossInstance.gameObject);
+            _activeBossInstance = null;
+        }
+        if (bossHealthBar != null) bossHealthBar.gameObject.SetActive(false);
+        if (bossWarningText != null) bossWarningText.gameObject.SetActive(false);
 
         // 2. Bật lại điều khiển xe và súng trên xe
         if (_playerMovement != null) _playerMovement.enabled = true;

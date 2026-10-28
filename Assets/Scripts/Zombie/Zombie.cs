@@ -15,7 +15,8 @@ public class Zombie : MonoBehaviour
     [SerializeField] private int attackDamage = 15;
 
     [Header("Attack Settings")]
-    [SerializeField] private float attackRange = 1.2f;
+    [Tooltip("Khoảng cách tiếp cận để bắt đầu đánh và gây sát thương (mét)")]
+    [SerializeField] private float attackRange = 0.35f;
     [SerializeField] private float attackCooldown = 1.5f;
 
     [Header("Directional Sprites")]

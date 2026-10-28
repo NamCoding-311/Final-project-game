@@ -167,7 +167,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.32, y: 0.47}
+  m_Size: {x: 0.32, y: 0.33}
   m_EdgeRadius: 0
 --- !u!58 &494937548067431963
 CircleCollider2D:
@@ -204,7 +204,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0.0036738813, y: -0.014695913}
-  m_Radius: 0.24446827
+  m_Radius: 0.174
 --- !u!114 &4374113333067817299
 MonoBehaviour:
   m_ObjectHideFlags: 0

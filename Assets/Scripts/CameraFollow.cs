@@ -29,8 +29,8 @@ public class CameraFollow : MonoBehaviour
     [SerializeField] private bool usePixelSnapping = false;
     [SerializeField] private float pixelsPerUnit = 32f;
 
-    // Màu nền Camera tiệp màu cát để không bao giờ bị lộ đường đen
-    [SerializeField] private Color backgroundColor = new Color(0.96f, 0.74f, 0.45f, 1f);
+    // Màu nền Camera mặc định
+    [SerializeField] private Color backgroundColor = new Color(0.537f, 0.683f, 0.764f, 1f);
 
     [Header("Arena Lock Settings")]
     [SerializeField] private bool isArenaLocked = false;

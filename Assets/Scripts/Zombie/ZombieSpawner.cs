@@ -124,6 +124,22 @@ public class ZombieSpawner : MonoBehaviour
         {
             playerTransform = player.transform;
             _laneMovement = player.GetComponent<Player3LaneMovement>();
+            AutoCalibrateRoadBoundaries();
+        }
+    }
+
+    // Tự động căn chỉnh ranh giới mặt đường theo các làn thực tế của Map hiện tại
+    private void AutoCalibrateRoadBoundaries()
+    {
+        if (_laneMovement == null) return;
+        float[] lanes = _laneMovement.GetAllLanePositions();
+        if (lanes != null && lanes.Length > 0)
+        {
+            float[] sortedLanes = (float[])lanes.Clone();
+            System.Array.Sort(sortedLanes);
+            roadMinY = sortedLanes[0] - 0.12f;
+            roadMaxY = sortedLanes[sortedLanes.Length - 1] + 0.12f;
+            bottomSpawnY = sortedLanes[0];
         }
     }
 
@@ -381,30 +397,44 @@ public class ZombieSpawner : MonoBehaviour
         if (totalWeight <= 0) totalWeight = 100;
 
         int roll = Random.Range(0, totalWeight);
+        float[] lanes = _laneMovement != null ? _laneMovement.GetAllLanePositions() : null;
 
         if (roll < frontSpawnWeight)
         {
             float spawnX = playerPos.x + Random.Range(minDistanceAhead, maxDistanceAhead);
-            float spawnY = Random.Range(roadMinY, roadMaxY);
+            float spawnY = GetSafeSpawnY(lanes);
             return new Vector3(spawnX, spawnY, 0f);
         }
         else if (roll < frontSpawnWeight + bottomSpawnWeight)
         {
-            // Don dau tu le duong phia truoc xe
+            // Đón đầu từ làn dưới cùng phía trước xe (chuẩn trên mặt đường, không bao giờ rơi ra vực đá)
             float spawnX = playerPos.x + Random.Range(minDistanceAhead * 0.4f, minDistanceAhead * 0.9f);
-            return new Vector3(spawnX, bottomSpawnY, 0f);
+            float spawnY = (lanes != null && lanes.Length > 0) ? lanes[0] : bottomSpawnY;
+            return new Vector3(spawnX, spawnY, 0f);
         }
         else
         {
             float spawnX = playerPos.x - Random.Range(minDistanceBehind, maxDistanceBehind);
-            // Neu o dau man choi thi khong sinh ra ngoai mep ban do ma sinh don dau phia truoc
+            // Nếu ở đầu màn chơi thì không sinh ra ngoài mép bản đồ mà sinh đón đầu phía trước
             if (spawnX < 0f)
             {
                 spawnX = playerPos.x + Random.Range(minDistanceAhead, maxDistanceAhead);
             }
-            float spawnY = Random.Range(roadMinY, roadMaxY);
+            float spawnY = GetSafeSpawnY(lanes);
             return new Vector3(spawnX, spawnY, 0f);
         }
+    }
+
+    // Chọn ngẫu nhiên một làn đường an toàn để sinh Zombie, chống văng ra ngoài mép bản đồ
+    private float GetSafeSpawnY(float[] lanes)
+    {
+        if (lanes != null && lanes.Length > 0)
+        {
+            float selectedLane = lanes[Random.Range(0, lanes.Length)];
+            float smallOffset = Random.Range(-0.10f, 0.10f);
+            return Mathf.Clamp(selectedLane + smallOffset, roadMinY, roadMaxY);
+        }
+        return Random.Range(roadMinY, roadMaxY);
     }
 
     public void SetPlayer(Transform player)

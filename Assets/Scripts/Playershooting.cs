@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 // Điều khiển khẩu súng xoay 360 độ theo con trỏ chuột, hỗ trợ hoạt ảnh bắn (Muzzle Flash, vỏ đạn, giật nòng) và bắn đạn từ FirePoint
@@ -20,8 +21,22 @@ public class PlayerShooting : MonoBehaviour
     // Bộ điều khiển hoạt ảnh lóe lửa, vỏ đạn và giật nòng của súng
     [SerializeField] private GunVisualAnimator gunVisualAnimator;
 
+    [Header("Muzzle Flash & Sparks (Hiệu ứng tia lửa & tàn lửa)")]
+    // GameObject hiển thị tia lửa nòng súng tại FirePoint
+    [SerializeField] private GameObject muzzleFlashObject;
+
+    // ParticleSystem sinh tàn lửa vàng cam tóe ra khi bắn
+    [SerializeField] private ParticleSystem muzzleSparkParticles;
+
+    // Sprite tia lửa lóe sáng
+    [SerializeField] private Sprite muzzleFlashSprite;
+
+    // Thời gian tồn tại của tia lửa lóe sáng mỗi lần bắn (giây)
+    [SerializeField] private float muzzleFlashDuration = 0.045f;
+
     private float _nextFireTime;
     private Camera _cam;
+    private Coroutine _flashRoutine;
 
     private void Start()
     {
@@ -36,9 +51,11 @@ public class PlayerShooting : MonoBehaviour
 
         if (gunHolder != null)
         {
+            gunHolder.gameObject.SetActive(true);
+
             if (gunSpriteRenderer == null)
             {
-                gunSpriteRenderer = gunHolder.GetComponentInChildren<SpriteRenderer>();
+                gunSpriteRenderer = gunHolder.GetComponentInChildren<SpriteRenderer>(true);
             }
 
             if (firePoint == null)
@@ -49,7 +66,17 @@ public class PlayerShooting : MonoBehaviour
 
             if (gunVisualAnimator == null)
             {
-                gunVisualAnimator = gunHolder.GetComponentInChildren<GunVisualAnimator>();
+                gunVisualAnimator = gunHolder.GetComponentInChildren<GunVisualAnimator>(true);
+            }
+        }
+
+        // Tự động gắn GunVisualAnimator nếu súng có SpriteRenderer mà chưa có script hoạt ảnh
+        if (gunVisualAnimator == null && gunSpriteRenderer != null)
+        {
+            gunVisualAnimator = gunSpriteRenderer.GetComponent<GunVisualAnimator>();
+            if (gunVisualAnimator == null)
+            {
+                gunVisualAnimator = gunSpriteRenderer.gameObject.AddComponent<GunVisualAnimator>();
             }
         }
 
@@ -61,6 +88,9 @@ public class PlayerShooting : MonoBehaviour
 
         // Cập nhật vị trí FirePoint theo cấu hình nòng súng của WeaponData
         UpdateFirePointOffset(false);
+
+        // Khởi tạo hiệu ứng tia lửa nòng súng
+        SetupMuzzleFlash();
     }
 
     private void Update()
@@ -145,6 +175,9 @@ public class PlayerShooting : MonoBehaviour
             gunVisualAnimator.PlayShootAnimation();
         }
 
+        // Kích hoạt tia lửa nòng súng và tàn lửa
+        TriggerMuzzleFlashEffect();
+
         // Vị trí xuất phát của đạn là FirePoint ở đầu nòng
         Vector3 spawnPos = firePoint != null ? firePoint.position : transform.position;
 
@@ -186,6 +219,80 @@ public class PlayerShooting : MonoBehaviour
         float cos = Mathf.Cos(rad);
         float sin = Mathf.Sin(rad);
         return new Vector2(v.x * cos - v.y * sin, v.x * sin + v.y * cos);
+    }
+
+    // Khởi tạo đối tượng tia lửa và tàn lửa tại FirePoint
+    private void SetupMuzzleFlash()
+    {
+        if (firePoint == null) return;
+
+        // 1. Tìm hoặc tạo MuzzleFlash GameObject con tại FirePoint
+        if (muzzleFlashObject == null)
+        {
+            Transform found = firePoint.Find("MuzzleFlash");
+            if (found != null)
+            {
+                muzzleFlashObject = found.gameObject;
+            }
+            else
+            {
+                GameObject newFlash = new GameObject("MuzzleFlash");
+                newFlash.transform.SetParent(firePoint, false);
+                newFlash.transform.localPosition = new Vector3(0.12f, 0f, 0f);
+                SpriteRenderer sr = newFlash.AddComponent<SpriteRenderer>();
+                if (muzzleFlashSprite != null)
+                {
+                    sr.sprite = muzzleFlashSprite;
+                }
+                sr.sortingLayerName = gunSpriteRenderer != null ? gunSpriteRenderer.sortingLayerName : "Default";
+                sr.sortingOrder = gunSpriteRenderer != null ? gunSpriteRenderer.sortingOrder + 4 : 15;
+                muzzleFlashObject = newFlash;
+            }
+        }
+
+        if (muzzleFlashObject != null)
+        {
+            muzzleFlashObject.SetActive(false);
+        }
+
+        // 2. Tìm hoặc tham chiếu MuzzleSparks Particle System
+        if (muzzleSparkParticles == null)
+        {
+            Transform foundSparks = firePoint.Find("MuzzleSparks");
+            if (foundSparks != null)
+            {
+                muzzleSparkParticles = foundSparks.GetComponent<ParticleSystem>();
+            }
+        }
+    }
+
+    // Kích hoạt lóe sáng tia lửa nòng và phun tàn lửa
+    private void TriggerMuzzleFlashEffect()
+    {
+        if (muzzleFlashObject != null)
+        {
+            if (_flashRoutine != null)
+            {
+                StopCoroutine(_flashRoutine);
+            }
+            _flashRoutine = StartCoroutine(MuzzleFlashRoutine());
+        }
+
+        if (muzzleSparkParticles != null)
+        {
+            muzzleSparkParticles.Emit(Random.Range(3, 6));
+        }
+    }
+
+    // Coroutine bật tia lửa chớp nhoáng rồi tắt
+    private IEnumerator MuzzleFlashRoutine()
+    {
+        muzzleFlashObject.SetActive(true);
+        float scale = Random.Range(0.9f, 1.25f);
+        muzzleFlashObject.transform.localScale = new Vector3(scale, Random.value > 0.5f ? scale : -scale, 1f);
+        yield return new WaitForSeconds(muzzleFlashDuration);
+        muzzleFlashObject.SetActive(false);
+        _flashRoutine = null;
     }
 
     // Thay đổi vũ khí mới và đồng bộ lại hình ảnh hoạt ảnh

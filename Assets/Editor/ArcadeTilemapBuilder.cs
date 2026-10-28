@@ -25,6 +25,10 @@ public class ArcadeTilemapBuilder : EditorWindow
     {
         EditorApplication.delayCall += () =>
         {
+            // Chỉ chạy ngầm nếu người dùng đang chủ động mở Scene ArenaSurvival
+            string currentScene = EditorSceneManager.GetActiveScene().name;
+            if (currentScene != "ArenaSurvival") return;
+
             if (Directory.Exists(TileAssetFolder) && GameObject.Find("Arena_Tilemap") != null)
             {
                 return;
@@ -39,24 +43,21 @@ public class ArcadeTilemapBuilder : EditorWindow
         string currentScene = EditorSceneManager.GetActiveScene().name;
         if (currentScene != "ArenaSurvival")
         {
-            string scenePath = "Assets/Scenes/ArenaSurvival.unity";
-            if (!silent)
-            {
-                bool proceed = EditorUtility.DisplayDialog("Xác nhận Scene",
-                    $"Bạn đang ở Scene '{currentScene}'. Công cụ này được thiết kế tối ưu nhất cho Scene 'ArenaSurvival'.\n\nBạn có muốn mở Scene 'ArenaSurvival' trước khi tạo Tilemap không?",
-                    "Mở ArenaSurvival & Tạo Tilemap", "Tiếp tục ở Scene hiện tại");
+            // Tuyệt đối không tự động chuyển scene nếu đang chạy ngầm (silent)
+            if (silent) return;
 
-                if (proceed && File.Exists(scenePath))
-                {
-                    EditorSceneManager.OpenScene(scenePath);
-                }
+            string scenePath = "Assets/Scenes/ArenaSurvival.unity";
+            bool proceed = EditorUtility.DisplayDialog("Xác nhận Scene",
+                $"Bạn đang ở Scene '{currentScene}'. Công cụ này được thiết kế tối ưu nhất cho Scene 'ArenaSurvival'.\n\nBạn có muốn mở Scene 'ArenaSurvival' trước khi tạo Tilemap không?",
+                "Mở ArenaSurvival & Tạo Tilemap", "Tiếp tục ở Scene hiện tại");
+
+            if (proceed && File.Exists(scenePath))
+            {
+                EditorSceneManager.OpenScene(scenePath);
             }
             else
             {
-                if (File.Exists(scenePath))
-                {
-                    EditorSceneManager.OpenScene(scenePath);
-                }
+                return;
             }
         }
 

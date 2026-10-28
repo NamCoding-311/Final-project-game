@@ -51,6 +51,11 @@ public class ZombieCharger : MonoBehaviour
     [SerializeField] private Color windupColor = new Color(1f, 0.25f, 0.2f, 1f); // Đỏ cam cảnh báo
     [SerializeField] private Color stunnedColor = new Color(0.6f, 0.6f, 0.7f, 1f); // Xám xanh kiệt sức
 
+    [Header("Road Boundaries (Khóa trên mặt đường)")]
+    [SerializeField] private bool clampToRoad = true;
+    [SerializeField] private float minRoadY = -3.45f;
+    [SerializeField] private float maxRoadY = 3.0f;
+
     private ChargerState _state = ChargerState.Approaching;
     private int _currentHP;
     private float _nextChargeReadyTime;
@@ -115,7 +120,27 @@ public class ZombieCharger : MonoBehaviour
     {
         _currentHP = maxHP;
         _nextChargeReadyTime = Time.time + Random.Range(1.0f, 2.5f); // Nhịp húc khởi đầu lệch nhau
+
+        // Tự động đồng bộ ranh giới đường từ ZombieSpawner
+        ZombieSpawner spawner = FindAnyObjectByType<ZombieSpawner>();
+        if (spawner != null)
+        {
+            minRoadY = spawner.GetRoadMinY();
+            maxRoadY = spawner.GetRoadMaxY();
+        }
+
         FindPlayerTarget();
+    }
+
+    private void LateUpdate()
+    {
+        if (_state == ChargerState.Dead) return;
+        if (clampToRoad)
+        {
+            Vector3 pos = transform.position;
+            pos.y = Mathf.Clamp(pos.y, minRoadY, maxRoadY);
+            transform.position = pos;
+        }
     }
 
     private void Update()

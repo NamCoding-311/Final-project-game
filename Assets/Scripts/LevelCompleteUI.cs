@@ -59,6 +59,13 @@ public class LevelCompleteUI : MonoBehaviour
         SceneManager.LoadScene("map2");
     }
 
+    // Choi lai Map 3
+    public void ReplayMap3()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("map3");
+    }
+
     // Về sảnh chính (Lobby)
     public void ReturnToLobby()
     {

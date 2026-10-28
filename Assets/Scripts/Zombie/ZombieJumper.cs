@@ -17,6 +17,11 @@ public class ZombieJumper : MonoBehaviour
     private SpriteRenderer _spriteRenderer;
     private bool _hasJumped = false;
     private bool _isJumping = false;
+    [Header("Road Boundaries (Khóa trên mặt đường)")]
+    [SerializeField] private bool clampToRoad = true;
+    [SerializeField] private float minRoadY = -3.45f;
+    [SerializeField] private float maxRoadY = 3.0f;
+
     private int _currentHP;
     private void Awake()
     {
@@ -25,6 +30,14 @@ public class ZombieJumper : MonoBehaviour
     private void Start()
     {
         _currentHP = maxHP;
+
+        // Tự động đồng bộ ranh giới đường từ ZombieSpawner
+        ZombieSpawner spawner = FindAnyObjectByType<ZombieSpawner>();
+        if (spawner != null)
+        {
+            minRoadY = spawner.GetRoadMinY();
+            maxRoadY = spawner.GetRoadMaxY();
+        }
 
         // Ưu tiên tìm người đi bộ OnFootPlayer trước
         OnFootPlayerController onFoot = FindAnyObjectByType<OnFootPlayerController>();
@@ -81,7 +94,12 @@ public class ZombieJumper : MonoBehaviour
 
         // Di chuyển tiếp cận người chơi (cả trước và sau khi nhảy)
         Vector3 dir = (_playerTransform.position - transform.position).normalized;
-        transform.position += dir * moveSpeed * Time.deltaTime;
+        Vector3 nextPos = transform.position + dir * moveSpeed * Time.deltaTime;
+        if (clampToRoad)
+        {
+            nextPos.y = Mathf.Clamp(nextPos.y, minRoadY, maxRoadY);
+        }
+        transform.position = nextPos;
     }
     // Chuỗi nhảy vồ hình Parabol
     private IEnumerator PerformLeapAttackRoutine()
@@ -95,6 +113,10 @@ public class ZombieJumper : MonoBehaviour
         // 2. Điểm xuất phát và điểm đích (vị trí xe tại thời điểm nhảy)
         Vector2 startPos = transform.position;
         Vector2 targetPos = _playerTransform.position;
+        if (clampToRoad)
+        {
+            targetPos.y = Mathf.Clamp(targetPos.y, minRoadY, maxRoadY);
+        }
         // 3. Bay trên không trung theo đường cong Parabol
         float elapsed = 0f;
         while (elapsed < jumpFlightDuration)

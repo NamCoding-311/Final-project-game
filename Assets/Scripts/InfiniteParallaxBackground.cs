@@ -38,8 +38,12 @@ public class InfiniteParallaxBackground : MonoBehaviour
     [SerializeField] private bool syncWithStageLevelManager = true;
 
     [Header("Tinh Chinh Do Cao Background (Manual Height Fix)")]
-    [Tooltip("Kéo tăng số này để nâng toàn bộ background lên khỏi mặt đường (khuyên dùng khoảng 2.0 đến 2.5 để thấy rõ sông và che kín dải màu be phía trên)")]
-    [SerializeField] private float globalYOffset = 2.2f;
+    [Tooltip("Bật để cố định vị trí Y của background theo giá trị fixedBackgroundY (ví dụ 2.83)")]
+    [SerializeField] private bool useFixedY = true;
+    [Tooltip("Độ cao Y cố định của các tấm ảnh background")]
+    [SerializeField] private float fixedBackgroundY = 2.83f;
+    [Tooltip("Dịch chuyển độ cao Y của toàn bộ nền (mét) nếu không dùng fixedY")]
+    [SerializeField] private float globalYOffset = 0f;
 
     [Header("Seamless Looping Elements")]
     [SerializeField] private Transform[] backgroundLayers;
@@ -61,6 +65,15 @@ public class InfiniteParallaxBackground : MonoBehaviour
         return stageOffset + globalYOffset;
     }
 
+    private float GetLockedPosY(float currHalfHeight, float stageYOffset)
+    {
+        if (useFixedY)
+        {
+            return fixedBackgroundY + stageYOffset;
+        }
+        return _initialBottomY + currHalfHeight + stageYOffset;
+    }
+
     private void OnValidate()
     {
         if (Application.isPlaying && backgroundLayers != null && backgroundLayers.Length > 0)
@@ -72,10 +85,9 @@ public class InfiniteParallaxBackground : MonoBehaviour
     public float GetStageScale(int index)
     {
         if (stages == null || index < 0 || index >= stages.Length) return 1f;
-        // Nếu người dùng chưa chỉnh hoặc scale <= 0.05 mà ảnh thấp (< 800px) thì tự động phóng 1.45f để phủ kín nóc
-        if (stages[index].scaleFactor <= 0.05f || (stages[index].scaleFactor == 1f && stages[index].stageSprite != null && stages[index].stageSprite.rect.height < 800))
+        if (stages[index].scaleFactor <= 0.05f)
         {
-            return 1.45f;
+            return 1f;
         }
         return stages[index].scaleFactor;
     }
@@ -220,7 +232,7 @@ public class InfiniteParallaxBackground : MonoBehaviour
                         float stageYOffset = GetStageYOffset(_currentStageIndex);
 
                         // KHÓA ĐÁY ẢNH VÀO BỜ KÈ VỚI Y OFFSET VÀ SCALE CHUẨN (chồng lấn 0.08f chống hở mối nối)
-                        float lockedPosY = _initialBottomY + newHalfHeight + stageYOffset;
+                        float lockedPosY = GetLockedPosY(newHalfHeight, stageYOffset);
                         seg.position = new Vector3(maxRightX + furthestWidth - 0.08f, lockedPosY, seg.position.z);
                     }
                     else
@@ -240,6 +252,21 @@ public class InfiniteParallaxBackground : MonoBehaviour
         float stageYOffset = GetStageYOffset(_currentStageIndex);
         float targetScale = GetStageScale(_currentStageIndex);
 
+        // Tính vị trí X bắt đầu lùi về phía sau mép trái Camera để phủ kín toàn bộ màn hình (chống hở dải trống bên trái)
+        float startX = transform.position.x;
+        if (targetCamera != null)
+        {
+            float camHalfWidth = targetCamera.orthographicSize * targetCamera.aspect;
+            float firstSegWidth = 21.42f;
+            SpriteRenderer firstSr = backgroundLayers[0].GetComponent<SpriteRenderer>();
+            if (firstSr != null && firstSr.sprite != null)
+            {
+                firstSegWidth = firstSr.bounds.size.x;
+            }
+            // Đặt tấm đầu tiên sao cho mép trái của nó lùi về sau mép trái camera ít nhất 8 mét
+            startX = targetCamera.transform.position.x - camHalfWidth - (firstSegWidth * 0.5f) - 8.0f;
+        }
+
         for (int i = 0; i < backgroundLayers.Length; i++)
         {
             Transform curr = backgroundLayers[i];
@@ -249,7 +276,7 @@ public class InfiniteParallaxBackground : MonoBehaviour
             {
                 curr.localScale = new Vector3(targetScale, targetScale, 1f);
                 float currHalfHeight = currSr.bounds.extents.y;
-                float lockedPosY = _initialBottomY + currHalfHeight + stageYOffset;
+                float lockedPosY = GetLockedPosY(currHalfHeight, stageYOffset);
 
                 if (i > 0)
                 {
@@ -259,7 +286,7 @@ public class InfiniteParallaxBackground : MonoBehaviour
                 }
                 else
                 {
-                    curr.position = new Vector3(curr.position.x, lockedPosY, curr.position.z);
+                    curr.position = new Vector3(startX, lockedPosY, curr.position.z);
                 }
             }
         }
@@ -425,7 +452,7 @@ public class InfiniteParallaxBackground : MonoBehaviour
                     seg.localScale = new Vector3(targetScale, targetScale, 1f);
 
                     float newHalfHeight = sr.bounds.extents.y;
-                    float lockedPosY = _initialBottomY + newHalfHeight + stageYOffset;
+                    float lockedPosY = GetLockedPosY(newHalfHeight, stageYOffset);
                     seg.position = new Vector3(seg.position.x, lockedPosY, seg.position.z);
                 }
             }

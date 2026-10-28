@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using UnityEngine;
 
@@ -29,6 +29,10 @@ public class ZombieBoss : MonoBehaviour
     [SerializeField] private float chargeCooldown = 7f;
     [SerializeField] private float chargeWindupTime = 0.5f; // Khựng lại lấy đà trước khi phóng
     [SerializeField] private int chargeDamage = 45;
+
+    [Header("Skill Activation Toggles")]
+    [SerializeField] private bool allowRockThrow = true;
+    [SerializeField] private bool allowChargeAttack = true;
 
     [Header("Visual & Facing Settings")]
     // Bật nếu sprite gốc vẽ quay sang Trái (mặc định của bộ Tank)
@@ -93,6 +97,17 @@ public class ZombieBoss : MonoBehaviour
         moveSpeed *= Mathf.Min(1.35f, speedMultiplier);
     }
 
+    // Cấu hình kỹ năng và máu cho Boss theo từng chặng
+    public void ConfigureBossSkills(bool enableRock, bool enableCharge, float hpMultiplier = 1f)
+    {
+        allowRockThrow = enableRock;
+        allowChargeAttack = enableCharge;
+        if (hpMultiplier > 1.01f)
+        {
+            ScaleStats(hpMultiplier, 1f, 1f);
+        }
+    }
+
     private void Awake()
     {
         _currentHealth = maxHealth;
@@ -155,6 +170,7 @@ public class ZombieBoss : MonoBehaviour
 
     private void CheckRockThrowSkill()
     {
+        if (!allowRockThrow) return;
         if (_isThrowing || _isCharging || _isWindingUpCharge) return;
         if (rockPrefab == null) return;
 
@@ -205,6 +221,7 @@ public class ZombieBoss : MonoBehaviour
 
     private void CheckChargeAttackSkill()
     {
+        if (!allowChargeAttack) return;
         if (_isThrowing || _isCharging || _isWindingUpCharge) return;
 
         if (Time.time >= _nextChargeTime)
@@ -259,7 +276,8 @@ public class ZombieBoss : MonoBehaviour
         if (clampToArena)
         {
             nextPos.x = Mathf.Clamp(nextPos.x, minArenaX, maxArenaX);
-            nextPos.y = Mathf.Clamp(nextPos.y, minArenaY, maxArenaY);
+            float halfH = Mathf.Abs(transform.localScale.y) * 0.22f;
+            nextPos.y = Mathf.Clamp(nextPos.y, minArenaY + halfH, maxArenaY - halfH);
         }
 
         transform.position = nextPos;
