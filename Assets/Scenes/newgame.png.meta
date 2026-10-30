@@ -1,0 +1,793 @@
+fileFormatVersion: 2
+guid: 7549a7e64fae7d74f87f2f7bccac390e
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -5507558004466063736
+    second: newgame_0
+  - first:
+      213: -7109715929896189399
+    second: newgame_1
+  - first:
+      213: -5206299856095050637
+    second: newgame_2
+  - first:
+      213: -2611206945574771831
+    second: newgame_3
+  - first:
+      213: -5297800119933482243
+    second: newgame_4
+  - first:
+      213: -1215002917760639065
+    second: newgame_5
+  - first:
+      213: -8968135411274599335
+    second: newgame_6
+  - first:
+      213: -4760754077298624661
+    second: newgame_7
+  - first:
+      213: 5445072166529681254
+    second: newgame_8
+  - first:
+      213: 2727188723393179466
+    second: newgame_9
+  - first:
+      213: -7101141567642762959
+    second: newgame_10
+  - first:
+      213: -3585842559109885207
+    second: newgame_11
+  - first:
+      213: -2176621331966554432
+    second: newgame_12
+  - first:
+      213: -6672649828061822771
+    second: newgame_13
+  - first:
+      213: 4607592987564774002
+    second: newgame_14
+  - first:
+      213: 3513630506883292807
+    second: newgame_15
+  - first:
+      213: 3776324001260622318
+    second: newgame_16
+  - first:
+      213: -7039602857246941172
+    second: newgame_17
+  - first:
+      213: 6013132842379607977
+    second: newgame_18
+  - first:
+      213: -2647411594954283541
+    second: newgame_19
+  - first:
+      213: 7353463371788178508
+    second: newgame_20
+  - first:
+      213: 3155922009542522803
+    second: newgame_21
+  - first:
+      213: 3369034693985690638
+    second: newgame_22
+  - first:
+      213: 5204627828629173682
+    second: newgame_23
+  - first:
+      213: 9094964470015688308
+    second: newgame_24
+  - first:
+      213: 2085423817872754818
+    second: newgame_25
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: newgame_0
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 0
+        width: 2005
+        height: 749
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 886e0fbdc293193b0800000000000000
+      internalID: -5507558004466063736
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_1
+      rect:
+        serializedVersion: 2
+        x: 734
+        y: 689
+        width: 21
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9220a98d707355d90800000000000000
+      internalID: -7109715929896189399
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_2
+      rect:
+        serializedVersion: 2
+        x: 1359
+        y: 703
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37489437dd18fb7b0800000000000000
+      internalID: -5206299856095050637
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_3
+      rect:
+        serializedVersion: 2
+        x: 678
+        y: 693
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 983abf52e1123cbd0800000000000000
+      internalID: -2611206945574771831
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_4
+      rect:
+        serializedVersion: 2
+        x: 853
+        y: 669
+        width: 6
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dfac7502cde6a76b0800000000000000
+      internalID: -5297800119933482243
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_5
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 675
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7af50dd9841732fe0800000000000000
+      internalID: -1215002917760639065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_6
+      rect:
+        serializedVersion: 2
+        x: 1408
+        y: 679
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9543061db58ca8380800000000000000
+      internalID: -8968135411274599335
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_7
+      rect:
+        serializedVersion: 2
+        x: 862
+        y: 79
+        width: 17
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b677f97e3676eedb0800000000000000
+      internalID: -4760754077298624661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_8
+      rect:
+        serializedVersion: 2
+        x: 1176
+        y: 95
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6674e564948c09b40800000000000000
+      internalID: 5445072166529681254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_9
+      rect:
+        serializedVersion: 2
+        x: 1254
+        y: 95
+        width: 9
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4f2d45d1bbe8d520800000000000000
+      internalID: 2727188723393179466
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_10
+      rect:
+        serializedVersion: 2
+        x: 1310
+        y: 99
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13184e02e5da37d90800000000000000
+      internalID: -7101141567642762959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_11
+      rect:
+        serializedVersion: 2
+        x: 670
+        y: 73
+        width: 11
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e217cbe0378c3ec0800000000000000
+      internalID: -3585842559109885207
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_12
+      rect:
+        serializedVersion: 2
+        x: 682
+        y: 85
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ce88994e661bc1e0800000000000000
+      internalID: -2176621331966554432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_13
+      rect:
+        serializedVersion: 2
+        x: 1286
+        y: 78
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc0cdc7a55cf563a0800000000000000
+      internalID: -6672649828061822771
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_14
+      rect:
+        serializedVersion: 2
+        x: 1368
+        y: 81
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 272116df86571ff30800000000000000
+      internalID: 4607592987564774002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_15
+      rect:
+        serializedVersion: 2
+        x: 1374
+        y: 79
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78e11ca745ce2c030800000000000000
+      internalID: 3513630506883292807
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_16
+      rect:
+        serializedVersion: 2
+        x: 678
+        y: 47
+        width: 45
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee1dbebdba2386430800000000000000
+      internalID: 3776324001260622318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_17
+      rect:
+        serializedVersion: 2
+        x: 774
+        y: 46
+        width: 9
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c00a8fdaf7e4e4e90800000000000000
+      internalID: -7039602857246941172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_18
+      rect:
+        serializedVersion: 2
+        x: 840
+        y: 65
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9af75411670f27350800000000000000
+      internalID: 6013132842379607977
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_19
+      rect:
+        serializedVersion: 2
+        x: 1203
+        y: 59
+        width: 31
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be5ef745e21824bd0800000000000000
+      internalID: -2647411594954283541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_20
+      rect:
+        serializedVersion: 2
+        x: 1240
+        y: 63
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c44d740f9ffbc0660800000000000000
+      internalID: 7353463371788178508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_21
+      rect:
+        serializedVersion: 2
+        x: 1314
+        y: 63
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b77e9dc8561ccb20800000000000000
+      internalID: 3155922009542522803
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_22
+      rect:
+        serializedVersion: 2
+        x: 782
+        y: 47
+        width: 9
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e04ebfa443731ce20800000000000000
+      internalID: 3369034693985690638
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_23
+      rect:
+        serializedVersion: 2
+        x: 472
+        y: 17
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b5fd815f6d8a3840800000000000000
+      internalID: 5204627828629173682
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_24
+      rect:
+        serializedVersion: 2
+        x: 1624
+        y: 0
+        width: 25
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47e75109ffdc73e70800000000000000
+      internalID: 9094964470015688308
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: newgame_25
+      rect:
+        serializedVersion: 2
+        x: 1646
+        y: 18
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 288c17ec9e9e0fc10800000000000000
+      internalID: 2085423817872754818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      newgame_0: -5507558004466063736
+      newgame_1: -7109715929896189399
+      newgame_10: -7101141567642762959
+      newgame_11: -3585842559109885207
+      newgame_12: -2176621331966554432
+      newgame_13: -6672649828061822771
+      newgame_14: 4607592987564774002
+      newgame_15: 3513630506883292807
+      newgame_16: 3776324001260622318
+      newgame_17: -7039602857246941172
+      newgame_18: 6013132842379607977
+      newgame_19: -2647411594954283541
+      newgame_2: -5206299856095050637
+      newgame_20: 7353463371788178508
+      newgame_21: 3155922009542522803
+      newgame_22: 3369034693985690638
+      newgame_23: 5204627828629173682
+      newgame_24: 9094964470015688308
+      newgame_25: 2085423817872754818
+      newgame_3: -2611206945574771831
+      newgame_4: -5297800119933482243
+      newgame_5: -1215002917760639065
+      newgame_6: -8968135411274599335
+      newgame_7: -4760754077298624661
+      newgame_8: 5445072166529681254
+      newgame_9: 2727188723393179466
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
