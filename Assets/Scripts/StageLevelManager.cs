@@ -694,6 +694,7 @@ public class StageLevelManager : MonoBehaviour
     }
 
     public int GetCurrentStageIndex() => _currentStageIndex;
+    public LevelStageInfo[] GetStages() => stages;
     public LevelState GetCurrentState() => _currentState;
 
     [ContextMenu("TEST: Chuyển Sang Chặng 1 (Sáng)")]
