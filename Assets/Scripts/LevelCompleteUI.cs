@@ -31,45 +31,54 @@ public class LevelCompleteUI : MonoBehaviour
         Time.timeScale = 0f;
     }
 
-    // Chuyen sang Map 2 (Ben Tre)
+    // Chuyển sang Map 2 (Bến Tre)
     public void ContinueToMap2()
     {
         Time.timeScale = 1f;
+        PlayerPrefs.SetString("LastLevel", "map2");
+        PlayerPrefs.Save();
         SceneManager.LoadScene("map2");
     }
 
-    // Chuyen sang Map 3
+    // Chuyển sang Map 3
     public void ContinueToMap3()
     {
         Time.timeScale = 1f;
+        PlayerPrefs.SetString("LastLevel", "map3");
+        PlayerPrefs.Save();
         SceneManager.LoadScene("map3");
     }
 
-    // Choi lai Map 1
+    // Chơi lại Map 1
     public void ReplayMap1()
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene("map1");
     }
 
-    // Choi lai Map 2
+    // Chơi lại Map 2
     public void ReplayMap2()
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene("map2");
     }
 
-    // Choi lai Map 3
+    // Chơi lại Map 3
     public void ReplayMap3()
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene("map3");
     }
 
-    // Về sảnh chính (Lobby)
+    // Về Menu chính
     public void ReturnToLobby()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("Main lobby");
+        if (Application.CanStreamedLevelBeLoaded("Main menu"))
+            SceneManager.LoadScene("Main menu");
+        else if (Application.CanStreamedLevelBeLoaded("Misson lobby"))
+            SceneManager.LoadScene("Misson lobby");
+        else
+            SceneManager.LoadScene(0);
     }
 }

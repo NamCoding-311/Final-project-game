@@ -15,6 +15,7 @@ public class Bullet : MonoBehaviour
 
     protected Vector2 _dir;
     protected int _damage = 10;
+    protected bool _isCrit = false;
     protected float _inheritedForwardSpeed = 0f;
 
     // Cài đặt hướng bay và xoay đầu đạn thẳng theo hướng đó
@@ -27,6 +28,11 @@ public class Bullet : MonoBehaviour
     }
 
     public virtual void SetDamage(int dmg) => _damage = dmg;
+    public virtual void SetDamage(int dmg, bool isCrit)
+    {
+        _damage = dmg;
+        _isCrit = isCrit;
+    }
 
     // Kế thừa vận tốc của chiếc xe: Đạn bay bằng tốc độ đạn + tốc độ xe
     public void SetInheritedSpeed(float carSpeed)

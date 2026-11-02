@@ -31,6 +31,12 @@ public class ZombieJumper : MonoBehaviour
     {
         _currentHP = maxHP;
 
+        // Nếu ở màn Đấu Trường Sinh Tồn thì bỏ khóa đường
+        if (ArenaManager.Instance != null)
+        {
+            clampToRoad = false;
+        }
+
         // Tự động đồng bộ ranh giới đường từ ZombieSpawner
         ZombieSpawner spawner = FindAnyObjectByType<ZombieSpawner>();
         if (spawner != null)
@@ -66,6 +72,11 @@ public class ZombieJumper : MonoBehaviour
                 ?? target.GetComponentInChildren<PlayerHealth>();
         }
     }
+    public void SetClampToRoad(bool clamp)
+    {
+        clampToRoad = clamp;
+    }
+
     private void Update()
     {
         if (_playerTransform == null || _isJumping) return;
@@ -95,7 +106,7 @@ public class ZombieJumper : MonoBehaviour
         // Di chuyển tiếp cận người chơi (cả trước và sau khi nhảy)
         Vector3 dir = (_playerTransform.position - transform.position).normalized;
         Vector3 nextPos = transform.position + dir * moveSpeed * Time.deltaTime;
-        if (clampToRoad)
+        if (clampToRoad && ArenaManager.Instance == null)
         {
             nextPos.y = Mathf.Clamp(nextPos.y, minRoadY, maxRoadY);
         }
@@ -113,7 +124,7 @@ public class ZombieJumper : MonoBehaviour
         // 2. Điểm xuất phát và điểm đích (vị trí xe tại thời điểm nhảy)
         Vector2 startPos = transform.position;
         Vector2 targetPos = _playerTransform.position;
-        if (clampToRoad)
+        if (clampToRoad && ArenaManager.Instance == null)
         {
             targetPos.y = Mathf.Clamp(targetPos.y, minRoadY, maxRoadY);
         }
@@ -162,10 +173,9 @@ public class ZombieJumper : MonoBehaviour
 
             if (ArenaManager.Instance != null || BrotatoLevelSystem.Instance != null)
             {
-                GameObject gem = new GameObject("MaterialGem");
-                gem.transform.position = transform.position;
-                MaterialGem mg = gem.AddComponent<MaterialGem>();
-                mg.SetGemData(2, new Color(0.2f, 0.8f, 1f), 0.9f);
+                // Jumper: 60% Xu Bạc, 40% Xu Vàng (5 Xu)
+                CoinTier tier = Random.value < 0.4f ? CoinTier.Gold : CoinTier.Silver;
+                MaterialGem.SpawnCoin(transform.position, tier);
                 ArenaPowerUp.TryDropRandom(transform.position, 8f);
             }
             Destroy(gameObject);

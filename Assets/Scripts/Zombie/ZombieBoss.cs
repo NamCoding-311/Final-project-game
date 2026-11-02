@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -376,13 +376,15 @@ public class ZombieBoss : MonoBehaviour
         // Rơi 4 viên ngọc hoàng kim (Gold Gems) giá trị cao khi Boss bị tiêu diệt
         if (ArenaManager.Instance != null || BrotatoLevelSystem.Instance != null)
         {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 3; i++)
             {
-                GameObject gem = new GameObject("BossMaterialGem");
                 Vector3 offset = new Vector3(UnityEngine.Random.Range(-1.2f, 1.2f), UnityEngine.Random.Range(-1.2f, 1.2f), 0f);
-                gem.transform.position = transform.position + offset;
-                MaterialGem mg = gem.AddComponent<MaterialGem>();
-                mg.SetGemData(10, new Color(1f, 0.85f, 0.15f), 1.35f);
+                MaterialGem.SpawnCoin(transform.position + offset, CoinTier.Red);
+            }
+            for (int i = 0; i < 3; i++)
+            {
+                Vector3 offset = new Vector3(UnityEngine.Random.Range(-1.2f, 1.2f), UnityEngine.Random.Range(-1.2f, 1.2f), 0f);
+                MaterialGem.SpawnCoin(transform.position + offset, CoinTier.Gold);
             }
             ArenaPowerUp.TryDropRandom(transform.position, 100f);
         }

@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,7 +7,7 @@ public class MainMenuController : MonoBehaviour
     public GameObject garagePanel;
     public GameObject settingsPanel;
 
-    // CONTINUE
+    // CONTINUE: Tiếp tục màn chơi đã lưu gần nhất
     public void ContinueGame()
     {
         Time.timeScale = 1f;
@@ -21,10 +20,12 @@ public class MainMenuController : MonoBehaviour
         SceneManager.LoadScene(savedScene);
     }
 
-    // NEW GAME
+    // NEW GAME: Chơi mới từ Map 1 và reset tiến trình
     public void NewGame()
     {
         Time.timeScale = 1f;
+        PlayerPrefs.SetString("LastLevel", "map1");
+        PlayerPrefs.Save();
         SceneManager.LoadScene("map1");
     }
 
@@ -41,15 +42,17 @@ public class MainMenuController : MonoBehaviour
             garagePanel.SetActive(false);
     }
 
-    // MISSION
+    // MISSION: Mở sảnh nhiệm vụ (Misson lobby) hoặc Đấu trường sinh tồn (ArenaSurvival)
     public void OpenMission()
     {
         Time.timeScale = 1f;
 
-        if (Application.CanStreamedLevelBeLoaded("Arena"))
-            SceneManager.LoadScene("Arena");
+        if (Application.CanStreamedLevelBeLoaded("Misson lobby"))
+            SceneManager.LoadScene("Misson lobby");
+        else if (Application.CanStreamedLevelBeLoaded("ArenaSurvival"))
+            SceneManager.LoadScene("ArenaSurvival");
         else
-            Debug.LogError("Arena scene not found in Build Profiles!");
+            Debug.LogError("Mission scene not found in Build Profiles!");
     }
 
     // SETTINGS

@@ -32,6 +32,16 @@ public class ArenaAutoShooting : MonoBehaviour
     [Header("Brotato Modifiers (Dùng cho Nâng cấp / Shop)")]
     [SerializeField] private int bonusDamage = 0;
     [SerializeField] private float attackSpeedMultiplier = 1.0f;
+    [SerializeField] private float critChance = 0.05f;
+    [SerializeField] private float lifeSteal = 0.0f;
+
+    public void AddCritChance(float amount) => critChance = Mathf.Clamp01(critChance + amount);
+    public void AddLifeSteal(float amount) => lifeSteal = Mathf.Clamp(lifeSteal + amount, 0f, 0.5f);
+
+    public int GetBonusDamage() => bonusDamage;
+    public float GetAttackSpeedMultiplier() => attackSpeedMultiplier;
+    public float GetCritChance() => critChance;
+    public float GetLifeSteal() => lifeSteal;
 
     [Header("Debug / Testing Keys")]
     [SerializeField] private bool enableTestHotkeys = true;
@@ -361,7 +371,9 @@ public class ArenaAutoShooting : MonoBehaviour
         Vector3 spawnPos = slot.firePoint != null ? slot.firePoint.position : slot.gunTransform.position;
         Vector2 baseDir = slot.gunTransform.right;
 
-        int finalDmg = weapon.damage + bonusDamage;
+        bool isCrit = Random.value < critChance;
+        int baseDmg = weapon.damage + bonusDamage;
+        int finalDmg = isCrit ? Mathf.RoundToInt(baseDmg * 2.0f) : baseDmg;
 
         for (int i = 0; i < weapon.pelletsPerShot; i++)
         {
@@ -376,7 +388,7 @@ public class ArenaAutoShooting : MonoBehaviour
             if (bullet != null)
             {
                 bullet.SetDirection(finalDir);
-                bullet.SetDamage(finalDmg);
+                bullet.SetDamage(finalDmg, isCrit);
             }
         }
     }

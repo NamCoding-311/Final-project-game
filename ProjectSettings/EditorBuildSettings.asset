@@ -6,7 +6,10 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Main lobby.unity
+    path: Assets/Scenes/Main menu.unity
+    guid: 1626a18f1bb55c34194ed821bd224467
+  - enabled: 1
+    path: Assets/Scenes/Misson lobby.unity
     guid: 46bc9259180c0ba429e2aa4509edafe5
   - enabled: 1
     path: Assets/Scenes/map1.unity

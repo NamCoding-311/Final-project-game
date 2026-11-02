@@ -1,0 +1,520 @@
+fileFormatVersion: 2
+guid: d126919fc6047dc478d152d7668f8646
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3249404454896429605
+    second: Icon_Harvest_0
+  - first:
+      213: -3424896693464482119
+    second: Icon_Harvest_1
+  - first:
+      213: 1347294783509431653
+    second: Icon_Harvest_2
+  - first:
+      213: 261246615386069286
+    second: Icon_Harvest_3
+  - first:
+      213: 5414112114955139784
+    second: Icon_Harvest_4
+  - first:
+      213: -2976986577040067601
+    second: Icon_Harvest_5
+  - first:
+      213: -787959300381352253
+    second: Icon_Harvest_6
+  - first:
+      213: 2225332546696690491
+    second: Icon_Harvest_7
+  - first:
+      213: -1293650085508216068
+    second: Icon_Harvest_8
+  - first:
+      213: -3004343551187880151
+    second: Icon_Harvest_9
+  - first:
+      213: 6262859260146838826
+    second: Icon_Harvest_10
+  - first:
+      213: 2386003277583753298
+    second: Icon_Harvest_11
+  - first:
+      213: 1848054953015649754
+    second: Icon_Harvest_12
+  - first:
+      213: 8851121209075292893
+    second: Icon_Harvest_13
+  - first:
+      213: 7600485982062616983
+    second: Icon_Harvest_14
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Icon_Harvest_0
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 362
+        width: 95
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd593564ddbc7e2d0800000000000000
+      internalID: -3249404454896429605
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Icon_Harvest_1
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 424
+        width: 76
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9beb3a96a925870d0800000000000000
+      internalID: -3424896693464482119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Icon_Harvest_2
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 332
+        width: 66
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56501d2a77d82b210800000000000000
+      internalID: 1347294783509431653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Icon_Harvest_3
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 327
+        width: 65
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6291cdc996220a300800000000000000
+      internalID: 261246615386069286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Icon_Harvest_4
+      rect:
+        serializedVersion: 2
+        x: 375
+        y: 331
+        width: 66
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ca3a0a884ac22b40800000000000000
+      internalID: 5414112114955139784
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Icon_Harvest_5
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 266
+        width: 61
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe3bb6e1b7e9fa6d0800000000000000
+      internalID: -2976986577040067601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Icon_Harvest_6
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 285
+        width: 57
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3cedd4be03b9015f0800000000000000
+      internalID: -787959300381352253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Icon_Harvest_7
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 292
+        width: 60
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3bb8f03928f1ee10800000000000000
+      internalID: 2225332546696690491
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Icon_Harvest_8
+      rect:
+        serializedVersion: 2
+        x: 278
+        y: 296
+        width: 65
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cfa01ade9180c0ee0800000000000000
+      internalID: -1293650085508216068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Icon_Harvest_9
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 283
+        width: 56
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 927f538357d6e46d0800000000000000
+      internalID: -3004343551187880151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Icon_Harvest_10
+      rect:
+        serializedVersion: 2
+        x: 406
+        y: 267
+        width: 59
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2d6157a0552ae650800000000000000
+      internalID: 6262859260146838826
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Icon_Harvest_11
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 249
+        width: 40
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2502c41e659cc1120800000000000000
+      internalID: 2386003277583753298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Icon_Harvest_12
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 23
+        width: 477
+        height: 268
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad526e7303c95a910800000000000000
+      internalID: 1848054953015649754
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Icon_Harvest_13
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 22
+        width: 63
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ddadbda28df75da70800000000000000
+      internalID: 8851121209075292893
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Icon_Harvest_14
+      rect:
+        serializedVersion: 2
+        x: 449
+        y: 22
+        width: 46
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 791ad294bb95a7960800000000000000
+      internalID: 7600485982062616983
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Icon_Harvest_0: -3249404454896429605
+      Icon_Harvest_1: -3424896693464482119
+      Icon_Harvest_10: 6262859260146838826
+      Icon_Harvest_11: 2386003277583753298
+      Icon_Harvest_12: 1848054953015649754
+      Icon_Harvest_13: 8851121209075292893
+      Icon_Harvest_14: 7600485982062616983
+      Icon_Harvest_2: 1347294783509431653
+      Icon_Harvest_3: 261246615386069286
+      Icon_Harvest_4: 5414112114955139784
+      Icon_Harvest_5: -2976986577040067601
+      Icon_Harvest_6: -787959300381352253
+      Icon_Harvest_7: 2225332546696690491
+      Icon_Harvest_8: -1293650085508216068
+      Icon_Harvest_9: -3004343551187880151
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

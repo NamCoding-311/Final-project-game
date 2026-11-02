@@ -36,6 +36,8 @@ public class BrotatoLevelSystem : MonoBehaviour
         public TextMeshProUGUI titleText;
         public TextMeshProUGUI descriptionText;
         public Image borderOrBackground;
+        public Image headerStrip;
+        public Image iconImage;
         public Button selectButton;
     }
 
@@ -60,6 +62,7 @@ public class BrotatoLevelSystem : MonoBehaviour
         public string Title;
         public string Description;
         public Color ThemeColor;
+        public Sprite Icon;
         public Action OnSelect;
     }
 
@@ -150,9 +153,39 @@ public class BrotatoLevelSystem : MonoBehaviour
                 if (cardUI == null) continue;
 
                 if (cardUI.cardRoot != null) cardUI.cardRoot.SetActive(true);
-                if (cardUI.titleText != null) cardUI.titleText.text = data.Title;
-                if (cardUI.descriptionText != null) cardUI.descriptionText.text = data.Description;
-                if (cardUI.borderOrBackground != null) cardUI.borderOrBackground.color = data.ThemeColor;
+
+                // Nền thẻ màu than chì tối sang trọng
+                if (cardUI.borderOrBackground != null) cardUI.borderOrBackground.color = new Color(0.12f, 0.14f, 0.19f, 0.96f);
+                if (cardUI.headerStrip != null) cardUI.headerStrip.color = data.ThemeColor;
+
+                // Tiêu đề nổi bật theo màu hệ
+                if (cardUI.titleText != null)
+                {
+                    cardUI.titleText.text = data.Title;
+                    cardUI.titleText.color = data.ThemeColor;
+                }
+
+                // Mô tả màu xám sáng rõ ràng, dễ đọc
+                if (cardUI.descriptionText != null)
+                {
+                    cardUI.descriptionText.text = data.Description;
+                    cardUI.descriptionText.color = new Color(0.85f, 0.88f, 0.94f, 1f);
+                }
+
+                // Icon trực quan
+                if (cardUI.iconImage != null)
+                {
+                    if (data.Icon != null)
+                    {
+                        cardUI.iconImage.gameObject.SetActive(true);
+                        cardUI.iconImage.sprite = data.Icon;
+                        cardUI.iconImage.color = data.Title.Contains("HP") ? Color.white : data.ThemeColor;
+                    }
+                    else
+                    {
+                        cardUI.iconImage.gameObject.SetActive(false);
+                    }
+                }
 
                 if (cardUI.selectButton != null)
                 {
@@ -166,6 +199,25 @@ public class BrotatoLevelSystem : MonoBehaviour
         }
     }
 
+    private readonly Dictionary<string, Sprite> _levelUpIconCache = new Dictionary<string, Sprite>();
+
+    public Sprite GetLevelUpIcon(string key)
+    {
+        if (string.IsNullOrEmpty(key)) return null;
+        if (_levelUpIconCache.TryGetValue(key, out var s) && s != null) return s;
+#if UNITY_EDITOR
+        string path = $"Assets/UI/ShopIcons/{key}.png";
+        s = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(path);
+        if (s == null && key.Contains("first-aid"))
+        {
+            var assets = UnityEditor.AssetDatabase.LoadAllAssetsAtPath("Assets/UI/Medkid UI/vecteezy_first-aid-kit-pixel-art_72639614.png");
+            foreach (var a in assets) { if (a is Sprite spr) { s = spr; break; } }
+        }
+        if (s != null) _levelUpIconCache[key] = s;
+#endif
+        return s;
+    }
+
     // Sinh 3 thẻ ngẫu nhiên không trùng lặp
     private void GenerateThreeRandomUpgrades()
     {
@@ -175,7 +227,8 @@ public class BrotatoLevelSystem : MonoBehaviour
             {
                 Title = "BONUS DAMAGE",
                 Description = "+3 Damage per projectile",
-                ThemeColor = new Color(1f, 0.3f, 0.3f),
+                ThemeColor = new Color(1f, 0.35f, 0.35f),
+                Icon = GetLevelUpIcon("Icon_Damage"),
                 OnSelect = () => {
                     if (ArenaAutoShooting.Instance != null) ArenaAutoShooting.Instance.AddBonusDamage(3);
                 }
@@ -185,6 +238,7 @@ public class BrotatoLevelSystem : MonoBehaviour
                 Title = "ATTACK SPEED",
                 Description = "+20% Weapon Fire Rate",
                 ThemeColor = new Color(1f, 0.85f, 0.2f),
+                Icon = GetLevelUpIcon("Icon_AttackSpeed"),
                 OnSelect = () => {
                     if (ArenaAutoShooting.Instance != null) ArenaAutoShooting.Instance.AddAttackSpeed(0.2f);
                 }
@@ -194,6 +248,7 @@ public class BrotatoLevelSystem : MonoBehaviour
                 Title = "MOVE SPEED",
                 Description = "+15% Movement Speed",
                 ThemeColor = new Color(0.3f, 0.85f, 1f),
+                Icon = GetLevelUpIcon("Icon_MoveSpeed"),
                 OnSelect = () => {
                     OnFootPlayerController player = FindAnyObjectByType<OnFootPlayerController>();
                     if (player != null) player.AddBonusSpeed(1.0f);
@@ -204,6 +259,7 @@ public class BrotatoLevelSystem : MonoBehaviour
                 Title = "MAX HP",
                 Description = "+25 Max HP & Instant Heal",
                 ThemeColor = new Color(0.2f, 1f, 0.4f),
+                Icon = GetLevelUpIcon("first-aid"),
                 OnSelect = () => {
                     PlayerHealth hp = FindAnyObjectByType<PlayerHealth>();
                     if (hp != null) hp.IncreaseMaxHP(25);
@@ -214,8 +270,29 @@ public class BrotatoLevelSystem : MonoBehaviour
                 Title = "MAGNET RANGE",
                 Description = "+35% Material Pickup Radius",
                 ThemeColor = new Color(0.9f, 0.4f, 1f),
+                Icon = GetLevelUpIcon("Icon_Magnet"),
                 OnSelect = () => {
                     magnetRadius += 1.5f;
+                }
+            },
+            new UpgradeCard
+            {
+                Title = "CRIT CHANCE",
+                Description = "+5% Critical Hit Chance (200% DMG)",
+                ThemeColor = new Color(1f, 0.6f, 0.15f),
+                Icon = GetLevelUpIcon("Icon_Crit"),
+                OnSelect = () => {
+                    if (ArenaAutoShooting.Instance != null) ArenaAutoShooting.Instance.AddCritChance(0.05f);
+                }
+            },
+            new UpgradeCard
+            {
+                Title = "LIFE STEAL",
+                Description = "+3% Chance to heal 1 HP on hit",
+                ThemeColor = new Color(0.85f, 0.15f, 0.35f),
+                Icon = GetLevelUpIcon("Icon_LifeSteal"),
+                OnSelect = () => {
+                    if (ArenaAutoShooting.Instance != null) ArenaAutoShooting.Instance.AddLifeSteal(0.03f);
                 }
             }
         };

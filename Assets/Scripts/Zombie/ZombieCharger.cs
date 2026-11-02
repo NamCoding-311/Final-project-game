@@ -121,7 +121,13 @@ public class ZombieCharger : MonoBehaviour
         _currentHP = maxHP;
         _nextChargeReadyTime = Time.time + Random.Range(1.0f, 2.5f); // Nhịp húc khởi đầu lệch nhau
 
-        // Tự động đồng bộ ranh giới đường từ ZombieSpawner
+        // Nếu đang ở màn Đấu Trường Sinh Tồn (Arena Survival) thì bỏ khóa đường để di chuyển tự do 360 độ
+        if (ArenaManager.Instance != null)
+        {
+            clampToRoad = false;
+        }
+
+        // Tự động đồng bộ ranh giới đường từ ZombieSpawner (chỉ khi chơi màn lái xe)
         ZombieSpawner spawner = FindAnyObjectByType<ZombieSpawner>();
         if (spawner != null)
         {
@@ -132,10 +138,15 @@ public class ZombieCharger : MonoBehaviour
         FindPlayerTarget();
     }
 
+    public void SetClampToRoad(bool clamp)
+    {
+        clampToRoad = clamp;
+    }
+
     private void LateUpdate()
     {
         if (_state == ChargerState.Dead) return;
-        if (clampToRoad)
+        if (clampToRoad && ArenaManager.Instance == null)
         {
             Vector3 pos = transform.position;
             pos.y = Mathf.Clamp(pos.y, minRoadY, maxRoadY);
@@ -327,12 +338,15 @@ public class ZombieCharger : MonoBehaviour
     // =========================================================================
     // 4. NHẬN SÁT THƯƠNG & CHẾT
     // =========================================================================
+    private Coroutine _flashCoroutine;
+
     public void TakeDamage(int damage)
     {
         if (_state == ChargerState.Dead) return;
 
         _currentHP -= damage;
-        StartCoroutine(DamageFlashRoutine());
+        if (_flashCoroutine != null) StopCoroutine(_flashCoroutine);
+        _flashCoroutine = StartCoroutine(DamageFlashRoutine());
 
         if (_currentHP <= 0)
         {
@@ -387,20 +401,27 @@ public class ZombieCharger : MonoBehaviour
             ArenaManager.Instance.AddKill();
         }
 
-        // Rơi ngọc kinh nghiệm nếu ở chế độ Đấu trường (Brotato)
+        // Rơi coin nếu ở chế độ Đấu trường (Brotato)
         if (ArenaManager.Instance != null || BrotatoLevelSystem.Instance != null)
         {
-            GameObject gem = new GameObject("MaterialGem");
-            gem.transform.position = transform.position;
-            MaterialGem mg = gem.AddComponent<MaterialGem>();
+            CoinTier tier = CoinTier.Gold;
+            float roll = Random.value;
             if (_isElite)
             {
-                mg.SetGemData(5, new Color(0.85f, 0.25f, 1f), 1.2f); // Ngọc tím 5 exp/gems cho Charger tinh anh
+                // Charger tinh anh: 40% Xu Đỏ (20 Xu), 50% Xu Vàng (5 Xu), 10% Xu Bạc
+                if (roll < 0.40f) tier = CoinTier.Red;
+                else if (roll < 0.90f) tier = CoinTier.Gold;
+                else tier = CoinTier.Silver;
             }
             else
             {
-                mg.SetGemData(2, new Color(0.2f, 0.8f, 1f), 0.9f);
+                // Charger thường: 15% Xu Đỏ, 65% Xu Vàng, 20% Xu Bạc
+                if (roll < 0.15f) tier = CoinTier.Red;
+                else if (roll < 0.80f) tier = CoinTier.Gold;
+                else tier = CoinTier.Silver;
             }
+
+            MaterialGem.SpawnCoin(transform.position, tier);
             ArenaPowerUp.TryDropRandom(transform.position, _isElite ? 35f : 12f);
         }
 

@@ -27,6 +27,7 @@ public class ArenaPowerUp : MonoBehaviour
     private SpriteRenderer _sr;
     private float _spawnTime;
     private bool _isCollected = false;
+    private float _baseScale = 1f;
 
     private void Awake()
     {
@@ -61,7 +62,7 @@ public class ArenaPowerUp : MonoBehaviour
         float floatY = Mathf.Sin((Time.time - _spawnTime) * 4f) * 0.08f;
         transform.position += new Vector3(0f, floatY * Time.deltaTime, 0f);
 
-        float pulse = 1f + Mathf.PingPong((Time.time - _spawnTime) * 1.5f, 0.15f);
+        float pulse = _baseScale * (1f + Mathf.PingPong((Time.time - _spawnTime) * 1.5f, 0.12f));
         transform.localScale = new Vector3(pulse, pulse, 1f);
 
         // Nhấp nháy nhanh khi sắp hết thời gian tồn tại (5 giây cuối)
@@ -144,11 +145,44 @@ public class ArenaPowerUp : MonoBehaviour
         if (customSprite != null)
         {
             _sr.sprite = customSprite;
+            _sr.color = Color.white;
             return;
         }
 
-        _sr.sprite = CreateMedkitSprite();
-        _sr.color = Color.white;
+#if UNITY_EDITOR
+        string medkitPath = "Assets/UI/Medkid UI/vecteezy_first-aid-kit-pixel-art_72639614.png";
+        Object[] subAssets = UnityEditor.AssetDatabase.LoadAllAssetsAtPath(medkitPath);
+        foreach (var a in subAssets)
+        {
+            if (a is Sprite s)
+            {
+                _sr.sprite = s;
+                _sr.color = Color.white;
+                break;
+            }
+        }
+#endif
+
+        if (_sr.sprite == null)
+        {
+            _sr.sprite = CreateMedkitSprite();
+            _sr.color = Color.white;
+        }
+
+        // Tự động chuẩn hóa kích thước túi cứu thương vừa vặn khoảng 0.75 mét trong game
+        if (_sr.sprite != null && _sr.sprite.rect.width > 0)
+        {
+            float spriteWorldWidth = _sr.sprite.rect.width / _sr.sprite.pixelsPerUnit;
+            _baseScale = 0.75f / Mathf.Max(0.1f, spriteWorldWidth);
+            transform.localScale = Vector3.one * _baseScale;
+
+            // Cập nhật Collider2D để bán kính nhặt luôn đạt chuẩn 0.5 mét
+            CircleCollider2D col = GetComponent<CircleCollider2D>();
+            if (col != null)
+            {
+                col.radius = 0.5f / Mathf.Max(0.001f, _baseScale);
+            }
+        }
     }
 
     // Vẽ Túi cứu thương Pixel (Hộp trắng viền đỏ dấu thập đỏ)

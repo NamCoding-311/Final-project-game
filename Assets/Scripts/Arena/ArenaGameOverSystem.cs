@@ -198,7 +198,12 @@ public class ArenaGameOverSystem : MonoBehaviour
     public void OnMenuClicked()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("Main lobby");
+        if (Application.CanStreamedLevelBeLoaded("Main menu"))
+            SceneManager.LoadScene("Main menu");
+        else if (Application.CanStreamedLevelBeLoaded("Misson lobby"))
+            SceneManager.LoadScene("Misson lobby");
+        else
+            SceneManager.LoadScene(0);
     }
 
     public void OnEndlessClicked()

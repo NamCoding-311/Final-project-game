@@ -7,8 +7,9 @@ using TMPro;
 // Quản lý Đấu trường Sinh Tồn (Brotato Mode):
 // 1. Tự động dựng 4 bức tường đấu trường khép kín (ngăn người chơi & quái lọt ra ngoài).
 // 2. Quản lý hệ thống Đợt Sóng (Waves): Đếm ngược thời gian, tăng dần độ khó.
-// 3. Sinh quái từ 4 mép ngoài dồn vào đấu trường.
-// 4. Hỗ trợ hiển thị UI bằng Canvas TextMeshPro tùy chỉnh hoặc fallback OnGUI.
+// 3. Sinh cây xanh trên sàn mỗi Wave (chặt cây nhặt quả hồi máu & hòm tiếp tế).
+// 4. Có dấu cảnh báo đỏ nguy hiểm trước khi quái và Boss xuất hiện.
+// 5. Kết thúc Wave: Tự động gom/hút toàn bộ ngọc trên khắp sàn đấu về người chơi rồi mới mở Shop.
 public class ArenaManager : MonoBehaviour
 {
     public static ArenaManager Instance { get; private set; }
@@ -27,7 +28,9 @@ public class ArenaManager : MonoBehaviour
     [Header("Arena Dimensions (Kích thước sàn đấu)")]
     [SerializeField] private float arenaWidth = 31f;
     [SerializeField] private float arenaHeight = 31f;
-    [SerializeField] private bool showWallVisuals = false; // Mặc định tắt khối xanh che sàn, để lộ toàn bộ sàn Tilemap đá
+    [Tooltip("Độ thu phóng góc nhìn Camera (Số càng nhỏ càng lại gần nhân vật, khuyên dùng 5.0 - 6.0)")]
+    [SerializeField] private float cameraZoom = 5.5f;
+    [SerializeField] private bool showWallVisuals = false;
     [SerializeField] private bool showArenaGizmos = true;
 
     [Header("Enemy Prefabs")]
@@ -38,8 +41,8 @@ public class ArenaManager : MonoBehaviour
 
     [Header("Wave Progression & Difficulty Scaling")]
     [SerializeField] private int currentWave = 1;
-    [SerializeField] private float waveDuration = 20f; // Thời gian mỗi đợt sóng (giây)
-    [SerializeField] private float baseSpawnInterval = 1.0f; // Nhịp sinh quái
+    [SerializeField] private float waveDuration = 20f;
+    [SerializeField] private float baseSpawnInterval = 1.0f;
     [Tooltip("Tỉ lệ tăng máu quái mỗi Wave (0.35 = +35%/wave)")]
     [SerializeField] private float hpScalePerWave = 0.35f;
     [Tooltip("Tỉ lệ tăng sát thương quái mỗi Wave (0.12 = +12%/wave)")]
@@ -74,7 +77,6 @@ public class ArenaManager : MonoBehaviour
     {
         Instance = this;
 
-        // Mở rộng toàn bộ sàn đấu đá 31x31 bao phủ trọn vẹn 32x32 ô gạch Tilemap
         if (arenaHeight < 28f || arenaWidth < 28f)
         {
             arenaWidth = 31f;
@@ -83,19 +85,16 @@ public class ArenaManager : MonoBehaviour
 
         CreateArenaWalls();
 
-        // Tự động đảm bảo hệ thống Level & Ngọc luôn có mặt
         if (GetComponent<BrotatoLevelSystem>() == null && FindAnyObjectByType<BrotatoLevelSystem>() == null)
         {
             gameObject.AddComponent<BrotatoLevelSystem>();
         }
 
-        // Tự động đảm bảo hệ thống Cửa Hàng (Shop) luôn có mặt
         if (GetComponent<ArenaShopSystem>() == null && FindAnyObjectByType<ArenaShopSystem>() == null)
         {
             gameObject.AddComponent<ArenaShopSystem>();
         }
 
-        // Tự động đảm bảo hệ thống Kết Thúc Game (GameOver / Victory) luôn có mặt
         if (GetComponent<ArenaGameOverSystem>() == null && FindAnyObjectByType<ArenaGameOverSystem>() == null)
         {
             gameObject.AddComponent<ArenaGameOverSystem>();
@@ -121,7 +120,7 @@ public class ArenaManager : MonoBehaviour
         Camera mainCam = Camera.main;
         if (mainCam != null && mainCam.orthographic)
         {
-            mainCam.orthographicSize = 9.0f;
+            mainCam.orthographicSize = cameraZoom;
             mainCam.transform.position = new Vector3(0f, 0f, -10f);
         }
 
@@ -138,7 +137,6 @@ public class ArenaManager : MonoBehaviour
             FindPlayer();
         }
 
-        // Đếm ngược thời gian đợt sóng
         _timeRemaining -= Time.deltaTime;
         if (_timeRemaining <= 0f)
         {
@@ -146,7 +144,6 @@ public class ArenaManager : MonoBehaviour
             EndWave();
         }
 
-        // Cập nhật Canvas UI tùy chỉnh nếu có
         if (customWaveText != null) customWaveText.text = $"WAVE {currentWave}";
         if (customTimerText != null) customTimerText.text = $"{Mathf.CeilToInt(_timeRemaining)}s";
     }
@@ -156,7 +153,6 @@ public class ArenaManager : MonoBehaviour
         UpdateCameraFollow();
     }
 
-    // Camera 2D mượt mà bám theo Player và tự động kẹp trong ranh giới map 32x32
     private void UpdateCameraFollow()
     {
         if (_playerTransform == null) return;
@@ -188,17 +184,14 @@ public class ArenaManager : MonoBehaviour
             _playerTransform = player.transform;
             _playerHealth = player.GetComponent<PlayerHealth>();
 
-            // Mở khóa toàn bộ ranh giới di chuyển khắp sàn đấu đá 31x31
             float halfW = arenaWidth * 0.5f - 0.5f;
             float halfH = arenaHeight * 0.5f - 0.5f;
             player.SetArenaBounds(-halfW, halfW, -halfH, halfH);
         }
     }
 
-    // 1. TỰ ĐỘNG TẠO SÀN VÀ 4 BỨC TƯỜNG ĐẤU TRƯỜNG KHÉP KÍN
     private void CreateArenaWalls()
     {
-        // Sàn đấu (Floor) - chỉ tạo nếu chưa có Tilemap Grid hoặc sàn đấu trong Scene
         if (transform.Find("Arena_Floor") == null && FindAnyObjectByType<Grid>() == null)
         {
             GameObject floor = new GameObject("Arena_Floor");
@@ -206,7 +199,7 @@ public class ArenaManager : MonoBehaviour
             floor.transform.position = Vector3.zero;
             SpriteRenderer floorSr = floor.AddComponent<SpriteRenderer>();
             floorSr.sprite = GetOrCreatePixelSprite();
-            floorSr.color = new Color(0.12f, 0.15f, 0.20f, 1f); // Nền xám xanh đậm hiện đại
+            floorSr.color = new Color(0.12f, 0.15f, 0.20f, 1f);
             floorSr.sortingOrder = -20;
             floor.transform.localScale = new Vector3(arenaWidth, arenaHeight, 1f);
         }
@@ -216,18 +209,14 @@ public class ArenaManager : MonoBehaviour
             GameObject wallsParent = new GameObject("Arena_Walls");
             wallsParent.transform.SetParent(transform);
 
-        float halfW = arenaWidth * 0.5f;
-        float halfH = arenaHeight * 0.5f;
-        float wallThickness = 1.0f;
+            float halfW = arenaWidth * 0.5f;
+            float halfH = arenaHeight * 0.5f;
+            float wallThickness = 1.0f;
 
-        // Tường Trên (Top)
-        CreateWall(wallsParent.transform, "Wall_Top", new Vector2(0f, halfH + wallThickness * 0.5f), new Vector2(arenaWidth + wallThickness * 2f, wallThickness));
-        // Tường Dưới (Bottom)
-        CreateWall(wallsParent.transform, "Wall_Bottom", new Vector2(0f, -halfH - wallThickness * 0.5f), new Vector2(arenaWidth + wallThickness * 2f, wallThickness));
-        // Tường Trái (Left)
-        CreateWall(wallsParent.transform, "Wall_Left", new Vector2(-halfW - wallThickness * 0.5f, 0f), new Vector2(wallThickness, arenaHeight));
-        // Tường Phải (Right)
-        CreateWall(wallsParent.transform, "Wall_Right", new Vector2(halfW + wallThickness * 0.5f, 0f), new Vector2(wallThickness, arenaHeight));
+            CreateWall(wallsParent.transform, "Wall_Top", new Vector2(0f, halfH + wallThickness * 0.5f), new Vector2(arenaWidth + wallThickness * 2f, wallThickness));
+            CreateWall(wallsParent.transform, "Wall_Bottom", new Vector2(0f, -halfH - wallThickness * 0.5f), new Vector2(arenaWidth + wallThickness * 2f, wallThickness));
+            CreateWall(wallsParent.transform, "Wall_Left", new Vector2(-halfW - wallThickness * 0.5f, 0f), new Vector2(wallThickness, arenaHeight));
+            CreateWall(wallsParent.transform, "Wall_Right", new Vector2(halfW + wallThickness * 0.5f, 0f), new Vector2(wallThickness, arenaHeight));
         }
     }
 
@@ -237,17 +226,15 @@ public class ArenaManager : MonoBehaviour
         wall.transform.SetParent(parent);
         wall.transform.position = pos;
 
-        // Collider vật lý ngăn người chơi lọt ra ngoài màn hình
         BoxCollider2D box = wall.AddComponent<BoxCollider2D>();
         box.size = size;
         _wallColliders.Add(box);
 
-        // Mặc định không vẽ Sprite khối màu xanh đè lên sàn đá nữa
         if (showWallVisuals)
         {
             SpriteRenderer wallSr = wall.AddComponent<SpriteRenderer>();
             wallSr.sprite = GetOrCreatePixelSprite();
-            wallSr.color = new Color(0.28f, 0.36f, 0.48f, 0.35f); // Viền mờ tinh tế nếu bật
+            wallSr.color = new Color(0.28f, 0.36f, 0.48f, 0.35f);
             wallSr.sortingOrder = -10;
             wall.transform.localScale = new Vector3(size.x, size.y, 1f);
         }
@@ -256,7 +243,6 @@ public class ArenaManager : MonoBehaviour
     public float GetWaveHPMultiplier()
     {
         int w = Mathf.Max(1, currentWave);
-        // Tăng theo đường cong chuẩn Brotato (tuyến tính + lũy thừa nhẹ)
         return 1f + (w - 1) * hpScalePerWave + Mathf.Pow(w - 1, 1.25f) * 0.05f;
     }
 
@@ -284,7 +270,6 @@ public class ArenaManager : MonoBehaviour
         float eliteChance = Mathf.Clamp(baseEliteChance + (currentWave - 2) * 0.03f, 0f, 0.35f);
         bool isElite = canBeElite && (Random.value < eliteChance);
 
-        // 1. Basic Zombie
         Zombie z = enemyObj.GetComponent<Zombie>();
         if (z != null)
         {
@@ -293,32 +278,29 @@ public class ArenaManager : MonoBehaviour
             if (isElite) z.MakeElite(2.5f, 1.3f);
         }
 
-        // 2. Zombie Charger
         ZombieCharger charger = enemyObj.GetComponent<ZombieCharger>();
         if (charger != null)
         {
+            charger.SetClampToRoad(false);
             charger.ScaleStats(hpMult, dmgMult, spdMult);
             if (isElite) charger.MakeElite(2.2f, 1.25f);
         }
 
-        // 3. Zombie Jumper
         ZombieJumper jumper = enemyObj.GetComponent<ZombieJumper>();
         if (jumper != null)
         {
+            jumper.SetClampToRoad(false);
             jumper.ScaleStats(hpMult, dmgMult, spdMult);
         }
 
-        // 4. Zombie Boss
         ZombieBoss boss = enemyObj.GetComponent<ZombieBoss>();
         if (boss != null)
         {
             boss.SetClampToArena(false);
-            // Boss tăng máu mạnh mẽ hơn theo wave (Wave 5: 1x, Wave 10: 2.2x, Wave 15: 3.5x)
             float bossWaveMult = 1f + Mathf.Max(0, currentWave - 5) * 0.35f;
             boss.ScaleStats(bossWaveMult, dmgMult, Mathf.Min(1.25f, spdMult));
         }
 
-        // Bỏ qua va chạm giữa quái và tường biên giới trên TẤT CẢ Collider của quái
         Collider2D[] enemyCols = enemyObj.GetComponentsInChildren<Collider2D>();
         foreach (var enemyCol in enemyCols)
         {
@@ -341,10 +323,8 @@ public class ArenaManager : MonoBehaviour
         currentWave = waveNumber;
         _isWaveCompleted = false;
 
-        // Ẩn banner hoàn thành wave nếu có
         if (customWaveCompletedBanner != null) customWaveCompletedBanner.SetActive(false);
 
-        // Mỗi wave tăng thêm 4 giây sinh tồn
         waveDuration = 16f + (waveNumber * 4f);
         _timeRemaining = waveDuration;
 
@@ -354,33 +334,33 @@ public class ArenaManager : MonoBehaviour
         float dmgMult = GetWaveDamageMultiplier();
         Debug.Log($"<color=#FF5555>[ArenaManager] Wave {currentWave} Started! Difficulty: Enemy HP x{hpMult:F2} | Damage x{dmgMult:F2} | Speed x{GetWaveSpeedMultiplier():F2}</color>");
 
-        // Tính toán nhịp spawn (wave càng cao sinh quái càng dồn dập)
         float spawnRate = Mathf.Max(0.28f, baseSpawnInterval - (waveNumber * 0.08f));
 
         StopAllCoroutines();
         StartCoroutine(EnemySpawnRoutine(spawnRate));
     }
 
-    // 3. SINH QUÁI TỪ 4 MÉP MÀN HÌNH CHẠY VÀO
+    // 3. SINH QUÁI TỪ 4 MÉP MÀN HÌNH CHẠY VÀO (CÓ DẤU CẢNH BÁO ĐỎ TRƯỚC KHI SPAWN)
     private IEnumerator EnemySpawnRoutine(float interval)
     {
         yield return new WaitForSeconds(0.8f);
 
-        // Cứ mỗi 5 wave (Wave 5, Wave 10, Wave 15,...) thì thả Boss!
         if (currentWave % 5 == 0 && bossPrefab != null)
         {
-            int bossCount = currentWave >= 10 ? 2 : 1; // Wave 10 thả hẳn 2 Boss cho kịch tính!
+            int bossCount = currentWave >= 10 ? 2 : 1;
             for (int b = 0; b < bossCount; b++)
             {
                 Vector3 bossPos = GetSpawnPositionAroundEdge();
-                GameObject bossObj = Instantiate(bossPrefab, bossPos, Quaternion.identity);
-                SetupSpawnedEnemy(bossObj);
+                SpawnWarningIndicator.ShowWarning(bossPos, 1.0f, () => {
+                    if (!_isWaveActive) return;
+                    GameObject bossObj = Instantiate(bossPrefab, bossPos, Quaternion.identity);
+                    SetupSpawnedEnemy(bossObj);
+                });
             }
         }
 
         while (_isWaveActive)
         {
-            // Từ Wave 4+: Có tỉ lệ sinh 2 quái cùng lúc để tạo cảm giác bầy đàn (swarm)
             int spawnBatch = (currentWave >= 4 && Random.value < 0.45f) ? 2 : 1;
             for (int s = 0; s < spawnBatch; s++)
             {
@@ -395,7 +375,6 @@ public class ArenaManager : MonoBehaviour
     {
         Vector3 spawnPos = GetSpawnPositionAroundEdge();
 
-        // Tỉ lệ xuất hiện Jumper và Charger tăng dần theo Wave
         int jumperChance = Mathf.Clamp((currentWave - 1) * 12, 0, 35);
         int chargerChance = (currentWave >= 2) ? Mathf.Clamp((currentWave - 1) * 10, 0, 30) : 0;
 
@@ -413,36 +392,37 @@ public class ArenaManager : MonoBehaviour
 
         if (prefabToSpawn != null)
         {
-            GameObject spawnedObj = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
-            SetupSpawnedEnemy(spawnedObj);
+            SpawnWarningIndicator.ShowWarning(spawnPos, 0.65f, () => {
+                if (!_isWaveActive) return;
+                GameObject spawnedObj = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
+                SetupSpawnedEnemy(spawnedObj);
+            });
         }
     }
 
-    // Lấy ngẫu nhiên tọa độ nằm sát mép trong của 4 cạnh sàn đấu đá
     private Vector3 GetSpawnPositionAroundEdge()
     {
-        // Sinh quái nằm trọn vẹn trên sàn đá cách mép tường 1.5m, không bao giờ bị rớt ra ngoài khoảng đen
         float spawnW = Mathf.Max(4f, (arenaWidth * 0.5f) - 1.5f);
         float spawnH = Mathf.Max(4f, (arenaHeight * 0.5f) - 1.5f);
 
-        int side = Random.Range(0, 4); // 0: Top, 1: Bottom, 2: Left, 3: Right
+        int side = Random.Range(0, 4);
         float x = 0f, y = 0f;
 
         switch (side)
         {
-            case 0: // Cạnh Trên
+            case 0:
                 x = Random.Range(-spawnW, spawnW);
                 y = spawnH;
                 break;
-            case 1: // Cạnh Dưới
+            case 1:
                 x = Random.Range(-spawnW, spawnW);
                 y = -spawnH;
                 break;
-            case 2: // Cạnh Trái
+            case 2:
                 x = -spawnW;
                 y = Random.Range(-spawnH, spawnH);
                 break;
-            case 3: // Cạnh Phải
+            case 3:
                 x = spawnW;
                 y = Random.Range(-spawnH, spawnH);
                 break;
@@ -451,14 +431,13 @@ public class ArenaManager : MonoBehaviour
         return new Vector3(x, y, 0f);
     }
 
-    // 4. KẾT THÚC ĐỢT SÓNG
+    // 4. KẾT THÚC ĐỢT SÓNG (HÚT SẠCH NGỌC CUỐI WAVE CHUẨN BROTATO)
     private void EndWave()
     {
         _isWaveActive = false;
         _isWaveCompleted = true;
         StopAllCoroutines();
 
-        // Dọn sạch toàn bộ quái còn lại trên sàn đấu
         Zombie[] zombies = FindObjectsByType<Zombie>(FindObjectsSortMode.None);
         foreach (var z in zombies) if (z != null) Destroy(z.gameObject);
 
@@ -471,18 +450,36 @@ public class ArenaManager : MonoBehaviour
         ZombieBoss[] bosses = FindObjectsByType<ZombieBoss>(FindObjectsSortMode.None);
         foreach (var b in bosses) if (b != null) Destroy(b.gameObject);
 
-        // Kiểm tra nếu đã sống sót qua toàn bộ đợt sóng (Mặc định 10 Waves) và không bật Vô Tận -> CHIẾN THẮNG!
+        // 2. Tự động gom toàn bộ ngọc (Materials/Gems) còn vương vãi trên sàn bay vút về người chơi
+        MaterialGem.MagnetizeAllGems();
+
+        // 3. Chờ 1.2s hút hết ngọc rồi mới mở Shop
+        StartCoroutine(EndWaveSequenceRoutine());
+    }
+
+    private IEnumerator EndWaveSequenceRoutine()
+    {
+        if (customWaveCompletedBanner != null)
+        {
+            customWaveCompletedBanner.SetActive(true);
+            if (customWaveCompletedText != null)
+                customWaveCompletedText.text = $"WAVE {currentWave} COMPLETED!\nVacuuming materials...";
+        }
+
+        yield return new WaitForSeconds(1.2f);
+
+        if (customWaveCompletedBanner != null) customWaveCompletedBanner.SetActive(false);
+
         if (currentWave >= maxWaves && !_isEndlessMode)
         {
             ArenaGameOverSystem gameOver = ArenaGameOverSystem.Instance ?? FindAnyObjectByType<ArenaGameOverSystem>();
             if (gameOver != null)
             {
                 gameOver.TriggerVictory();
-                return;
+                yield break;
             }
         }
 
-        // Mở Cửa Hàng Giữa Các Hiệp (Inter-Wave Shop)
         ArenaShopSystem shop = ArenaShopSystem.Instance ?? FindAnyObjectByType<ArenaShopSystem>();
         if (shop != null)
         {
@@ -490,9 +487,6 @@ public class ArenaManager : MonoBehaviour
         }
         else
         {
-            // Fallback nếu chưa có Shop thì hiển thị banner thông báo như cũ
-            if (customWaveCompletedBanner != null) customWaveCompletedBanner.SetActive(true);
-            if (customWaveCompletedText != null) customWaveCompletedText.text = $"WAVE {currentWave} COMPLETED!\nReady for next wave...";
             StartCoroutine(AutoNextWaveRoutine());
         }
     }
@@ -506,7 +500,6 @@ public class ArenaManager : MonoBehaviour
     // 5. GIAO DIỆN HUD TỰ ĐỘNG (Trực quan, chuẩn phong cách Brotato)
     private void OnGUI()
     {
-        // Tự động tắt OnGUI nếu người chơi đã tự kéo UI Canvas vào
         if (customWaveText != null || customTimerText != null) return;
         GUIStyle titleStyle = new GUIStyle(GUI.skin.label)
         {
@@ -522,14 +515,12 @@ public class ArenaManager : MonoBehaviour
         };
         timerStyle.normal.textColor = _timeRemaining <= 5f ? Color.red : Color.yellow;
 
-        // Đồng hồ đếm ngược trên đỉnh màn hình
         if (_isWaveActive)
         {
             GUI.Label(new Rect(Screen.width * 0.5f - 150, 15, 300, 35), $"WAVE {currentWave}", titleStyle);
             GUI.Label(new Rect(Screen.width * 0.5f - 150, 50, 300, 45), $"{Mathf.CeilToInt(_timeRemaining)}s", timerStyle);
         }
 
-        // Thông báo hoàn thành Wave (tự động chuyển sau 2 giây)
         if (_isWaveCompleted)
         {
             GUIStyle winStyle = new GUIStyle(titleStyle)
@@ -545,20 +536,16 @@ public class ArenaManager : MonoBehaviour
                 fontSize = 20
             };
             nextStyle.normal.textColor = Color.yellow;
-            GUI.Label(new Rect(Screen.width * 0.5f - 200, Screen.height * 0.45f, 400, 40), $"Ready for next Wave {currentWave + 1}...", nextStyle);
+            GUI.Label(new Rect(Screen.width * 0.5f - 200, Screen.height * 0.45f, 400, 40), $"Vacuuming Gems for Shop...", nextStyle);
         }
     }
 
     private void OnDrawGizmos()
     {
         if (!showArenaGizmos) return;
-
-        // Vẽ khung viền đấu trường màu xanh neon trong Scene View
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireCube(Vector3.zero, new Vector3(arenaWidth, arenaHeight, 0f));
     }
 }
 
-// Alias để tương thích ngược nếu component đã gán tên cũ
 public class BrotatoArenaManager : ArenaManager { }
-

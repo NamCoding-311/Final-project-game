@@ -637,17 +637,15 @@ public class Zombie : MonoBehaviour
 
     private void SpawnMaterialGem()
     {
-        // Chỉ sinh ngọc nếu đang ở chế độ Đấu trường (Arena)
+        // Chỉ sinh coin nếu đang ở chế độ Đấu trường (Arena)
         if (ArenaManager.Instance != null || BrotatoLevelSystem.Instance != null)
         {
-            GameObject gem = new GameObject("MaterialGem");
-            gem.transform.position = transform.position;
-            MaterialGem mg = gem.AddComponent<MaterialGem>();
-            if (_isElite)
-            {
-                mg.SetGemData(4, new Color(0.85f, 0.25f, 1f), 1.1f);
-            }
-            float dropChance = _isElite ? 22f : 3.5f;
+            // Zombie thường: 100% Xu Bạc (1 Xu). Zombie Elite: 75% Xu Vàng (5 Xu), 25% Xu Bạc
+            CoinTier tier = _isElite ? (Random.value < 0.75f ? CoinTier.Gold : CoinTier.Silver) : CoinTier.Silver;
+            MaterialGem.SpawnCoin(transform.position, tier);
+
+            // Tỉ lệ rơi Hộp cứu thương First Aid Kit
+            float dropChance = _isElite ? 15f : 3.5f;
             ArenaPowerUp.TryDropRandom(transform.position, dropChance);
         }
     }
