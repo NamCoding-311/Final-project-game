@@ -39,6 +39,11 @@ public class CameraFollow : MonoBehaviour
 
     private Camera _cam;
     private float _originalXOffset;
+    private float _originalOrthoSize = 5f;
+    private float _shakeTimeRemaining;
+    private float _shakeMagnitude;
+    private Vector3 _shakeOffset;
+    private Coroutine _zoomCoroutine;
 
     private void Awake()
     {
@@ -51,6 +56,7 @@ public class CameraFollow : MonoBehaviour
         {
             _cam.clearFlags = CameraClearFlags.SolidColor;
             _cam.backgroundColor = backgroundColor;
+            _originalOrthoSize = _cam.orthographicSize;
         }
     }
 
@@ -102,7 +108,16 @@ public class CameraFollow : MonoBehaviour
         }
 
         // Cập nhật vị trí Camera (X thay đổi theo xe, Y và Z giữ cố định)
-        transform.position = new Vector3(currentX, fixedY, fixedZ);
+        if (_shakeTimeRemaining > 0f)
+        {
+            _shakeOffset = (Vector3)(Random.insideUnitCircle * _shakeMagnitude);
+            _shakeTimeRemaining -= Time.deltaTime;
+        }
+        else
+        {
+            _shakeOffset = Vector3.zero;
+        }
+        transform.position = new Vector3(currentX, fixedY, fixedZ) + _shakeOffset;
     }
 
     // Hàm cho phép đổi đối tượng theo dõi lúc runtime nếu cần
@@ -118,5 +133,39 @@ public class CameraFollow : MonoBehaviour
         minCamX = minX;
         maxCamX = maxX;
         xOffset = locked ? customXOffset : _originalXOffset;
+    }
+
+    public void TriggerShake(float duration = 0.5f, float magnitude = 0.35f)
+    {
+        _shakeTimeRemaining = Mathf.Max(_shakeTimeRemaining, duration);
+        _shakeMagnitude = Mathf.Max(_shakeMagnitude, magnitude);
+    }
+
+    public void TriggerZoom(float targetSize, float duration, System.Action onComplete = null)
+    {
+        if (_cam == null) _cam = GetComponent<Camera>();
+        if (_cam == null) return;
+        if (_zoomCoroutine != null) StopCoroutine(_zoomCoroutine);
+        _zoomCoroutine = StartCoroutine(ZoomRoutine(targetSize, duration, onComplete));
+    }
+
+    public void ResetZoom(float duration = 1.0f)
+    {
+        TriggerZoom(_originalOrthoSize, duration);
+    }
+
+    private System.Collections.IEnumerator ZoomRoutine(float targetSize, float duration, System.Action onComplete)
+    {
+        float startSize = _cam.orthographicSize;
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            _cam.orthographicSize = Mathf.Lerp(startSize, targetSize, elapsed / duration);
+            yield return null;
+        }
+        _cam.orthographicSize = targetSize;
+        _zoomCoroutine = null;
+        onComplete?.Invoke();
     }
 }

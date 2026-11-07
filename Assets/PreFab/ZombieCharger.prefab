@@ -193,7 +193,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_MaskInteraction: 0
   m_Sprite: {fileID: 2324236343598682440, guid: fa219707244ed8e408c71e147e02632e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -229,6 +229,9 @@ MonoBehaviour:
   stunDuration: 1
   windupColor: {r: 1, g: 0.25, b: 0.2, a: 1}
   stunnedColor: {r: 0.6, g: 0.6, b: 0.7, a: 1}
+  clampToRoad: 1
+  minRoadY: -3.45
+  maxRoadY: 3
 --- !u!95 &5296069336229096062
 Animator:
   serializedVersion: 7

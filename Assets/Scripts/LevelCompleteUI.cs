@@ -70,6 +70,18 @@ public class LevelCompleteUI : MonoBehaviour
         SceneManager.LoadScene("map3");
     }
 
+    // Về Mission Lobby / Bàn tác chiến
+    public void ReturnToMissionLobby()
+    {
+        Time.timeScale = 1f;
+        if (Application.CanStreamedLevelBeLoaded("Misson lobby"))
+            SceneManager.LoadScene("Misson lobby");
+        else if (Application.CanStreamedLevelBeLoaded("Main menu"))
+            SceneManager.LoadScene("Main menu");
+        else
+            SceneManager.LoadScene(0);
+    }
+
     // Về Menu chính
     public void ReturnToLobby()
     {

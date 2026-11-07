@@ -144,6 +144,42 @@ public class StageLevelManager : MonoBehaviour
     [SerializeField] protected TextMeshProUGUI bossWarningText;
     protected ZombieBoss _activeBossInstance;
 
+    [Header("Cinematic Audio & Effects")]
+    [Tooltip("Âm thanh xe tăng tốc xé gió Nitro")]
+    [SerializeField] protected AudioClip nitroBoostSound;
+    [Range(0f, 1f)]
+    [Tooltip("Âm lượng tiếng Nitro (0.0 đến 1.0)")]
+    [SerializeField] protected float nitroBoostVolume = 0.9f;
+
+    [Tooltip("Âm thanh tiếng gầm của Boss khi tiếp đất")]
+    [SerializeField] protected AudioClip bossRoarSound;
+    [Range(0f, 1f)]
+    [Tooltip("Âm lượng tiếng gầm của Boss (0.0 đến 1.0)")]
+    [SerializeField] protected float bossRoarVolume = 1.0f;
+    protected AudioSource _cutsceneAudioSource;
+
+    protected void PlayCutsceneAudio(AudioClip clip, string editorAssetPath, float volume = 1f)
+    {
+        if (clip == null)
+        {
+            #if UNITY_EDITOR
+            clip = UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>(editorAssetPath);
+            #endif
+        }
+        if (clip != null)
+        {
+            if (_cutsceneAudioSource == null)
+            {
+                _cutsceneAudioSource = GetComponent<AudioSource>();
+                if (_cutsceneAudioSource == null) _cutsceneAudioSource = gameObject.AddComponent<AudioSource>();
+            }
+            if (_cutsceneAudioSource != null)
+            {
+                _cutsceneAudioSource.PlayOneShot(clip, volume);
+            }
+        }
+    }
+
     [Header("UI Announcements")]
     [SerializeField] protected TextMeshProUGUI stageAnnouncementText;
     [SerializeField] protected LevelCompleteUI levelCompleteUI;
@@ -197,6 +233,8 @@ public class StageLevelManager : MonoBehaviour
         {
             _startPlayerX = playerTransform.position.x;
             _playerMovement = playerTransform.GetComponent<Player3LaneMovement>();
+            Transform carGunHolder = playerTransform.Find("GunHolder") ?? playerTransform.Find("Gun");
+            if (carGunHolder != null) carGunHolder.gameObject.SetActive(true);
         }
 
         if (globalLight2D == null) globalLight2D = FindAnyObjectByType<Light2D>();
@@ -216,6 +254,18 @@ public class StageLevelManager : MonoBehaviour
         if (obstacleSpawner == null) obstacleSpawner = FindAnyObjectByType<ObstacleSpawner>();
         if (parallaxBackground == null) parallaxBackground = FindAnyObjectByType<InfiniteParallaxBackground>();
         if (levelCompleteUI == null) levelCompleteUI = FindAnyObjectByType<LevelCompleteUI>();
+
+        if (_cutsceneAudioSource == null)
+        {
+            _cutsceneAudioSource = GetComponent<AudioSource>();
+            if (_cutsceneAudioSource == null) _cutsceneAudioSource = gameObject.AddComponent<AudioSource>();
+        }
+
+        Canvas mainCanvas = FindAnyObjectByType<Canvas>();
+        if (mainCanvas != null)
+        {
+            SpeedLinesOverlay.GetOrCreate(mainCanvas);
+        }
 
         // Thiết lập hiển thị thanh máu
         if (carHealthBar == null) carHealthBar = GameObject.Find("HPBar");
@@ -316,10 +366,27 @@ public class StageLevelManager : MonoBehaviour
     {
         _currentState = LevelState.ParkingVehicle;
 
-        // Tắt điều khiển xe và súng xe
-        if (_playerMovement != null) _playerMovement.enabled = false;
+        // Tắt điều khiển xe, tắt bắn súng xe và ẩn khẩu súng trên nóc xe khi xuống xe (tránh trùng 2 súng)
+        if (_playerMovement != null)
+        {
+            _playerMovement.SetSpeed(0f);
+            _playerMovement.enabled = false;
+        }
         PlayerShooting carShooting = playerTransform != null ? playerTransform.GetComponent<PlayerShooting>() : null;
         if (carShooting != null) carShooting.enabled = false;
+
+        Transform carGunHolder = playerTransform != null ? (playerTransform.Find("GunHolder") ?? playerTransform.Find("Gun")) : null;
+        if (carGunHolder != null) carGunHolder.gameObject.SetActive(false);
+
+        if (playerTransform != null)
+        {
+            var rb = playerTransform.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero;
+                rb.angularVelocity = 0f;
+            }
+        }
 
         // 1. Tự động tấp xe vào lề trên bên trái (Làn trên cùng)
         float topParkY = 2.4f;
@@ -347,8 +414,8 @@ public class StageLevelManager : MonoBehaviour
         if (playerTransform != null) playerTransform.position = targetParkPos;
 
         // 2. Thiết lập phạm vi đấu trường (tự động tương thích với mép đường của từng Map)
-        float arenaLeft = targetParkPos.x - 4f;
-        float arenaRight = targetParkPos.x + 22f;
+        float arenaLeft = targetParkPos.x - 3.5f;
+        float arenaRight = targetParkPos.x + 16.0f;
         float arenaBottom = _playerMovement != null ? _playerMovement.GetMinYLimit() : (zombieSpawner != null ? zombieSpawner.GetRoadMinY() : -1.2f);
         float arenaTop = _playerMovement != null ? _playerMovement.GetMaxYLimit() : (zombieSpawner != null ? zombieSpawner.GetRoadMaxY() : 3.2f);
         float centerArenaY = (arenaBottom + arenaTop) * 0.5f;
@@ -358,11 +425,42 @@ public class StageLevelManager : MonoBehaviour
         if (zombieSpawner != null) zombieSpawner.SetSpawningActive(false);
         if (obstacleSpawner != null) obstacleSpawner.enabled = false;
 
-        // Dọn dẹp quái lẻ cũ trên đường
+        // Dàn đều ảnh nền Parallax bao trọn hai bên Camera để không bao giờ bị hở khoảng xám bên trái khi xe dừng
+        if (parallaxBackground != null)
+        {
+            parallaxBackground.RealignAroundCamera();
+        }
+
+        // Dọn dẹp sạch toàn bộ quái lẻ cũ (Zombie thường, ZombieCharger)
         Zombie[] leftoverZombies = FindObjectsByType<Zombie>(FindObjectsSortMode.None);
         foreach (var z in leftoverZombies)
         {
             if (z != null) Destroy(z.gameObject);
+        }
+
+        ZombieCharger[] leftoverChargers = FindObjectsByType<ZombieCharger>(FindObjectsSortMode.None);
+        foreach (var c in leftoverChargers)
+        {
+            if (c != null) Destroy(c.gameObject);
+        }
+
+        // Dọn dẹp toàn bộ chướng ngại vật (xe tải, rào chắn, đống rác) trong khu vực đấu trường
+        RoadObstacle[] roadObstacles = FindObjectsByType<RoadObstacle>(FindObjectsSortMode.None);
+        foreach (var ro in roadObstacles)
+        {
+            if (ro != null) Destroy(ro.gameObject);
+        }
+
+        GameObject[] obstacles = GameObject.FindGameObjectsWithTag("Obstacle");
+        foreach (var o in obstacles)
+        {
+            if (o != null) Destroy(o);
+        }
+
+        // Đảm bảo OnFootPlayer luôn tìm thấy nếu chưa gán
+        if (onFootPlayer == null)
+        {
+            onFootPlayer = FindAnyObjectByType<OnFootPlayerController>(FindObjectsInactive.Include);
         }
 
         // 3. Cho người chơi bước xuống xe
@@ -381,7 +479,7 @@ public class StageLevelManager : MonoBehaviour
             if (cameraFollow != null)
             {
                 cameraFollow.SetTarget(onFootPlayer.transform);
-                cameraFollow.SetArenaLock(true, targetParkPos.x + 4f, targetParkPos.x + 18f, centerArenaY);
+                cameraFollow.SetArenaLock(true, targetParkPos.x + 3.0f, targetParkPos.x + 8.5f, centerArenaY);
             }
 
             // Đổi thanh máu
@@ -414,9 +512,46 @@ public class StageLevelManager : MonoBehaviour
 
             if (bossPrefab != null)
             {
-                Vector3 bossSpawnPos = new Vector3(arenaRight - 3f, centerArenaY, 0f);
-                GameObject bossObj = Instantiate(bossPrefab, bossSpawnPos, Quaternion.identity);
+                // 1. Cảnh báo rung chấn từ xa (2 nhịp rúng động nhẹ)
+                if (cameraFollow != null) cameraFollow.TriggerShake(0.3f, 0.15f);
+                yield return new WaitForSeconds(0.4f);
+                if (cameraFollow != null) cameraFollow.TriggerShake(0.3f, 0.2f);
+                yield return new WaitForSeconds(0.5f);
+
+                // 2. Boss rơi từ trên cao xuống mặt đường (Ground Slam) - Rơi ngay phía trước mặt người chơi (đối diện cách 9m, nằm trọn trong khung hình)
+                Vector3 targetLandPos = new Vector3(targetParkPos.x + 9.0f, centerArenaY, 0f);
+                float camBaseY = cameraFollow != null ? cameraFollow.transform.position.y : 3.55f;
+                // Khởi đầu ngay mép trên camera (9.0m), nằm trọn vẹn trong bầu trời background, không bị rơi từ khoảng đen ngoài map
+                Vector3 skyStartPos = new Vector3(targetLandPos.x, camBaseY + 5.5f, 0f);
+
+                GameObject bossObj = Instantiate(bossPrefab, skyStartPos, Quaternion.identity);
                 _activeBossInstance = bossObj.GetComponent<ZombieBoss>();
+
+                // Tạm thời vô hiệu hóa va chạm và AI trong lúc rơi
+                Collider2D bossCol = bossObj.GetComponent<Collider2D>();
+                if (bossCol != null) bossCol.enabled = false;
+
+                float dropTime = 0.42f;
+                float dropElapsed = 0f;
+                while (dropElapsed < dropTime)
+                {
+                    dropElapsed += Time.deltaTime;
+                    float t = dropElapsed / dropTime;
+                    float easeT = t * t; // Gia tốc trọng lực nhanh dần
+                    bossObj.transform.position = Vector3.Lerp(skyStartPos, targetLandPos, easeT);
+                    yield return null;
+                }
+                bossObj.transform.position = targetLandPos;
+                if (bossCol != null) bossCol.enabled = true;
+
+                // 3. Khoảnh khắc tiếp đất: Rung giật màn hình cực mạnh + Sóng bụi chấn động + Tiếng gầm
+                if (cameraFollow != null)
+                {
+                    cameraFollow.TriggerShake(0.85f, 0.5f);
+                }
+
+                GroundShockwaveEffect.Spawn(targetLandPos, maxRadius: 7.0f, duration: 0.6f);
+                PlayCutsceneAudio(bossRoarSound, "Assets/sound eff/boss.mp3", bossRoarVolume);
 
                 if (_activeBossInstance != null)
                 {
@@ -430,6 +565,7 @@ public class StageLevelManager : MonoBehaviour
                     );
                 }
 
+                // 4. Thanh máu Boss tự động tụ đầy (Cinematic Fill)
                 if (bossHealthBar != null)
                 {
                     var nameText = bossHealthBar.GetComponentInChildren<TextMeshProUGUI>(true);
@@ -441,6 +577,17 @@ public class StageLevelManager : MonoBehaviour
                     bossHealthBar.gameObject.SetActive(true);
                     int expectedMaxHp = Mathf.RoundToInt(500 * currentStage.bossHpMultiplier);
                     bossHealthBar.maxValue = expectedMaxHp;
+                    bossHealthBar.value = 0f;
+
+                    float fillTime = 1.0f;
+                    float fillElapsed = 0f;
+                    while (fillElapsed < fillTime)
+                    {
+                        fillElapsed += Time.deltaTime;
+                        float t = fillElapsed / fillTime;
+                        bossHealthBar.value = Mathf.Lerp(0f, expectedMaxHp, t);
+                        yield return null;
+                    }
                     bossHealthBar.value = expectedMaxHp;
                 }
             }
@@ -564,10 +711,13 @@ public class StageLevelManager : MonoBehaviour
         if (bossHealthBar != null) bossHealthBar.gameObject.SetActive(false);
         if (bossWarningText != null) bossWarningText.gameObject.SetActive(false);
 
-        // 2. Bật lại điều khiển xe và súng trên xe
+        // 2. Bật lại điều khiển xe, súng trên xe và hiện lại súng trên nóc xe
         if (_playerMovement != null) _playerMovement.enabled = true;
         PlayerShooting carShooting = playerTransform != null ? playerTransform.GetComponent<PlayerShooting>() : null;
         if (carShooting != null) carShooting.enabled = true;
+
+        Transform carGunHolder = playerTransform != null ? (playerTransform.Find("GunHolder") ?? playerTransform.Find("Gun")) : null;
+        if (carGunHolder != null) carGunHolder.gameObject.SetActive(true);
 
         // 3. Trả Camera về bám theo xe và gỡ bỏ khóa đấu trường
         if (cameraFollow != null)
@@ -602,19 +752,44 @@ public class StageLevelManager : MonoBehaviour
 
         ShowStageAnnouncement($"STAGE {_currentStageIndex + 1} COMPLETE!\nENTERING {nextStage.stageName.ToUpper()}", 3.5f);
 
-        // 1. Xe tăng tốc Nitro phóng vút qua
-        if (_playerMovement != null)
+        // 1. Kích hoạt hiệu ứng Nitro Boost: Vệt xé gió + 2 viền đen điện ảnh + Action Cam Zoom-In + Rung nhẹ
+        Canvas cutsceneCanvas = FindAnyObjectByType<Canvas>();
+        SpeedLinesOverlay overlay = null;
+        if (cutsceneCanvas != null)
         {
-            _playerMovement.SetSpeed(22f);
+            overlay = SpeedLinesOverlay.GetOrCreate(cutsceneCanvas);
+            if (overlay != null) overlay.Play(duration: 2.8f, peakAlpha: 0.85f);
         }
 
-        // 2. Đổi Background Parallax (Fade 2.0s)
+        if (cameraFollow != null)
+        {
+            // Zoom nhẹ VÀO TRONG (4.7f) thay vì zoom xa (6.2f):
+            // Giúp tập trung cận cảnh vào xe xé gió, đồng thời khung hình KHÔNG BAO GIỜ bị lòi rìa ngoài map!
+            cameraFollow.TriggerZoom(targetSize: 4.7f, duration: 1.0f);
+            cameraFollow.TriggerShake(duration: 2.5f, magnitude: 0.08f);
+        }
+
+        PlayCutsceneAudio(nitroBoostSound, "Assets/sound eff/charge.mp3", nitroBoostVolume);
+
+        // 2. Xe tăng tốc Nitro phóng vút qua
+        if (_playerMovement != null)
+        {
+            _playerMovement.SetSpeed(24f);
+        }
+
+        // Chớp sáng xé gió (Speed Flash) khi đổi background để che hoàn toàn vết nối chuyển cảnh
+        if (overlay != null)
+        {
+            overlay.TriggerFlash(peakAlpha: 0.45f, duration: 0.35f);
+        }
+
+        // 3. Đổi Background Parallax (Fade 2.0s)
         if (parallaxBackground != null)
         {
             parallaxBackground.SwitchToStage(nextStageIndex, fadeDuration: 2.0f);
         }
 
-        // 3. Fade màu ánh sáng Global Light 2D sang chặng mới
+        // 4. Fade màu ánh sáng Global Light 2D sang chặng mới
         if (globalLight2D != null)
         {
             Color startColor = globalLight2D.color;
@@ -639,7 +814,13 @@ public class StageLevelManager : MonoBehaviour
             yield return new WaitForSeconds(2.5f);
         }
 
-        // 4. Áp dụng độ khó và máu mới cho Zombie ở chặng mới
+        // 5. Bình ổn lại Camera và hoàn tất chuyển chặng
+        if (cameraFollow != null)
+        {
+            cameraFollow.ResetZoom(duration: 1.0f);
+        }
+
+        // 6. Áp dụng độ khó và máu mới cho Zombie ở chặng mới
         _currentStageIndex = nextStageIndex;
         ApplyStageSettings(_currentStageIndex, isInstant: false);
 
@@ -647,7 +828,6 @@ public class StageLevelManager : MonoBehaviour
         {
             zombieSpawner.SetSpawningActive(true);
         }
-
         _currentState = LevelState.NormalDriving;
     }
 
@@ -655,6 +835,21 @@ public class StageLevelManager : MonoBehaviour
     private IEnumerator TriggerVictorySequence()
     {
         _currentState = LevelState.LevelWon;
+
+        // Mở khóa chặng tiếp theo trong Bàn Tác Chiến (Mission Lobby)
+        string activeSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        if (activeSceneName == "map1")
+        {
+            TacticalWarRoomManager.UnlockNextSector(1);
+        }
+        else if (activeSceneName == "map2")
+        {
+            TacticalWarRoomManager.UnlockNextSector(2);
+        }
+        else if (activeSceneName == "map3")
+        {
+            TacticalWarRoomManager.UnlockNextSector(3);
+        }
 
         ShowStageAnnouncement(mapVictoryText, 4f);
 

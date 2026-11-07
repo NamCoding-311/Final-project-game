@@ -4954,7 +4954,7 @@ Transform:
   m_GameObject: {fileID: 4839827906619030958}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.47, y: 0.42, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.1680801, y: 1.1680801, z: 1.4601}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5056,7 +5056,7 @@ Transform:
   m_GameObject: {fileID: 6734557756555595515}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.959, y: 0.495, z: 0}
+  m_LocalPosition: {x: 0.55, y: 0.06, z: 0}
   m_LocalScale: {x: 1.25, y: 1.25, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -5089,7 +5089,7 @@ Transform:
   m_GameObject: {fileID: 7205679626805496180}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.2, y: 0, z: 0}
+  m_LocalPosition: {x: 0.67, y: 0.42, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5284,6 +5284,10 @@ MonoBehaviour:
   firePoint: {fileID: 6004938008631932678}
   gunSpriteRenderer: {fileID: 2718776989532238224}
   gunVisualAnimator: {fileID: 6179838621228696261}
+  muzzleFlashObject: {fileID: 0}
+  muzzleSparkParticles: {fileID: 0}
+  muzzleFlashSprite: {fileID: 0}
+  muzzleFlashDuration: 0.045
 --- !u!114 &2381315871009996159
 MonoBehaviour:
   m_ObjectHideFlags: 0

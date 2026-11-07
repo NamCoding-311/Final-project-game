@@ -4,20 +4,48 @@ using UnityEngine;
 // Điều khiển Hoạt Ảnh và Độ Giật (Recoil & Shoot Animation) cho từng khẩu súng:
 // - Chạy chuỗi Sprite Sheet (Lóe lửa đầu nòng, giật khóa nòng, văng vỏ đạn) khi bắn.
 // - Tự động đồng bộ tốc độ animation theo FireRate của súng (bắn càng nhanh, hoạt ảnh chạy càng nhanh).
-// - Thêm hiệu ứng thụt lùi (Recoil Kickback) cơ học nảy về sau trên GameObject con (Visual) rồi hồi vị trí ban đầu (0, 0, 0),
-//   hoàn toàn độc lập và không bao giờ xung đột với vị trí quỹ đạo bay (Orbit) quanh nhân vật.
+// - Thêm hiệu ứng thụt lùi (Recoil Kickback) cơ học nảy về sau trên GameObject con (Visual) rồi hồi vị trí ban đầu (baseLocalPos),
+//   hoàn toàn độc lập và không bao giờ xung đột với vị trí neo tay cầm (GunHolder).
 public class GunVisualAnimator : MonoBehaviour
 {
     private WeaponData _weaponData;
     private SpriteRenderer _sr;
     private Sprite _idleSprite;
     private Coroutine _currentAnimRoutine;
+    private Vector3 _baseLocalPos = Vector3.zero;
+    private bool _hasBaseLocalPos = false;
+
+    // Tham chiếu Transform trực tiếp nhận hiệu ứng giật nòng (Visual child)
+    private Transform _recoilTarget;
+
+    private void Awake()
+    {
+        CacheRecoilTarget();
+    }
+
+    private void CacheRecoilTarget()
+    {
+        if (_recoilTarget == null)
+        {
+            _recoilTarget = transform;
+            _baseLocalPos = transform.localPosition;
+            _hasBaseLocalPos = true;
+        }
+    }
 
     public void Initialize(WeaponData data, SpriteRenderer sr)
     {
         _weaponData = data;
         _sr = sr;
-        transform.localPosition = Vector3.zero;
+
+        CacheRecoilTarget();
+
+        // Nếu component này gắn trực tiếp trên GunHolder (chứa OnFootPlayerController ở cha),
+        // không được reset vị trí local của GunHolder về (0,0,0) làm tuột khỏi tay nhân vật
+        if (_hasBaseLocalPos)
+        {
+            transform.localPosition = _baseLocalPos;
+        }
 
         if (_weaponData != null)
         {
@@ -49,6 +77,7 @@ public class GunVisualAnimator : MonoBehaviour
     public void PlayShootAnimation()
     {
         if (_weaponData == null || _sr == null) return;
+        if (!gameObject.activeInHierarchy) return;
 
         if (_currentAnimRoutine != null)
         {
@@ -62,6 +91,13 @@ public class GunVisualAnimator : MonoBehaviour
     {
         Sprite[] frames = _weaponData.shootAnimationFrames;
         float recoilDist = _weaponData.recoilDistance;
+
+        // Nếu súng gắn trực tiếp trên GunHolder thay vì GunSprite con, giảm kickback tránh giật lệch tay
+        bool isDirectGunHolder = (transform.parent != null && (name == "GunHolder" || name == "Gun"));
+        if (isDirectGunHolder)
+        {
+            recoilDist = Mathf.Min(recoilDist * 0.2f, 0.02f);
+        }
 
         // 1. Nếu có chuỗi frame animation (Sprite Sheet)
         if (frames != null && frames.Length > 0)
@@ -85,10 +121,10 @@ public class GunVisualAnimator : MonoBehaviour
                 }
 
                 // Hiệu ứng giật nòng: giật lùi ở 2-3 frame đầu rồi phục hồi dần dọc trục -X cục bộ
-                if (recoilDist > 0.01f)
+                if (recoilDist > 0.005f && _recoilTarget != null)
                 {
                     float kickback = (i < 2) ? -recoilDist : Mathf.Lerp(-recoilDist, 0f, (float)i / frames.Length);
-                    transform.localPosition = new Vector3(kickback, 0f, 0f);
+                    _recoilTarget.localPosition = _baseLocalPos + new Vector3(kickback, 0f, 0f);
                 }
 
                 yield return new WaitForSeconds(frameTime);
@@ -97,12 +133,19 @@ public class GunVisualAnimator : MonoBehaviour
         else
         {
             // Fallback nếu súng chưa gán frame: Giật thụt lùi nhẹ bằng code
-            transform.localPosition = new Vector3(-0.08f, 0f, 0f);
+            if (_recoilTarget != null)
+            {
+                _recoilTarget.localPosition = _baseLocalPos + new Vector3(-0.03f, 0f, 0f);
+            }
             yield return new WaitForSeconds(0.06f);
         }
 
-        // Trả về vị trí cục bộ chuẩn (0, 0, 0) và hình ảnh idle gốc
-        transform.localPosition = Vector3.zero;
+        // Trả về vị trí cục bộ chuẩn và hình ảnh idle gốc
+        if (_recoilTarget != null)
+        {
+            _recoilTarget.localPosition = _baseLocalPos;
+        }
+
         if (_idleSprite != null && _sr != null)
         {
             _sr.sprite = _idleSprite;
@@ -118,7 +161,12 @@ public class GunVisualAnimator : MonoBehaviour
             StopCoroutine(_currentAnimRoutine);
             _currentAnimRoutine = null;
         }
-        transform.localPosition = Vector3.zero;
+
+        if (_recoilTarget != null)
+        {
+            _recoilTarget.localPosition = _baseLocalPos;
+        }
+
         if (_idleSprite != null && _sr != null)
         {
             _sr.sprite = _idleSprite;

@@ -12,10 +12,26 @@ public class OnFootPlayerController : MonoBehaviour
     // Tham chiếu đến hệ thống máu chung của người chơi
     [SerializeField] private PlayerHealth playerHealth;
 
-    [Header("Visuals")]
+    [Header("Visuals & Animation")]
     [SerializeField] private SpriteRenderer characterSpriteRenderer;
+    [SerializeField] private Animator animator;
     [SerializeField] private Transform gunHolderTransform;
     [SerializeField] private Color hitFlashColor = Color.red;
+
+    [Header("Gun Anchor Settings (Căn chỉnh súng dính chặt vào tay nhân vật)")]
+    [Tooltip("Tọa độ báng súng trên tay nhân vật (X: đưa về phía trước, Y: độ cao ngang ngực/tay)")]
+    [SerializeField] private Vector2 gunHandOffset = new Vector2(0.02f, 0.09f);
+    [SerializeField] private float gunBobAmount = 0.006f;
+    [SerializeField] private float gunBobSpeed = 14f;
+    private bool _isFacingRight = true;
+
+    [Header("Procedural / Fallback Frame Animation")]
+    [SerializeField] private Sprite[] idleSprites;
+    [SerializeField] private Sprite[] runSprites;
+    [SerializeField] private float runFps = 10f;
+    [SerializeField] private float idleFps = 6f;
+    private float _animTimer = 0f;
+    private int _animFrame = 0;
 
     [Header("Arena Boundaries (Giới hạn di chuyển trong sàn đấu Boss)")]
     // Mặc định tắt để có thể di chuyển tự do, chỉ kích hoạt khi vào sàn đấu Boss
@@ -51,12 +67,24 @@ public class OnFootPlayerController : MonoBehaviour
             _originalColor = characterSpriteRenderer.color;
         }
 
+        if (animator == null)
+        {
+            animator = GetComponent<Animator>();
+        }
+
+        if (gunHolderTransform == null)
+        {
+            gunHolderTransform = transform.Find("GunHolder") ?? transform.Find("Gun");
+        }
+
+        UpdateGunAnchor();
+
         _cam = Camera.main;
     }
 
     private void Start()
     {
-        // Ưu tiên sử dụng PlayerHealth gắn riêng trên người đi bộ (Trashcan)
+        // Ưu tiên sử dụng PlayerHealth gắn riêng trên người đi bộ
         if (playerHealth == null)
         {
             playerHealth = GetComponent<PlayerHealth>();
@@ -82,6 +110,37 @@ public class OnFootPlayerController : MonoBehaviour
     {
         HandleMovementInput();
         HandleFacingDirection();
+        UpdateAnimation();
+    }
+
+    private void UpdateAnimation()
+    {
+        float speed = _input.magnitude;
+
+        // 1. Nếu có AnimatorController -> điều khiển thông qua Animator state
+        if (animator != null && animator.runtimeAnimatorController != null)
+        {
+            animator.SetFloat("Speed", speed);
+        }
+        // 2. Fallback: Nếu không có AnimatorController -> tự động chuyển frame sprite mượt mà
+        else if (characterSpriteRenderer != null)
+        {
+            bool isMoving = speed > 0.05f;
+            Sprite[] currentAnim = isMoving ? runSprites : idleSprites;
+            float currentFps = isMoving ? runFps : idleFps;
+
+            if (currentAnim != null && currentAnim.Length > 0)
+            {
+                _animTimer += Time.deltaTime;
+                float interval = 1f / Mathf.Max(1f, currentFps);
+                if (_animTimer >= interval)
+                {
+                    _animTimer -= interval;
+                    _animFrame = (_animFrame + 1) % currentAnim.Length;
+                    characterSpriteRenderer.sprite = currentAnim[_animFrame];
+                }
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -122,18 +181,40 @@ public class OnFootPlayerController : MonoBehaviour
         }
     }
 
-    // Lật mặt nhân vật hướng theo con trỏ chuột
+    // Lật mặt nhân vật hướng theo con trỏ chuột và ghim súng chặt vào tay
     private void HandleFacingDirection()
     {
         if (_cam == null) _cam = Camera.main;
-        if (_cam == null || characterSpriteRenderer == null) return;
+        if (_cam == null) return;
 
         Vector3 mouseScreen = Input.mousePosition;
         mouseScreen.z = -_cam.transform.position.z;
         Vector3 mouseWorld = _cam.ScreenToWorldPoint(mouseScreen);
 
-        bool aimRight = mouseWorld.x >= transform.position.x;
-        characterSpriteRenderer.flipX = !aimRight;
+        _isFacingRight = mouseWorld.x >= transform.position.x;
+        if (characterSpriteRenderer != null)
+        {
+            characterSpriteRenderer.flipX = !_isFacingRight;
+        }
+
+        UpdateGunAnchor();
+    }
+
+    // Cập nhật vị trí báng súng dính chặt vào tay nhân vật (lật chuẩn theo hướng ngắm và nhấp nhô nhẹ khi chạy)
+    private void UpdateGunAnchor()
+    {
+        if (gunHolderTransform == null) return;
+
+        float targetX = _isFacingRight ? gunHandOffset.x : -gunHandOffset.x;
+        float targetY = gunHandOffset.y;
+
+        // Nhấp nhô nhẹ khi di chuyển
+        if (_input.sqrMagnitude > 0.01f)
+        {
+            targetY += Mathf.Sin(Time.time * gunBobSpeed) * gunBobAmount;
+        }
+
+        gunHolderTransform.localPosition = new Vector3(targetX, targetY, 0f);
     }
 
     // Cài đặt ranh giới đấu trường khi bước xuống xe hoặc trong Arena

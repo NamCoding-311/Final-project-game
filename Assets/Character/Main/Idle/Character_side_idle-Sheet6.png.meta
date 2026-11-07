@@ -5,6 +5,21 @@ TextureImporter:
   - first:
       213: -8690489390062296544
     second: Character_side_idle-Sheet6_0
+  - first:
+      213: -1958664638617996299
+    second: Character_side_idle-Sheet6_1
+  - first:
+      213: 1963409464632182342
+    second: Character_side_idle-Sheet6_2
+  - first:
+      213: 1641799250174222040
+    second: Character_side_idle-Sheet6_3
+  - first:
+      213: 5139827592412303427
+    second: Character_side_idle-Sheet6_4
+  - first:
+      213: 4967261594453266736
+    second: Character_side_idle-Sheet6_5
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -24,7 +39,7 @@ TextureImporter:
     heightScale: 0.25
     normalMapFilter: 0
     flipGreenChannel: 0
-  isReadable: 0
+  isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -37,7 +52,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -75,7 +90,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -118,10 +133,10 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 72
+        width: 12
         height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -130,6 +145,116 @@ TextureImporter:
       bones: []
       spriteID: 0222905a1fd256780800000000000000
       internalID: -8690489390062296544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Character_side_idle-Sheet6_1
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 0
+        width: 12
+        height: 16
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f33e0d73ec61d4e0800000000000000
+      internalID: -1958664638617996299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Character_side_idle-Sheet6_2
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 0
+        width: 12
+        height: 16
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6468a08618e6f3b10800000000000000
+      internalID: 1963409464632182342
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Character_side_idle-Sheet6_3
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 0
+        width: 12
+        height: 16
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8de132b28b7d8c610800000000000000
+      internalID: 1641799250174222040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Character_side_idle-Sheet6_4
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 0
+        width: 12
+        height: 16
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3409c7c96f5545740800000000000000
+      internalID: 5139827592412303427
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Character_side_idle-Sheet6_5
+      rect:
+        serializedVersion: 2
+        x: 60
+        y: 0
+        width: 12
+        height: 16
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 031d3db3a124fe440800000000000000
+      internalID: 4967261594453266736
       vertices: []
       indices: 
       edges: []
@@ -149,6 +274,11 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Character_side_idle-Sheet6_0: -8690489390062296544
+      Character_side_idle-Sheet6_1: -1958664638617996299
+      Character_side_idle-Sheet6_2: 1963409464632182342
+      Character_side_idle-Sheet6_3: 1641799250174222040
+      Character_side_idle-Sheet6_4: 5139827592412303427
+      Character_side_idle-Sheet6_5: 4967261594453266736
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

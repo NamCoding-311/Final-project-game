@@ -3,12 +3,6 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 // Component phụ gắn vào từng Chunk để đánh dấu loại Prefab và chiều rộng thực tế khi thu hồi
-public class ChunkIdentifier : MonoBehaviour
-{
-    public int PrefabIndex { get; set; }
-    public float ActualWidth { get; set; } = 50f;
-}
-
 // Quản lý hệ thống bản đồ vô tận dạng cuộn ngang (Horizontal Endless Map / 3-Lane Runner).
 // Đảm bảo đường sinh liên tục vô tận phía trước xe, TUYỆT ĐỐI KHÔNG BAO GIỜ BỊ MẤT ĐƯỜNG.
 public class EndlessMapManager : MonoBehaviour

@@ -708,11 +708,15 @@ MonoBehaviour:
     bossAllowCharge: 0
     bossHpMultiplier: 1
     bossName: TANK ZOMBIE
-  carHealthBar: {fileID: 0}
-  onFootHealthBar: {fileID: 0}
+  carHealthBar: {fileID: 1337719883}
+  onFootHealthBar: {fileID: 458453125}
   bossPrefab: {fileID: 0}
-  bossHealthBar: {fileID: 0}
-  bossWarningText: {fileID: 0}
+  bossHealthBar: {fileID: 2116060385}
+  bossWarningText: {fileID: 980682743}
+  nitroBoostSound: {fileID: 8300000, guid: 3daa7066694c94f41a3b0cc7787f4eca, type: 3}
+  nitroBoostVolume: 0.9
+  bossRoarSound: {fileID: 8300000, guid: 0870f66974f50b14690b5f2c0416bfd9, type: 3}
+  bossRoarVolume: 1
   stageAnnouncementText: {fileID: 727045519}
   levelCompleteUI: {fileID: 719702668}
   mapVictoryText: 'VICTORY!
@@ -34187,8 +34191,8 @@ Transform:
   m_GameObject: {fileID: 1304801218}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.3, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0.02, y: 0.09, z: 0}
+  m_LocalScale: {x: 0.15, y: 0.15, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 926538970}
@@ -34643,6 +34647,7 @@ GameObject:
   - component: {fileID: 1354300024}
   - component: {fileID: 1354300026}
   - component: {fileID: 1354300025}
+  - component: {fileID: 1354300031}
   m_Layer: 0
   m_Name: OnFootPlayer
   m_TagString: Untagged
@@ -34665,8 +34670,28 @@ MonoBehaviour:
   moveSpeed: 6
   playerHealth: {fileID: 1354300025}
   characterSpriteRenderer: {fileID: 1354300029}
+  animator: {fileID: 1354300031}
   gunHolderTransform: {fileID: 1304801220}
   hitFlashColor: {r: 1, g: 0, b: 0, a: 1}
+  gunHandOffset: {x: 0.02, y: 0.09}
+  gunBobAmount: 0.006
+  gunBobSpeed: 14
+  idleSprites:
+  - {fileID: -8690489390062296544, guid: 2ff5c5738a19b9f48a854862b46c09fd, type: 3}
+  - {fileID: -1958664638617996299, guid: 2ff5c5738a19b9f48a854862b46c09fd, type: 3}
+  - {fileID: 1963409464632182342, guid: 2ff5c5738a19b9f48a854862b46c09fd, type: 3}
+  - {fileID: 1641799250174222040, guid: 2ff5c5738a19b9f48a854862b46c09fd, type: 3}
+  - {fileID: 5139827592412303427, guid: 2ff5c5738a19b9f48a854862b46c09fd, type: 3}
+  - {fileID: 4967261594453266736, guid: 2ff5c5738a19b9f48a854862b46c09fd, type: 3}
+  runSprites:
+  - {fileID: -6778061932005677629, guid: 6b4730685b4d1e745b42d450c70a746c, type: 3}
+  - {fileID: 6062154317196889876, guid: 6b4730685b4d1e745b42d450c70a746c, type: 3}
+  - {fileID: 3496635193935178079, guid: 6b4730685b4d1e745b42d450c70a746c, type: 3}
+  - {fileID: -9158505776115253160, guid: 6b4730685b4d1e745b42d450c70a746c, type: 3}
+  - {fileID: -3799915142077914838, guid: 6b4730685b4d1e745b42d450c70a746c, type: 3}
+  - {fileID: -2097097991690485062, guid: 6b4730685b4d1e745b42d450c70a746c, type: 3}
+  runFps: 10
+  idleFps: 6
   useArenaBounds: 1
   clampYToRoad: 1
   minX: -1000
@@ -34824,15 +34849,15 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 15
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 0}
-  m_Color: {r: 0.2, g: 0.8, b: 1, a: 1}
+  m_Sprite: {fileID: -6778061932005677629, guid: 6b4730685b4d1e745b42d450c70a746c, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.14, y: 0.17}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
 --- !u!4 &1354300030
 Transform:
@@ -34844,12 +34869,34 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 7, y: 7, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1304801220}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &1354300031
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1354300023}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 998735bd536b68149b11c1477477f977, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1492360290
 GameObject:
   m_ObjectHideFlags: 0
@@ -35459,11 +35506,11 @@ PrefabInstance:
       objectReference: {fileID: 2158481323813890127, guid: 087535e6f6dcfb441a47cdd1b466ccc3, type: 3}
     - target: {fileID: 6004938008631932678, guid: f65272b389c6c2c438e4423bd7082a70, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.65
+      value: 0.55
       objectReference: {fileID: 0}
     - target: {fileID: 6004938008631932678, guid: f65272b389c6c2c438e4423bd7082a70, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.05
+      value: 0.06
       objectReference: {fileID: 0}
     - target: {fileID: 7205679626805496180, guid: f65272b389c6c2c438e4423bd7082a70, type: 3}
       propertyPath: m_IsActive
@@ -35535,11 +35582,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7531580844967781686, guid: f65272b389c6c2c438e4423bd7082a70, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.2
+      value: 0.67
       objectReference: {fileID: 0}
     - target: {fileID: 7531580844967781686, guid: f65272b389c6c2c438e4423bd7082a70, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.9
+      value: 0.42
       objectReference: {fileID: 0}
     - target: {fileID: 8120440495813365603, guid: f65272b389c6c2c438e4423bd7082a70, type: 3}
       propertyPath: m_Size.x

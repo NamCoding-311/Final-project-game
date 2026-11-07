@@ -35,5 +35,5 @@ MonoBehaviour:
   - {fileID: 6450806508920747961, guid: 5fb1b52ade3de8f47ba979fb57a0512a, type: 3}
   - {fileID: 8142609066581661361, guid: 5fb1b52ade3de8f47ba979fb57a0512a, type: 3}
   animationFps: 32
-  firePointOffset: {x: 0.85, y: 0.05}
+  firePointOffset: {x: 0.55, y: 0.06}
   recoilDistance: 0.12

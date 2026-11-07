@@ -192,7 +192,8 @@ public class InfiniteParallaxBackground : MonoBehaviour
         if (backgroundLayers != null && backgroundLayers.Length > 1)
         {
             float camHalfWidth = targetCamera.orthographicSize * targetCamera.aspect;
-            float recycleThreshold = camHalfWidth + 3.0f; // Vừa ra khỏi mép trái camera 3m là tái chế đón đầu ngay
+            // Giữ lại ít nhất 20m phía sau lưng camera để không bị lòi khoảng xám khi xe dừng đấu Boss hoặc quay đầu
+            float recycleThreshold = camHalfWidth + 22.0f;
 
             for (int i = 0; i < backgroundLayers.Length; i++)
             {
@@ -240,6 +241,36 @@ public class InfiniteParallaxBackground : MonoBehaviour
                         seg.position = new Vector3(maxRightX + furthestWidth - 0.08f, seg.position.y, seg.position.z);
                     }
                 }
+            }
+        }
+    }
+
+    // Căn xếp lại toàn bộ các tấm ảnh nền dàn đều quanh vị trí hiện tại của Camera (dùng khi vào màn Boss)
+    public void RealignAroundCamera()
+    {
+        if (targetCamera == null || backgroundLayers == null || backgroundLayers.Length == 0) return;
+
+        float camX = targetCamera.transform.position.x;
+        float camHalfWidth = targetCamera.orthographicSize * targetCamera.aspect;
+        float stageYOffset = GetStageYOffset(_currentStageIndex);
+        float targetScale = GetStageScale(_currentStageIndex);
+
+        // Đặt tấm đầu tiên lùi sâu về sau lưng Camera ít nhất 25 mét để luôn phủ kín khung hình bên trái
+        float startX = camX - camHalfWidth - 25.0f;
+
+        for (int i = 0; i < backgroundLayers.Length; i++)
+        {
+            Transform curr = backgroundLayers[i];
+            if (curr == null) continue;
+            SpriteRenderer currSr = curr.GetComponent<SpriteRenderer>();
+            if (currSr != null && currSr.sprite != null)
+            {
+                curr.localScale = new Vector3(targetScale, targetScale, 1f);
+                float currWidth = currSr.bounds.size.x;
+                float currHalfHeight = currSr.bounds.extents.y;
+                float lockedPosY = GetLockedPosY(currHalfHeight, stageYOffset);
+
+                curr.position = new Vector3(startX + (i * (currWidth - 0.08f)), lockedPosY, curr.position.z);
             }
         }
     }

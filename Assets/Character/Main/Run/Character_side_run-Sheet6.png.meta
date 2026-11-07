@@ -17,6 +17,9 @@ TextureImporter:
   - first:
       213: -3799915142077914838
     second: Character_side_run-Sheet6_4
+  - first:
+      213: -2097097991690485062
+    second: Character_side_run-Sheet6_5
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -36,7 +39,7 @@ TextureImporter:
     heightScale: 0.25
     normalMapFilter: 0
     flipGreenChannel: 0
-  isReadable: 0
+  isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -49,7 +52,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -87,7 +90,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -132,8 +135,8 @@ TextureImporter:
         y: 0
         width: 14
         height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -150,12 +153,12 @@ TextureImporter:
       name: Character_side_run-Sheet6_1
       rect:
         serializedVersion: 2
-        x: 13
+        x: 14
         y: 0
-        width: 30
+        width: 14
         height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -172,12 +175,12 @@ TextureImporter:
       name: Character_side_run-Sheet6_2
       rect:
         serializedVersion: 2
-        x: 43
+        x: 28
         y: 0
-        width: 12
+        width: 14
         height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -194,12 +197,12 @@ TextureImporter:
       name: Character_side_run-Sheet6_3
       rect:
         serializedVersion: 2
-        x: 57
+        x: 42
         y: 0
-        width: 12
+        width: 14
         height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -216,12 +219,12 @@ TextureImporter:
       name: Character_side_run-Sheet6_4
       rect:
         serializedVersion: 2
-        x: 71
+        x: 56
         y: 0
-        width: 12
+        width: 14
         height: 17
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -230,6 +233,28 @@ TextureImporter:
       bones: []
       spriteID: a2161d3af4df34bc0800000000000000
       internalID: -3799915142077914838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Character_side_run-Sheet6_5
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 0
+        width: 14
+        height: 17
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab28a1acc7c95e2e0800000000000000
+      internalID: -2097097991690485062
       vertices: []
       indices: 
       edges: []
@@ -253,6 +278,7 @@ TextureImporter:
       Character_side_run-Sheet6_2: 3496635193935178079
       Character_side_run-Sheet6_3: -9158505776115253160
       Character_side_run-Sheet6_4: -3799915142077914838
+      Character_side_run-Sheet6_5: -2097097991690485062
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

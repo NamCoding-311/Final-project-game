@@ -59,6 +59,8 @@ public class Zombie : MonoBehaviour
 
     private float _nextAttackTime;
     private bool _hasSpeedParam = false;
+    private bool _hasMoveXParam = false;
+    private bool _hasMoveYParam = false;
 
     private void Awake()
     {
@@ -70,11 +72,9 @@ public class Zombie : MonoBehaviour
         {
             foreach (var p in _animator.parameters)
             {
-                if (p.name == "Speed")
-                {
-                    _hasSpeedParam = true;
-                    break;
-                }
+                if (p.name == "Speed") _hasSpeedParam = true;
+                if (p.name == "MoveX") _hasMoveXParam = true;
+                if (p.name == "MoveY") _hasMoveYParam = true;
             }
         }
     }
@@ -481,15 +481,21 @@ public class Zombie : MonoBehaviour
 
         if (_animator != null)
         {
-            _animator.SetFloat(
-                "MoveX",
-                _moveDirection.x
-            );
+            if (_hasMoveXParam)
+            {
+                _animator.SetFloat(
+                    "MoveX",
+                    _moveDirection.x
+                );
+            }
 
-            _animator.SetFloat(
-                "MoveY",
-                _moveDirection.y
-            );
+            if (_hasMoveYParam)
+            {
+                _animator.SetFloat(
+                    "MoveY",
+                    _moveDirection.y
+                );
+            }
 
             if (_hasSpeedParam)
             {

@@ -69,6 +69,9 @@ public class ZombieCharger : MonoBehaviour
     private Collider2D _col;
     private Color _originalColor = Color.white;
     private bool _isElite = false;
+    private bool _hasMoveXParam = false;
+    private bool _hasMoveYParam = false;
+    private bool _hasSpeedParam = false;
 
     // Tăng chỉ số theo Wave (Độ khó tăng dần)
     public void ScaleStats(float hpMultiplier, float damageMultiplier, float speedMultiplier)
@@ -99,6 +102,15 @@ public class ZombieCharger : MonoBehaviour
         if (_spriteRenderer != null) _originalColor = _spriteRenderer.color;
 
         _animator = GetComponent<Animator>();
+        if (_animator != null)
+        {
+            foreach (var p in _animator.parameters)
+            {
+                if (p.name == "MoveX") _hasMoveXParam = true;
+                if (p.name == "MoveY") _hasMoveYParam = true;
+                if (p.name == "Speed") _hasSpeedParam = true;
+            }
+        }
         _rb = GetComponent<Rigidbody2D>();
         _col = GetComponent<Collider2D>();
 
@@ -482,9 +494,9 @@ public class ZombieCharger : MonoBehaviour
     private void UpdateAnimator(Vector2 moveDir, float speed)
     {
         if (_animator == null) return;
-        _animator.SetFloat("MoveX", moveDir.x);
-        _animator.SetFloat("MoveY", moveDir.y);
-        _animator.SetFloat("Speed", speed);
+        if (_hasMoveXParam) _animator.SetFloat("MoveX", moveDir.x);
+        if (_hasMoveYParam) _animator.SetFloat("MoveY", moveDir.y);
+        if (_hasSpeedParam) _animator.SetFloat("Speed", speed);
     }
 
     public ChargerState GetCurrentState() => _state;
