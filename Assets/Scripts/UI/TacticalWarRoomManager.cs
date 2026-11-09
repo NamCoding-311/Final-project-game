@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -87,6 +87,21 @@ public class TacticalWarRoomManager : MonoBehaviour
         Instance = this;
         InitializeDefaultSectors();
         LoadProgression();
+    }
+
+    private void OnEnable()
+    {
+        GameRewardManager.OnCashChanged += HandleCashUpdated;
+    }
+
+    private void OnDisable()
+    {
+        GameRewardManager.OnCashChanged -= HandleCashUpdated;
+    }
+
+    private void HandleCashUpdated(int newCash)
+    {
+        UpdateCashDisplay();
     }
 
     private void Start()
@@ -475,10 +490,13 @@ public class TacticalWarRoomManager : MonoBehaviour
 
     private void UpdateCashDisplay()
     {
-        int cash = PlayerPrefs.GetInt(PREF_PLAYER_CASH, 2500);
+        int cash = GameRewardManager.Instance != null 
+            ? GameRewardManager.Instance.GetCurrentCash() 
+            : PlayerPrefs.GetInt(PREF_PLAYER_CASH, 2500);
+
         if (cashDisplayTopText != null)
         {
-            cashDisplayTopText.text = $"CASH: ${cash:N0}";
+            cashDisplayTopText.text = $"FUNDS: ${cash:N0}";
         }
     }
 

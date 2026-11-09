@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
@@ -26,6 +26,12 @@ public class PlayerHealth : MonoBehaviour
 
     private int _currentHP;
     private bool _isDead;
+
+    public int CurrentHP => _currentHP;
+    public int MaxHP => maxHP;
+    public int CurrentHealth => _currentHP;
+    public int MaxHealth => maxHP;
+    public float HealthPercent => maxHP > 0 ? Mathf.Clamp01((float)_currentHP / maxHP) : 1f;
 
     private void Awake()
     {

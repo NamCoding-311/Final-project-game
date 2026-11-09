@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -27,6 +27,13 @@ public class ArenaGameOverSystem : MonoBehaviour
     [SerializeField] private TextMeshProUGUI killsStatText;
     [SerializeField] private TextMeshProUGUI gemsStatText;
     [SerializeField] private TextMeshProUGUI weaponsStatText;
+
+    [Header("Reward UI Elements (Tien Thuong)")]
+    [SerializeField] private TextMeshProUGUI rewardCashText;
+    [SerializeField] private TextMeshProUGUI totalCashText;
+
+    private GameRewardManager.ArenaRewardResult _rewardResult;
+    private bool _hasAwarded = false;
 
     [Header("Action Buttons")]
     [SerializeField] private Button restartButton;
@@ -106,6 +113,17 @@ public class ArenaGameOverSystem : MonoBehaviour
         ArenaAutoShooting shooting = ArenaAutoShooting.Instance ?? FindAnyObjectByType<ArenaAutoShooting>();
         _finalWeapons = shooting != null ? shooting.GetCurrentWeaponCount() : 1;
 
+        if (!_hasAwarded)
+        {
+            _hasAwarded = true;
+            if (GameRewardManager.Instance == null)
+            {
+                var mgrGo = new GameObject("GameRewardManager");
+                mgrGo.AddComponent<GameRewardManager>();
+            }
+            _rewardResult = GameRewardManager.Instance.CalculateAndAwardArenaReward(_finalWave, _finalKills, _finalGems, _isVictory);
+        }
+
         UpdateCanvasUI();
 
         if (endGamePanel != null)
@@ -176,6 +194,20 @@ public class ArenaGameOverSystem : MonoBehaviour
         if (killsStatText != null) killsStatText.text = $"{_finalKills} KILLS";
         if (gemsStatText != null) gemsStatText.text = $"{_finalGems} GEMS";
         if (weaponsStatText != null) weaponsStatText.text = $"{_finalWeapons}/6 WEAPONS";
+
+        if (rewardCashText != null)
+        {
+            StartCoroutine(GameRewardManager.AnimateCashCounter(rewardCashText, 0, _rewardResult.totalCash, "+$", " CASH"));
+        }
+        else if (gemsStatText != null)
+        {
+            gemsStatText.text += $" | +${_rewardResult.totalCash:N0} CASH";
+        }
+
+        if (totalCashText != null && GameRewardManager.Instance != null)
+        {
+            totalCashText.text = $"FUNDS: ${GameRewardManager.Instance.GetCurrentCash():N0}";
+        }
     }
 
     private string FormatTime(float seconds)
@@ -254,7 +286,7 @@ public class ArenaGameOverSystem : MonoBehaviour
 
         // Khung tổng kết ở chính giữa
         float panelW = Mathf.Min(680, screenW - 40);
-        float panelH = Mathf.Min(560, screenH - 40);
+        float panelH = Mathf.Min(640, screenH - 40);
         float panelX = (screenW - panelW) * 0.5f;
         float panelY = (screenH - panelH) * 0.5f;
 
@@ -292,6 +324,8 @@ public class ArenaGameOverSystem : MonoBehaviour
         DrawStatRow(panelX + 40, statStartY + rowHeight * 2, panelW - 80, "ZOMBIES KILLED:", $"{_finalKills} Kills", new Color(1f, 0.45f, 0.45f));
         DrawStatRow(panelX + 40, statStartY + rowHeight * 3, panelW - 80, "GEMS COLLECTED:", $"{_finalGems} Gems", new Color(0.2f, 1f, 0.55f));
         DrawStatRow(panelX + 40, statStartY + rowHeight * 4, panelW - 80, "WEAPONS OWNED:", $"{_finalWeapons}/6 Weapons", new Color(1f, 0.75f, 0.2f));
+        DrawStatRow(panelX + 40, statStartY + rowHeight * 5, panelW - 80, "BOUNTY REWARD:", $"+${_rewardResult.totalCash:N0} CASH", new Color(1f, 0.85f, 0.2f));
+        DrawStatRow(panelX + 40, statStartY + rowHeight * 6, panelW - 80, "TOTAL FUNDS:", $"${GameRewardManager.Instance?.GetCurrentCash() ?? 0:N0}", new Color(0.4f, 1f, 0.5f));
 
         // Nút hành động phía dưới
         float btnY = panelY + panelH - 85f;
