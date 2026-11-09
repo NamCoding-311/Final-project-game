@@ -1,0 +1,2327 @@
+fileFormatVersion: 2
+guid: f8639b0fec5a6f0448b83cc3f60f00d8
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2427758606855689517
+    second: garage signt_0
+  - first:
+      213: 8346299660572976529
+    second: garage signt_1
+  - first:
+      213: 8602931756367200871
+    second: garage signt_2
+  - first:
+      213: -7237115729976846501
+    second: garage signt_3
+  - first:
+      213: -5413881979822337696
+    second: garage signt_4
+  - first:
+      213: 4044578570127786763
+    second: garage signt_5
+  - first:
+      213: 3880191683647124106
+    second: garage signt_6
+  - first:
+      213: -8300748883451225816
+    second: garage signt_7
+  - first:
+      213: -8181800196775184508
+    second: garage signt_8
+  - first:
+      213: 4165825012538472643
+    second: garage signt_9
+  - first:
+      213: -938670561428593267
+    second: garage signt_10
+  - first:
+      213: -5691446669521088863
+    second: garage signt_11
+  - first:
+      213: 2700799224405824451
+    second: garage signt_12
+  - first:
+      213: 3293564816272623829
+    second: garage signt_13
+  - first:
+      213: -469550332015878864
+    second: garage signt_14
+  - first:
+      213: 7896355337089170624
+    second: garage signt_15
+  - first:
+      213: 7153448735812322421
+    second: garage signt_16
+  - first:
+      213: 2934476126516228595
+    second: garage signt_17
+  - first:
+      213: -669668231843809635
+    second: garage signt_18
+  - first:
+      213: 7444224788661870275
+    second: garage signt_19
+  - first:
+      213: -4468914572075869591
+    second: garage signt_20
+  - first:
+      213: 559637240007361992
+    second: garage signt_21
+  - first:
+      213: -1740212607044549870
+    second: garage signt_22
+  - first:
+      213: 6296358308174242867
+    second: garage signt_23
+  - first:
+      213: -2061912472668339035
+    second: garage signt_24
+  - first:
+      213: -2771753967582739681
+    second: garage signt_25
+  - first:
+      213: -2567943908406641126
+    second: garage signt_26
+  - first:
+      213: -6510484591662601325
+    second: garage signt_27
+  - first:
+      213: 5354800802880670213
+    second: garage signt_28
+  - first:
+      213: -5106259791528724792
+    second: garage signt_29
+  - first:
+      213: -4535403806117117632
+    second: garage signt_30
+  - first:
+      213: 248493674626271598
+    second: garage signt_31
+  - first:
+      213: 8829560270998610660
+    second: garage signt_32
+  - first:
+      213: -3814640309863937032
+    second: garage signt_33
+  - first:
+      213: -3748666280087741690
+    second: garage signt_34
+  - first:
+      213: -4574487577520952256
+    second: garage signt_35
+  - first:
+      213: 4749520378182442501
+    second: garage signt_36
+  - first:
+      213: 2155169387509155567
+    second: garage signt_37
+  - first:
+      213: 3677080056576041833
+    second: garage signt_38
+  - first:
+      213: -4729343824075024525
+    second: garage signt_39
+  - first:
+      213: 100225133209404622
+    second: garage signt_40
+  - first:
+      213: 7462174176372909304
+    second: garage signt_41
+  - first:
+      213: 3899881346296162040
+    second: garage signt_42
+  - first:
+      213: -1724050899478293194
+    second: garage signt_43
+  - first:
+      213: 3840558331930640731
+    second: garage signt_44
+  - first:
+      213: 6780725683187357970
+    second: garage signt_45
+  - first:
+      213: -6046410778227799654
+    second: garage signt_46
+  - first:
+      213: -4159801918956264792
+    second: garage signt_47
+  - first:
+      213: -1854719468916976826
+    second: garage signt_48
+  - first:
+      213: 5318767914538662945
+    second: garage signt_49
+  - first:
+      213: 8643855560957938745
+    second: garage signt_50
+  - first:
+      213: -3857799113641028633
+    second: garage signt_51
+  - first:
+      213: -4903197870831659676
+    second: garage signt_52
+  - first:
+      213: 6334356441427154783
+    second: garage signt_53
+  - first:
+      213: -2823597019306133970
+    second: garage signt_54
+  - first:
+      213: -1814368317622440865
+    second: garage signt_55
+  - first:
+      213: 740242158123590871
+    second: garage signt_56
+  - first:
+      213: -2239436177128766460
+    second: garage signt_57
+  - first:
+      213: -4958482828309910901
+    second: garage signt_58
+  - first:
+      213: 2617550978701232108
+    second: garage signt_59
+  - first:
+      213: -8730465798113985008
+    second: garage signt_60
+  - first:
+      213: -5473284055986972923
+    second: garage signt_61
+  - first:
+      213: 1380518204136679266
+    second: garage signt_62
+  - first:
+      213: 7320864380205258166
+    second: garage signt_63
+  - first:
+      213: -1689300435800577249
+    second: garage signt_64
+  - first:
+      213: -2938324986121954861
+    second: garage signt_65
+  - first:
+      213: -2879320343082073687
+    second: garage signt_66
+  - first:
+      213: 2222751775730733884
+    second: garage signt_67
+  - first:
+      213: -7319217413297444773
+    second: garage signt_68
+  - first:
+      213: -8018663522193512818
+    second: garage signt_69
+  - first:
+      213: 901327194830858085
+    second: garage signt_70
+  - first:
+      213: 3752782376262710851
+    second: garage signt_71
+  - first:
+      213: -1434632585378802256
+    second: garage signt_72
+  - first:
+      213: 6590216780355468705
+    second: garage signt_73
+  - first:
+      213: -604802506779512249
+    second: garage signt_74
+  - first:
+      213: -8194677525481100133
+    second: garage signt_75
+  - first:
+      213: -3642036615140822740
+    second: garage signt_76
+  - first:
+      213: -5506977531957938293
+    second: garage signt_77
+  - first:
+      213: 8489922545146660540
+    second: garage signt_78
+  - first:
+      213: 1012390307333707542
+    second: garage signt_79
+  - first:
+      213: 1992537583195304765
+    second: garage signt_80
+  - first:
+      213: 2357510558427964520
+    second: garage signt_81
+  - first:
+      213: -4501421710956187390
+    second: garage signt_82
+  - first:
+      213: 4655416235588756460
+    second: garage signt_83
+  - first:
+      213: -2840381198949384250
+    second: garage signt_84
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: garage signt_0
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 667
+        width: 116
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d25d702179121b120800000000000000
+      internalID: 2427758606855689517
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_1
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 677
+        width: 82
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1956a69125304d370800000000000000
+      internalID: 8346299660572976529
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_2
+      rect:
+        serializedVersion: 2
+        x: 318
+        y: 677
+        width: 11
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 762c1352ad0c36770800000000000000
+      internalID: 8602931756367200871
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_3
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 677
+        width: 21
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5796546699909b90800000000000000
+      internalID: -7237115729976846501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_4
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 691
+        width: 17
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0611dc8f5070ed4b0800000000000000
+      internalID: -5413881979822337696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_5
+      rect:
+        serializedVersion: 2
+        x: 424
+        y: 657
+        width: 104
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b03cf9ac7ca312830800000000000000
+      internalID: 4044578570127786763
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_6
+      rect:
+        serializedVersion: 2
+        x: 555
+        y: 682
+        width: 55
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a82363437c539d530800000000000000
+      internalID: 3880191683647124106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_7
+      rect:
+        serializedVersion: 2
+        x: 611
+        y: 691
+        width: 39
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8295b28aed0ddcc80800000000000000
+      internalID: -8300748883451225816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_8
+      rect:
+        serializedVersion: 2
+        x: 639
+        y: 653
+        width: 118
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4877effe118647e80800000000000000
+      internalID: -8181800196775184508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_9
+      rect:
+        serializedVersion: 2
+        x: 788
+        y: 667
+        width: 52
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c8fac407cbffc930800000000000000
+      internalID: 4165825012538472643
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_10
+      rect:
+        serializedVersion: 2
+        x: 839
+        y: 673
+        width: 17
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d85aee0091c29f2f0800000000000000
+      internalID: -938670561428593267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_11
+      rect:
+        serializedVersion: 2
+        x: 861
+        y: 671
+        width: 45
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ae8d1d986be301b0800000000000000
+      internalID: -5691446669521088863
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_12
+      rect:
+        serializedVersion: 2
+        x: 965
+        y: 694
+        width: 74
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c31c5cc59a2b7520800000000000000
+      internalID: 2700799224405824451
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_13
+      rect:
+        serializedVersion: 2
+        x: 1042
+        y: 665
+        width: 38
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d887a610c715bd20800000000000000
+      internalID: 3293564816272623829
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_14
+      rect:
+        serializedVersion: 2
+        x: 1078
+        y: 665
+        width: 35
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03dd608f572db79f0800000000000000
+      internalID: -469550332015878864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_15
+      rect:
+        serializedVersion: 2
+        x: 1112
+        y: 677
+        width: 17
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ccb577a75d759d60800000000000000
+      internalID: 7896355337089170624
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_16
+      rect:
+        serializedVersion: 2
+        x: 1128
+        y: 675
+        width: 34
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5748f0189b7264360800000000000000
+      internalID: 7153448735812322421
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_17
+      rect:
+        serializedVersion: 2
+        x: 1154
+        y: 687
+        width: 16
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f13dd25d7a59b820800000000000000
+      internalID: 2934476126516228595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_18
+      rect:
+        serializedVersion: 2
+        x: 1158
+        y: 693
+        width: 8
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d96f59b8a4cd4b6f0800000000000000
+      internalID: -669668231843809635
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_19
+      rect:
+        serializedVersion: 2
+        x: 1164
+        y: 693
+        width: 24
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ce195c01033f4760800000000000000
+      internalID: 7444224788661870275
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_20
+      rect:
+        serializedVersion: 2
+        x: 1207
+        y: 681
+        width: 45
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96ad9dfbfd93bf1c0800000000000000
+      internalID: -4468914572075869591
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_21
+      rect:
+        serializedVersion: 2
+        x: 1283
+        y: 673
+        width: 21
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c508bdca1b34c700800000000000000
+      internalID: 559637240007361992
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_22
+      rect:
+        serializedVersion: 2
+        x: 1295
+        y: 709
+        width: 35
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 213047b9ad589d7e0800000000000000
+      internalID: -1740212607044549870
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_23
+      rect:
+        serializedVersion: 2
+        x: 1301
+        y: 688
+        width: 18
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3342e419588216750800000000000000
+      internalID: 6296358308174242867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_24
+      rect:
+        serializedVersion: 2
+        x: 1335
+        y: 665
+        width: 72
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a408a4d78d9263e0800000000000000
+      internalID: -2061912472668339035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_25
+      rect:
+        serializedVersion: 2
+        x: 1427
+        y: 659
+        width: 78
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f13837da370c889d0800000000000000
+      internalID: -2771753967582739681
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_26
+      rect:
+        serializedVersion: 2
+        x: 1510
+        y: 665
+        width: 66
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1e3b40fe94dc5cd0800000000000000
+      internalID: -2567943908406641126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_27
+      rect:
+        serializedVersion: 2
+        x: 1595
+        y: 677
+        width: 31
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39beb4602cc16a5a0800000000000000
+      internalID: -6510484591662601325
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_28
+      rect:
+        serializedVersion: 2
+        x: 1746
+        y: 661
+        width: 83
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50acda295f2105a40800000000000000
+      internalID: 5354800802880670213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_29
+      rect:
+        serializedVersion: 2
+        x: 1826
+        y: 689
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c6f11316cbe229b0800000000000000
+      internalID: -5106259791528724792
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_30
+      rect:
+        serializedVersion: 2
+        x: 1828
+        y: 693
+        width: 23
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0414f6794420f01c0800000000000000
+      internalID: -4535403806117117632
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_31
+      rect:
+        serializedVersion: 2
+        x: 1852
+        y: 681
+        width: 64
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e69c7053ea3d27300800000000000000
+      internalID: 248493674626271598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_32
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 25
+        width: 2119
+        height: 646
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e226c31946e88a70800000000000000
+      internalID: 8829560270998610660
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_33
+      rect:
+        serializedVersion: 2
+        x: 314
+        y: 677
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8fb8ca859dcaf0bc0800000000000000
+      internalID: -3814640309863937032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_34
+      rect:
+        serializedVersion: 2
+        x: 891
+        y: 661
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60b92e921ef0afbc0800000000000000
+      internalID: -3748666280087741690
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_35
+      rect:
+        serializedVersion: 2
+        x: 1116
+        y: 677
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04c2d60f8c72480c0800000000000000
+      internalID: -4574487577520952256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_36
+      rect:
+        serializedVersion: 2
+        x: 1166
+        y: 669
+        width: 14
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50e1b03be9fa9e140800000000000000
+      internalID: 4749520378182442501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_37
+      rect:
+        serializedVersion: 2
+        x: 1168
+        y: 663
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe6874da323b8ed10800000000000000
+      internalID: 2155169387509155567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_38
+      rect:
+        serializedVersion: 2
+        x: 1177
+        y: 671
+        width: 9
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96363e654dc970330800000000000000
+      internalID: 3677080056576041833
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_39
+      rect:
+        serializedVersion: 2
+        x: 1235
+        y: 665
+        width: 31
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 377125169defd5eb0800000000000000
+      internalID: -4729343824075024525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_40
+      rect:
+        serializedVersion: 2
+        x: 1504
+        y: 661
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec443864a32146100800000000000000
+      internalID: 100225133209404622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_41
+      rect:
+        serializedVersion: 2
+        x: 1842
+        y: 662
+        width: 33
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f4ecca80e7fe8760800000000000000
+      internalID: 7462174176372909304
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_42
+      rect:
+        serializedVersion: 2
+        x: 1872
+        y: 659
+        width: 21
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f6a7280c692f1630800000000000000
+      internalID: 3899881346296162040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_43
+      rect:
+        serializedVersion: 2
+        x: 1904
+        y: 669
+        width: 22
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63557e167d0f218e0800000000000000
+      internalID: -1724050899478293194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_44
+      rect:
+        serializedVersion: 2
+        x: 451
+        y: 655
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5184e964776c4530800000000000000
+      internalID: 3840558331930640731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_45
+      rect:
+        serializedVersion: 2
+        x: 455
+        y: 646
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21910c1451af91e50800000000000000
+      internalID: 6780725683187357970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_46
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 650
+        width: 12
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9983a5be65d61ca0800000000000000
+      internalID: -6046410778227799654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_47
+      rect:
+        serializedVersion: 2
+        x: 820
+        y: 646
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a2af9cb13a6546c0800000000000000
+      internalID: -4159801918956264792
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_48
+      rect:
+        serializedVersion: 2
+        x: 989
+        y: 642
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 643d3314876b246e0800000000000000
+      internalID: -1854719468916976826
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_49
+      rect:
+        serializedVersion: 2
+        x: 1890
+        y: 634
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12c72dcfc3f00d940800000000000000
+      internalID: 5318767914538662945
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_50
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 429
+        width: 49
+        height: 144
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93ccea8e5d425f770800000000000000
+      internalID: 8643855560957938745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_51
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 363
+        width: 34
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e31c984528567ac0800000000000000
+      internalID: -3857799113641028633
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_52
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 449
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46590a5c38754fbb0800000000000000
+      internalID: -4903197870831659676
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_53
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 433
+        width: 9
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5719f36f9728e750800000000000000
+      internalID: 6334356441427154783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_54
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 439
+        width: 16
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e26f763987190d8d0800000000000000
+      internalID: -2823597019306133970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_55
+      rect:
+        serializedVersion: 2
+        x: 2116
+        y: 439
+        width: 41
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5c2468c0a112d6e0800000000000000
+      internalID: -1814368317622440865
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_56
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 343
+        width: 11
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d4a9b2225ed54a00800000000000000
+      internalID: 740242158123590871
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_57
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 407
+        width: 29
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 404c41579acebe0e0800000000000000
+      internalID: -2239436177128766460
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_58
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 397
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8aa6b9832eef2bb0800000000000000
+      internalID: -4958482828309910901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_59
+      rect:
+        serializedVersion: 2
+        x: 2106
+        y: 401
+        width: 12
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce786fa2fb8635420800000000000000
+      internalID: 2617550978701232108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_60
+      rect:
+        serializedVersion: 2
+        x: 2130
+        y: 409
+        width: 27
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01ef7b3dc9727d680800000000000000
+      internalID: -8730465798113985008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_61
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 301
+        width: 6
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5075618562dfa04b0800000000000000
+      internalID: -5473284055986972923
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_62
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 194
+        width: 5
+        height: 108
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 267e68b0ef5982310800000000000000
+      internalID: 1380518204136679266
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_63
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 194
+        width: 37
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b5d1febd5fe89560800000000000000
+      internalID: 7320864380205258166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_64
+      rect:
+        serializedVersion: 2
+        x: 183
+        y: 35
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1ba13534366e88e0800000000000000
+      internalID: -1689300435800577249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_65
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 29
+        width: 37
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d9db873ef8f837d0800000000000000
+      internalID: -2938324986121954861
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_66
+      rect:
+        serializedVersion: 2
+        x: 251
+        y: 33
+        width: 16
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a1890c37699a08d0800000000000000
+      internalID: -2879320343082073687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_67
+      rect:
+        serializedVersion: 2
+        x: 263
+        y: 29
+        width: 30
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c339c40a6fcc8de10800000000000000
+      internalID: 2222751775730733884
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_68
+      rect:
+        serializedVersion: 2
+        x: 338
+        y: 23
+        width: 59
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b586d8e9a8aec6a90800000000000000
+      internalID: -7319217413297444773
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_69
+      rect:
+        serializedVersion: 2
+        x: 408
+        y: 31
+        width: 19
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e86e542e20cf7b090800000000000000
+      internalID: -8018663522193512818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_70
+      rect:
+        serializedVersion: 2
+        x: 434
+        y: 33
+        width: 45
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 567ea4aee48228c00800000000000000
+      internalID: 901327194830858085
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_71
+      rect:
+        serializedVersion: 2
+        x: 462
+        y: 31
+        width: 277
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3463c7820bf841430800000000000000
+      internalID: 3752782376262710851
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_72
+      rect:
+        serializedVersion: 2
+        x: 786
+        y: 27
+        width: 50
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b5db4db349271ce0800000000000000
+      internalID: -1434632585378802256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_73
+      rect:
+        serializedVersion: 2
+        x: 893
+        y: 33
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1adf7e9ce37257b50800000000000000
+      internalID: 6590216780355468705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_74
+      rect:
+        serializedVersion: 2
+        x: 975
+        y: 33
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7423420135f4b97f0800000000000000
+      internalID: -604802506779512249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_75
+      rect:
+        serializedVersion: 2
+        x: 1126
+        y: 34
+        width: 136
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9c62d43538a64e80800000000000000
+      internalID: -8194677525481100133
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_76
+      rect:
+        serializedVersion: 2
+        x: 1259
+        y: 34
+        width: 109
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c21b09faef2e47dc0800000000000000
+      internalID: -3642036615140822740
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_77
+      rect:
+        serializedVersion: 2
+        x: 1337
+        y: 31
+        width: 39
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b87f695ac194393b0800000000000000
+      internalID: -5506977531957938293
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_78
+      rect:
+        serializedVersion: 2
+        x: 1404
+        y: 31
+        width: 51
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb60c02c29342d570800000000000000
+      internalID: 8489922545146660540
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_79
+      rect:
+        serializedVersion: 2
+        x: 1476
+        y: 31
+        width: 21
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6179ca2ee9bbc0e00800000000000000
+      internalID: 1012390307333707542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_80
+      rect:
+        serializedVersion: 2
+        x: 1491
+        y: 31
+        width: 126
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d33b8ffff5ae6ab10800000000000000
+      internalID: 1992537583195304765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_81
+      rect:
+        serializedVersion: 2
+        x: 1607
+        y: 31
+        width: 118
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 864e45dbc5f87b020800000000000000
+      internalID: 2357510558427964520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_82
+      rect:
+        serializedVersion: 2
+        x: 1727
+        y: 31
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 201b93eadccb781c0800000000000000
+      internalID: -4501421710956187390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_83
+      rect:
+        serializedVersion: 2
+        x: 1742
+        y: 33
+        width: 27
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce3aadb966c5b9040800000000000000
+      internalID: 4655416235588756460
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: garage signt_84
+      rect:
+        serializedVersion: 2
+        x: 1790
+        y: 31
+        width: 143
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cf7ce93950f498d0800000000000000
+      internalID: -2840381198949384250
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      garage signt_0: 2427758606855689517
+      garage signt_1: 8346299660572976529
+      garage signt_10: -938670561428593267
+      garage signt_11: -5691446669521088863
+      garage signt_12: 2700799224405824451
+      garage signt_13: 3293564816272623829
+      garage signt_14: -469550332015878864
+      garage signt_15: 7896355337089170624
+      garage signt_16: 7153448735812322421
+      garage signt_17: 2934476126516228595
+      garage signt_18: -669668231843809635
+      garage signt_19: 7444224788661870275
+      garage signt_2: 8602931756367200871
+      garage signt_20: -4468914572075869591
+      garage signt_21: 559637240007361992
+      garage signt_22: -1740212607044549870
+      garage signt_23: 6296358308174242867
+      garage signt_24: -2061912472668339035
+      garage signt_25: -2771753967582739681
+      garage signt_26: -2567943908406641126
+      garage signt_27: -6510484591662601325
+      garage signt_28: 5354800802880670213
+      garage signt_29: -5106259791528724792
+      garage signt_3: -7237115729976846501
+      garage signt_30: -4535403806117117632
+      garage signt_31: 248493674626271598
+      garage signt_32: 8829560270998610660
+      garage signt_33: -3814640309863937032
+      garage signt_34: -3748666280087741690
+      garage signt_35: -4574487577520952256
+      garage signt_36: 4749520378182442501
+      garage signt_37: 2155169387509155567
+      garage signt_38: 3677080056576041833
+      garage signt_39: -4729343824075024525
+      garage signt_4: -5413881979822337696
+      garage signt_40: 100225133209404622
+      garage signt_41: 7462174176372909304
+      garage signt_42: 3899881346296162040
+      garage signt_43: -1724050899478293194
+      garage signt_44: 3840558331930640731
+      garage signt_45: 6780725683187357970
+      garage signt_46: -6046410778227799654
+      garage signt_47: -4159801918956264792
+      garage signt_48: -1854719468916976826
+      garage signt_49: 5318767914538662945
+      garage signt_5: 4044578570127786763
+      garage signt_50: 8643855560957938745
+      garage signt_51: -3857799113641028633
+      garage signt_52: -4903197870831659676
+      garage signt_53: 6334356441427154783
+      garage signt_54: -2823597019306133970
+      garage signt_55: -1814368317622440865
+      garage signt_56: 740242158123590871
+      garage signt_57: -2239436177128766460
+      garage signt_58: -4958482828309910901
+      garage signt_59: 2617550978701232108
+      garage signt_6: 3880191683647124106
+      garage signt_60: -8730465798113985008
+      garage signt_61: -5473284055986972923
+      garage signt_62: 1380518204136679266
+      garage signt_63: 7320864380205258166
+      garage signt_64: -1689300435800577249
+      garage signt_65: -2938324986121954861
+      garage signt_66: -2879320343082073687
+      garage signt_67: 2222751775730733884
+      garage signt_68: -7319217413297444773
+      garage signt_69: -8018663522193512818
+      garage signt_7: -8300748883451225816
+      garage signt_70: 901327194830858085
+      garage signt_71: 3752782376262710851
+      garage signt_72: -1434632585378802256
+      garage signt_73: 6590216780355468705
+      garage signt_74: -604802506779512249
+      garage signt_75: -8194677525481100133
+      garage signt_76: -3642036615140822740
+      garage signt_77: -5506977531957938293
+      garage signt_78: 8489922545146660540
+      garage signt_79: 1012390307333707542
+      garage signt_8: -8181800196775184508
+      garage signt_80: 1992537583195304765
+      garage signt_81: 2357510558427964520
+      garage signt_82: -4501421710956187390
+      garage signt_83: 4655416235588756460
+      garage signt_84: -2840381198949384250
+      garage signt_9: 4165825012538472643
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
