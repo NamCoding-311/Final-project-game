@@ -23,19 +23,52 @@ public static class WarRoomUIBuilder
         
         // Font chính: Consolas Bold (Typewriter / Máy đánh chữ hồ sơ quân sự sắc nét)
         TMP_FontAsset fontConsolas = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/Consolas-Bold SDF.asset");
-        if (fontConsolas == null)
+        if (fontConsolas == null || fontConsolas.atlasTextures == null || fontConsolas.atlasTextures.Length == 0 || fontConsolas.atlasTextures[0] == null)
         {
+            if (fontConsolas != null)
+            {
+                AssetDatabase.DeleteAsset("Assets/Fonts/Consolas-Bold SDF.asset");
+                fontConsolas = null;
+            }
+
             Font ttf = AssetDatabase.LoadAssetAtPath<Font>("Assets/Fonts/Consolas-Bold.ttf");
             if (ttf != null)
             {
                 fontConsolas = TMP_FontAsset.CreateFontAsset(ttf);
                 if (fontConsolas != null)
                 {
+                    fontConsolas.name = "Consolas-Bold SDF";
                     fontConsolas.atlasPopulationMode = AtlasPopulationMode.Dynamic;
                     AssetDatabase.CreateAsset(fontConsolas, "Assets/Fonts/Consolas-Bold SDF.asset");
+
+                    if (fontConsolas.atlasTextures != null)
+                    {
+                        for (int i = 0; i < fontConsolas.atlasTextures.Length; i++)
+                        {
+                            var tex = fontConsolas.atlasTextures[i];
+                            if (tex != null)
+                            {
+                                tex.name = fontConsolas.name + " Atlas " + i;
+                                AssetDatabase.AddObjectToAsset(tex, fontConsolas);
+                            }
+                        }
+                    }
+
+                    if (fontConsolas.material != null)
+                    {
+                        fontConsolas.material.name = fontConsolas.name + " Material";
+                        AssetDatabase.AddObjectToAsset(fontConsolas.material, fontConsolas);
+                    }
+
+                    EditorUtility.SetDirty(fontConsolas);
                     AssetDatabase.SaveAssets();
                 }
             }
+        }
+
+        if (fontConsolas == null || fontConsolas.atlasTextures == null || fontConsolas.atlasTextures.Length == 0 || fontConsolas.atlasTextures[0] == null)
+        {
+            fontConsolas = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset");
         }
         if (fontConsolas == null) fontConsolas = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/Kenney Future SDF.asset");
 

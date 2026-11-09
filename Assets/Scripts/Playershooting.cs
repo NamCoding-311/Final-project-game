@@ -34,9 +34,30 @@ public class PlayerShooting : MonoBehaviour
     // Thời gian tồn tại của tia lửa lóe sáng mỗi lần bắn (giây)
     [SerializeField] private float muzzleFlashDuration = 0.045f;
 
+    [Header("Dynamic Recoil & Spray Spread (Độ tản đạn khi sấy lâu)")]
+    [Tooltip("Bật/Tắt cơ chế tản đạn tăng dần khi sấy liên tục")]
+    [SerializeField] private bool enableDynamicRecoil = true;
+
+    [Tooltip("Độ nở tâm cộng dồn sau mỗi viên đạn bắn ra (độ)")]
+    [SerializeField] private float spreadIncreasePerShot = 1.35f;
+
+    [Tooltip("Góc tản đạn tối đa khi sấy kịch kim (độ)")]
+    [SerializeField] private float maxRecoilSpread = 15f;
+
+    [Tooltip("Tốc độ hồi tâm khi ngừng bắn (độ/giây)")]
+    [SerializeField] private float recoilRecoverySpeed = 26f;
+
+    [Tooltip("Độ rung lắc ngẫu nhiên của nòng súng khi sấy")]
+    [Range(0f, 0.5f)]
+    [SerializeField] private float gunShakeFactor = 0.18f;
+
     private float _nextFireTime;
     private Camera _cam;
     private Coroutine _flashRoutine;
+    private float _currentRecoilSpread = 0f;
+    private float _lastFireTime = 0f;
+
+    public float CurrentRecoilSpread => _currentRecoilSpread;
 
     private void Start()
     {
@@ -97,11 +118,26 @@ public class PlayerShooting : MonoBehaviour
     {
         if (_cam == null) _cam = Camera.main;
 
-        // 1. Xoay khẩu súng và FirePoint theo con trỏ chuột
+        // 1. Cập nhật hồi tâm (giảm độ tản đạn khi không bắn hoặc vừa dứt loạt sấy)
+        UpdateRecoilRecovery();
+
+        // 2. Xoay khẩu súng và FirePoint theo con trỏ chuột (kèm rung nòng nhẹ khi sấy)
         RotateGun();
 
-        // 2. Xử lý bắn đạn khi người chơi bấm chuột
+        // 3. Xử lý bắn đạn khi người chơi bấm chuột
         HandleShooting();
+    }
+
+    // Hồi tâm súng khi người chơi ngừng bắn
+    private void UpdateRecoilRecovery()
+    {
+        if (!enableDynamicRecoil) return;
+
+        // Bắt đầu hồi tâm sau khi dứt phát bắn trước đó ít nhất 0.08 giây
+        if (Time.time - _lastFireTime > 0.08f && _currentRecoilSpread > 0f)
+        {
+            _currentRecoilSpread = Mathf.MoveTowards(_currentRecoilSpread, 0f, recoilRecoverySpeed * Time.deltaTime);
+        }
     }
 
     // Xoay súng hướng về vị trí con trỏ chuột và lật dọc khi ngắm bên trái
@@ -119,6 +155,14 @@ public class PlayerShooting : MonoBehaviour
 
         // Tính góc xoay (Angle) theo độ
         float angle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
+
+        // Thêm độ rung nhẹ vào nòng súng khi đang sấy giật liên tục
+        if (enableDynamicRecoil && _currentRecoilSpread > 1.5f && gunShakeFactor > 0f)
+        {
+            float jitter = Random.Range(-_currentRecoilSpread * gunShakeFactor, _currentRecoilSpread * gunShakeFactor);
+            angle += jitter;
+        }
+
         gunHolder.rotation = Quaternion.Euler(0f, 0f, angle);
 
         // Kiểm tra xem chuột đang ở bên trái nhân vật hay không để lật súng
@@ -178,16 +222,23 @@ public class PlayerShooting : MonoBehaviour
         // Kích hoạt tia lửa nòng súng và tàn lửa
         TriggerMuzzleFlashEffect();
 
+        // Ghi nhận thời điểm bắn để tính thời gian hồi tâm
+        _lastFireTime = Time.time;
+
         // Vị trí xuất phát của đạn là FirePoint ở đầu nòng
         Vector3 spawnPos = firePoint != null ? firePoint.position : transform.position;
 
         // Hướng bắn chính là hướng trục đỏ (Right) của súng sau khi xoay
         Vector2 baseDir = gunHolder != null ? (Vector2)gunHolder.right : Vector2.right;
 
+        // Tổng độ tản đạn = Độ tản cơ bản của súng (nếu có) + Độ tản tích lũy do sấy liên tục
+        float baseSpread = currentWeapon != null ? currentWeapon.spreadAngle : 0f;
+        float totalSpread = enableDynamicRecoil ? (baseSpread + _currentRecoilSpread) : baseSpread;
+
         for (int i = 0; i < currentWeapon.pelletsPerShot; i++)
         {
-            // Tính độ tản đạn ngẫu nhiên
-            float randomSpread = Random.Range(-currentWeapon.spreadAngle / 2f, currentWeapon.spreadAngle / 2f);
+            // Tính độ tản đạn ngẫu nhiên trong góc totalSpread
+            float randomSpread = Random.Range(-totalSpread / 2f, totalSpread / 2f);
             Vector2 finalDir = RotateVector(baseDir, randomSpread);
 
             // Xoay đầu đạn theo đúng hướng bay
@@ -209,6 +260,12 @@ public class PlayerShooting : MonoBehaviour
                     bulletScript.SetInheritedSpeed(movement.GetCurrentSpeed());
                 }
             }
+        }
+
+        // Tích tụ độ tản đạn cho phát bắn tiếp theo khi sấy
+        if (enableDynamicRecoil)
+        {
+            _currentRecoilSpread = Mathf.Min(_currentRecoilSpread + spreadIncreasePerShot, maxRecoilSpread);
         }
     }
 
@@ -299,6 +356,7 @@ public class PlayerShooting : MonoBehaviour
     public void EquipWeapon(WeaponData newWeapon)
     {
         currentWeapon = newWeapon;
+        _currentRecoilSpread = 0f;
         if (gunVisualAnimator != null && currentWeapon != null)
         {
             gunVisualAnimator.Initialize(currentWeapon, gunSpriteRenderer);
