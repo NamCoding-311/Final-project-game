@@ -372,7 +372,8 @@ public class ArenaAutoShooting : MonoBehaviour
         Vector2 baseDir = slot.gunTransform.right;
 
         bool isCrit = Random.value < critChance;
-        int baseDmg = weapon.damage + bonusDamage;
+        int garageBonusDamage = Mathf.Max(0, PlayerPrefs.GetInt(GarageUpgradeController.GunLevelKey, 0)) * 2;
+        int baseDmg = weapon.damage + bonusDamage + garageBonusDamage;
         int finalDmg = isCrit ? Mathf.RoundToInt(baseDmg * 2.0f) : baseDmg;
 
         for (int i = 0; i < weapon.pelletsPerShot; i++)

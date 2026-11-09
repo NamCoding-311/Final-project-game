@@ -251,7 +251,8 @@ public class PlayerShooting : MonoBehaviour
             if (bulletScript != null)
             {
                 bulletScript.SetDirection(finalDir);
-                bulletScript.SetDamage(currentWeapon.damage);
+                int garageBonusDamage = Mathf.Max(0, PlayerPrefs.GetInt(GarageUpgradeController.GunLevelKey, 0)) * 2;
+                bulletScript.SetDamage(currentWeapon.damage + garageBonusDamage);
 
                 // Truyền vận tốc hiện tại của xe để đạn bay cộng hưởng theo đà xe
                 Player3LaneMovement movement = GetComponent<Player3LaneMovement>();

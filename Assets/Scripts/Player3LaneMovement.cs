@@ -132,6 +132,10 @@ public class Player3LaneMovement : MonoBehaviour
 
     private void Start()
     {
+        int dashUpgradeLevel = Mathf.Clamp(PlayerPrefs.GetInt(GarageUpgradeController.DashLevelKey, 0), 0, 5);
+        dashSpeed += dashUpgradeLevel;
+        dashDuration += dashUpgradeLevel * 0.05f;
+
         _currentSpeed = 0f;
 
         // Tìm chỉ số làn gần nhất với vị trí đặt xe ban đầu

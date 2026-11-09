@@ -454,6 +454,8 @@ public class TacticalWarRoomManager : MonoBehaviour
 
         if (Application.CanStreamedLevelBeLoaded(sceneName))
         {
+            PlayerPrefs.SetString("LastLevel", sceneName);
+            PlayerPrefs.Save();
             SceneManager.LoadScene(sceneName);
         }
         else

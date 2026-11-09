@@ -32,8 +32,14 @@ public class MainMenuController : MonoBehaviour
     // GARAGE
     public void OpenGarage()
     {
-        if (garagePanel != null)
-            garagePanel.SetActive(true);
+        Time.timeScale = 1f;
+        if (Application.CanStreamedLevelBeLoaded("garage"))
+        {
+            SceneManager.LoadScene("garage");
+            return;
+        }
+
+        Debug.LogError("Garage scene is not included in the active Build Settings.", this);
     }
 
     public void CloseGarage()

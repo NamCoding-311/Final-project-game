@@ -41,6 +41,8 @@ public class PlayerHealth : MonoBehaviour
 
     private void Start()
     {
+        // Gara HP upgrades persist between scenes and apply before the health bar initializes.
+        maxHP += Mathf.Max(0, PlayerPrefs.GetInt(GarageUpgradeController.HpLevelKey, 0)) * 25;
         _currentHP = maxHP;
         UpdateHPBar();
 

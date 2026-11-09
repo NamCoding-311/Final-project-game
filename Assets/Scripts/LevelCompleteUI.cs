@@ -99,6 +99,8 @@ public class LevelCompleteUI : MonoBehaviour
     public void ReplayMap1()
     {
         Time.timeScale = 1f;
+        PlayerPrefs.SetString("LastLevel", "map1");
+        PlayerPrefs.Save();
         SceneManager.LoadScene("map1");
     }
 
@@ -106,6 +108,8 @@ public class LevelCompleteUI : MonoBehaviour
     public void ReplayMap2()
     {
         Time.timeScale = 1f;
+        PlayerPrefs.SetString("LastLevel", "map2");
+        PlayerPrefs.Save();
         SceneManager.LoadScene("map2");
     }
 
@@ -113,6 +117,8 @@ public class LevelCompleteUI : MonoBehaviour
     public void ReplayMap3()
     {
         Time.timeScale = 1f;
+        PlayerPrefs.SetString("LastLevel", "map3");
+        PlayerPrefs.Save();
         SceneManager.LoadScene("map3");
     }
 
