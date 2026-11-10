@@ -186,8 +186,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Mutants: Basic Walkers, Rapid Jumpers, Heavy Chargers'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -567,8 +567,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: RETURN TO LOBBY
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -704,8 +704,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Threat: Low (Tier 1)'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1160,8 +1160,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: SECTOR 03
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1674,8 +1674,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Threat: Low (Tier 1)'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1803,8 +1803,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: SECTOR 01
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2090,8 +2090,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: BUNKER 04 // TACTICAL BOUNTY BOARD
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2327,8 +2327,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Rewards: +1,500 Cash  |  Armored Truck Unlocked'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2985,8 +2985,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 03
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3197,8 +3197,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Threat: Extreme (Tier 5)'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3606,8 +3606,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Highway Outskirts
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3751,8 +3751,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'SECTOR 01: HIGHWAY OUTSKIRTS'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3880,8 +3880,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: SECTOR 02
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -4308,8 +4308,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: '[ HQ DISPATCH // ENCRYPTED TRANSCRIPT ]'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -4685,8 +4685,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 02
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -4831,8 +4831,8 @@ MonoBehaviour:
   m_text: 'HQ to Survivor: Outskirts highway is swarming with infected. Punch through
     barricades, dismount and secure Checkpoint Alpha!'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -5473,8 +5473,8 @@ MonoBehaviour:
     -
     2. Dismount vehicle and eliminate 10 mutants on foot'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -5677,237 +5677,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1307490236}
   m_CullTransparentMesh: 1
---- !u!1 &1314351644
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1314351647}
-  - component: {fileID: 1314351646}
-  - component: {fileID: 1314351645}
-  m_Layer: 0
-  m_Name: TacticalWarRoomManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!82 &1314351645
-AudioSource:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1314351644}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: 3ffc6d8bdfe691542adea5d3f62d017c, type: 3}
-  m_PlayOnAwake: 1
-  m_Volume: 0.65
-  m_Pitch: 1
-  Loop: 1
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
---- !u!114 &1314351646
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1314351644}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c81170ab7995b724d85dab49c7ab901a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TacticalWarRoomManager
-  sectors:
-  - sectorIndex: 1
-    sectorCode: SECTOR 01
-    sectorName: HIGHWAY OUTSKIRTS
-    sceneToLoad: map1
-    threatLevel: 2
-    targetDistance: 160
-    enemyIntel: Basic Walkers, Rapid Jumpers, Heavy Chargers
-    bossIntel: Outskirts Horde (10 Mutants)
-    radioDispatch: 'HQ to Survivor: Outskirts highway is blocked with swarms of runners
-      and jumpers. Punch through their blockade, dismount and secure Checkpoint Alpha!'
-    objectives:
-    - 1. Ram through barricades & reach 160m
-    - 2. Dismount vehicle and eliminate 10 Zombies
-    - 3. Secure forward outpost & unlock Sector 02
-    rewardText: +1,500 Cash  |  Armored Truck Access
-    cashReward: 1500
-    sectorPreviewSprite: {fileID: -1031709563291914572, guid: e45705567bed03447b84055bcc761826, type: 3}
-  - sectorIndex: 2
-    sectorCode: SECTOR 02
-    sectorName: CONTAMINATED ZONE
-    sceneToLoad: map2
-    threatLevel: 4
-    targetDistance: 350
-    enemyIntel: Acid-Infused Walkers, Aggressive Chargers
-    bossIntel: MUTATED TANK ZOMBIE (Boulder Thrower)
-    radioDispatch: Hazard Alert! Toxic chemical spills detected in Sector 2. A mutated
-      Tank Zombie has been sighted hurling concrete boulders. Exercise extreme caution!
-    objectives:
-    - 1. Traverse acid highway lanes (350m)
-    - 2. Dodge flying concrete boulder strikes
-    - 3. Defeat Mutated Tank Zombie on foot
-    rewardText: +3,500 Cash  |  Heavy Armor Upgrade
-    cashReward: 3500
-    sectorPreviewSprite: {fileID: -1031709563291914572, guid: e45705567bed03447b84055bcc761826, type: 3}
-  - sectorIndex: 3
-    sectorCode: SECTOR 03
-    sectorName: APEX GROUND ZERO
-    sceneToLoad: map3
-    threatLevel: 5
-    targetDistance: 550
-    enemyIntel: Colossal Outbreak Horde (High Density)
-    bossIntel: APEX TANK (Ground Slam Shockwave & Turbo Rush)
-    radioDispatch: "Emergency Broadcast! Sector 3 is completely lost to the epidemic.
-      The Apex Tank has overrun downtown. This is our last stand \u2014 destroy the
-      monster and save the city!"
-    objectives:
-    - 1. Breach Ground Zero epicenter (550m)
-    - 2. Survive Boss Ground Slam shockwave
-    - 3. Terminate APEX TANK and win the game!
-    rewardText: +8,000 Cash  |  Ultimate Savior Trophy
-    cashReward: 8000
-    sectorPreviewSprite: {fileID: 341646083534590235, guid: bf34d579efdc9ed42af87552f05b6e77, type: 3}
-  warRoomPanel: {fileID: 1559345600}
-  lobbyDefaultHUD: {fileID: 1554200545}
-  sectorTitleText: {fileID: 943806556}
-  threatLevelText: {fileID: 370894214}
-  distanceText: {fileID: 1315029114}
-  enemyIntelText: {fileID: 17768255}
-  bossIntelText: {fileID: 2024459205}
-  radioTranscriptText: {fileID: 1122465663}
-  objectivesText: {fileID: 1290412378}
-  rewardsText: {fileID: 586205765}
-  sectorPreviewImage: {fileID: 23872679}
-  deployButton: {fileID: 1051335637}
-  deployButtonText: {fileID: 1316878242}
-  closeButton: {fileID: 51381429}
-  openWarRoomButton: {fileID: 1204708869}
-  returnToMenuButton: {fileID: 801626688}
-  mapPinButtons:
-  - {fileID: 1522045201}
-  - {fileID: 1105699961}
-  - {fileID: 1734577298}
-  pinLockedIcons:
-  - {fileID: 1394685158}
-  - {fileID: 2010445352}
-  - {fileID: 1315555170}
-  pinClearedIcons:
-  - {fileID: 2054073463}
-  - {fileID: 1123866025}
-  - {fileID: 312828987}
-  pinSelectionGlows:
-  - {fileID: 1553894486}
-  - {fileID: 321357771}
-  - {fileID: 451481089}
-  musicSource: {fileID: 1314351645}
-  sfxSource: {fileID: 0}
-  lobbyMusicClip: {fileID: 8300000, guid: 3ffc6d8bdfe691542adea5d3f62d017c, type: 3}
-  cashDisplayTopText: {fileID: 2016192861}
---- !u!4 &1314351647
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1314351644}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1315029111
 GameObject:
   m_ObjectHideFlags: 0
@@ -5975,8 +5744,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Distance: 160 Meters'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -6104,8 +5873,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: '[ LOCKED ]'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -6249,8 +6018,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: DEPLOY VEHICLE
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -6378,8 +6147,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Apex Ground Zero
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -6652,8 +6421,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: TACTICAL WAR MAP
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -7122,8 +6891,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: MAIN MENU
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -7334,8 +7103,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 01
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -7564,8 +7333,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: OPERATIONS SECTORS
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -7845,8 +7614,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Contaminated Zone
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -8133,8 +7902,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: '[ LOCKED ]'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -8251,8 +8020,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'FUNDS: $25,000'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -8415,8 +8184,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Boss: Outskirts Mutated Horde'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -8725,8 +8494,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Threat: High (Tier 3)'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -9112,8 +8881,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: +25 HP | LV 0/5 | UPGRADE $500
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: ef19cbb135d398140aa75424a36e2206, type: 2}
-  m_sharedMaterial: {fileID: 7716653984412776852, guid: ef19cbb135d398140aa75424a36e2206, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -9370,8 +9139,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: +2 DAMAGE | LV 0/5 | UPGRADE $750
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: ef19cbb135d398140aa75424a36e2206, type: 2}
-  m_sharedMaterial: {fileID: 7716653984412776852, guid: ef19cbb135d398140aa75424a36e2206, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -9515,8 +9284,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: ef19cbb135d398140aa75424a36e2206, type: 2}
-  m_sharedMaterial: {fileID: 7716653984412776852, guid: ef19cbb135d398140aa75424a36e2206, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -9652,8 +9421,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: MISSION DOSSIER // BRIEFING
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
-  m_sharedMaterial: {fileID: 7929353972586448625, guid: 6b023d0879d1e5c43a8a53c8222059a0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -9738,4 +9507,3 @@ SceneRoots:
   - {fileID: 593987328}
   - {fileID: 359601743}
   - {fileID: 329482127}
-  - {fileID: 1314351647}
