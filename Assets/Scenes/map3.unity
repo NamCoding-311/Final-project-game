@@ -160,6 +160,15 @@ MonoBehaviour:
   gameOverPanel: {fileID: 1821894508}
   finalDistanceText: {fileID: 0}
   bestDistanceText: {fileID: 0}
+  sectorSummaryText: {fileID: 0}
+  killSummaryText: {fileID: 0}
+  speedSummaryText: {fileID: 0}
+  distanceScrapText: {fileID: 0}
+  mutantScrapText: {fileID: 0}
+  earnedCashText: {fileID: 0}
+  totalFundsText: {fileID: 0}
+  retryButton: {fileID: 0}
+  lobbyButton: {fileID: 0}
 --- !u!114 &556528
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -234,6 +243,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelCompleteUI
   levelCompletePanel: {fileID: 867348810}
+  titleText: {fileID: 0}
+  rewardText: {fileID: 0}
+  totalFundsText: {fileID: 0}
 --- !u!114 &556533
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74518,13 +74530,25 @@ PrefabInstance:
       propertyPath: distanceTracker
       value: 
       objectReference: {fileID: 556526}
+    - target: {fileID: 4836973209122323060, guid: f65272b389c6c2c438e4423bd7082a70, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -4192537344338304719, guid: a200b3ab6de84bf41987f68823b0a045, type: 3}
+    - target: {fileID: 7260736734946049795, guid: f65272b389c6c2c438e4423bd7082a70, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.26049012
+      objectReference: {fileID: 0}
+    - target: {fileID: 7260736734946049795, guid: f65272b389c6c2c438e4423bd7082a70, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.2893578
+      objectReference: {fileID: 0}
     - target: {fileID: 7260736734946049795, guid: f65272b389c6c2c438e4423bd7082a70, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.05
+      value: 1.13
       objectReference: {fileID: 0}
     - target: {fileID: 7260736734946049795, guid: f65272b389c6c2c438e4423bd7082a70, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.36
+      value: 0.26
       objectReference: {fileID: 0}
     - target: {fileID: 7260736734946049795, guid: f65272b389c6c2c438e4423bd7082a70, type: 3}
       propertyPath: m_LocalPosition.z
@@ -74557,6 +74581,14 @@ PrefabInstance:
     - target: {fileID: 7260736734946049795, guid: f65272b389c6c2c438e4423bd7082a70, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8120440495813365603, guid: f65272b389c6c2c438e4423bd7082a70, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.x
+      value: 20.43
+      objectReference: {fileID: 0}
+    - target: {fileID: 8120440495813365603, guid: f65272b389c6c2c438e4423bd7082a70, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.y
+      value: 7.0934615
       objectReference: {fileID: 0}
     - target: {fileID: 9213037732409640061, guid: f65272b389c6c2c438e4423bd7082a70, type: 3}
       propertyPath: m_Name

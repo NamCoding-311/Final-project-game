@@ -18,6 +18,14 @@ public class GarageUpgradeController : MonoBehaviour
     [SerializeField] private int dashCost = 400;
     [SerializeField] private bool seedDemoCashOnce = true;
     [SerializeField] private int demoCashAmount = 10000;
+    [Header("Garage Vehicle Preview")]
+    [SerializeField] private Image vehiclePreviewImage;
+    [SerializeField] private Sprite[] vehiclePreviewSprites;
+
+    private int _selectedVehicleIndex;
+    private int _latestUnlockedVehicleIndex;
+    private TMP_Text _vehicleNameText;
+    private TMP_Text _vehicleStatusText;
 
     private const string DemoCashSeededKey = "GarageDemoCashSeeded";
 
@@ -50,10 +58,17 @@ public class GarageUpgradeController : MonoBehaviour
 
         SeedDemoCashIfNeeded();
         BuildCashLabel();
+        SetupVehiclePreview();
         BuildDashButton();
         BuildButton("HPUpgradeButton", "MAX HP", HpLevelKey, hpCost, new Vector2(-45f, -290f));
         BuildButton("GunUpgradeButton", "WEAPON DAMAGE", GunLevelKey, gunCost, new Vector2(345f, -290f));
         Refresh();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftArrow)) ShowVehicle(_selectedVehicleIndex - 1);
+        else if (Input.GetKeyDown(KeyCode.RightArrow)) ShowVehicle(_selectedVehicleIndex + 1);
     }
 
     public void GoToCurrentMap()
@@ -67,6 +82,98 @@ public class GarageUpgradeController : MonoBehaviour
         }
 
         SceneManager.LoadScene(currentMap);
+    }
+
+    public void ShowPreviousVehicle() => ShowVehicle(_selectedVehicleIndex - 1);
+
+    public void ShowNextVehicle() => ShowVehicle(_selectedVehicleIndex + 1);
+
+    private void SetupVehiclePreview()
+    {
+        if (vehiclePreviewImage == null)
+        {
+            GameObject preview = GameObject.Find("VehiclePreviewUI");
+            if (preview != null) vehiclePreviewImage = preview.GetComponent<Image>();
+        }
+
+        if (vehiclePreviewImage == null || vehiclePreviewSprites == null || vehiclePreviewSprites.Length == 0)
+            return;
+
+        // MaxUnlockedSector is advanced only when the player clears a map.
+        // The most recently unlocked map's vehicle is the only usable one;
+        // earlier and future vehicles remain visible as locked previews.
+        _latestUnlockedVehicleIndex = Mathf.Clamp(PlayerPrefs.GetInt("MaxUnlockedSector", 1) - 1, 0, vehiclePreviewSprites.Length - 1);
+        _selectedVehicleIndex = _latestUnlockedVehicleIndex;
+
+        RectTransform canvasRect = transform as RectTransform;
+        if (canvasRect == null) canvasRect = GetComponentInParent<Canvas>()?.transform as RectTransform;
+        if (canvasRect == null) return;
+
+        RectTransform previewRect = vehiclePreviewImage.rectTransform;
+        Vector2 center = previewRect.anchoredPosition;
+        _vehicleNameText = CreatePreviewLabel("VehicleName", canvasRect, center + new Vector2(0f, 190f), new Vector2(540f, 48f), 28f);
+        _vehicleStatusText = CreatePreviewLabel("VehicleLockStatus", canvasRect, center, new Vector2(460f, 100f), 25f);
+        TMP_Text hint = CreatePreviewLabel("VehicleControlsHint", canvasRect, center + new Vector2(0f, -195f), new Vector2(560f, 42f), 18f);
+        hint.text = "BROWSE VEHICLES  [  ←   →  ]";
+        hint.color = new Color(1f, 0.78f, 0.36f);
+
+        RefreshVehiclePreview();
+    }
+
+    private TMP_Text CreatePreviewLabel(string objectName, RectTransform parent, Vector2 position, Vector2 size, float fontSize)
+    {
+        Transform existing = parent.Find(objectName);
+        GameObject labelObject = existing != null
+            ? existing.gameObject
+            : new GameObject(objectName, typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+        labelObject.transform.SetParent(parent, false);
+        RectTransform rect = labelObject.GetComponent<RectTransform>();
+        rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.anchoredPosition = position;
+        rect.sizeDelta = size;
+
+        TMP_Text text = labelObject.GetComponent<TMP_Text>();
+        text.alignment = TextAlignmentOptions.Center;
+        text.fontSize = fontSize;
+        text.fontStyle = FontStyles.Bold;
+        text.color = Color.white;
+        text.raycastTarget = false;
+        text.enableAutoSizing = true;
+        text.fontSizeMin = fontSize * 0.7f;
+        text.fontSizeMax = fontSize;
+        return text;
+    }
+
+    private void ShowVehicle(int index)
+    {
+        if (vehiclePreviewSprites == null || vehiclePreviewSprites.Length == 0) return;
+        _selectedVehicleIndex = (index % vehiclePreviewSprites.Length + vehiclePreviewSprites.Length) % vehiclePreviewSprites.Length;
+        RefreshVehiclePreview();
+    }
+
+    private void RefreshVehiclePreview()
+    {
+        if (_selectedVehicleIndex < 0 || _selectedVehicleIndex >= vehiclePreviewSprites.Length) return;
+
+        bool isUsable = _selectedVehicleIndex == _latestUnlockedVehicleIndex;
+        if (vehiclePreviewImage != null)
+        {
+            vehiclePreviewImage.sprite = vehiclePreviewSprites[_selectedVehicleIndex];
+            vehiclePreviewImage.preserveAspect = true;
+            vehiclePreviewImage.color = isUsable ? Color.white : new Color(0.42f, 0.42f, 0.42f, 0.85f);
+        }
+
+        if (_vehicleNameText != null)
+            _vehicleNameText.text = $"MAP {_selectedVehicleIndex + 1} VEHICLE";
+        if (_vehicleStatusText != null)
+        {
+            _vehicleStatusText.text = isUsable
+                ? "UNLOCKED  •  READY"
+                : _selectedVehicleIndex < _latestUnlockedVehicleIndex
+                    ? "LOCKED  •  PREVIOUS VEHICLE"
+                    : $"LOCKED  •  CLEAR MAP {_selectedVehicleIndex} TO UNLOCK";
+            _vehicleStatusText.color = isUsable ? new Color(0.4f, 1f, 0.48f) : new Color(1f, 0.35f, 0.3f);
+        }
     }
 
     public void ReturnToMainMenu()
