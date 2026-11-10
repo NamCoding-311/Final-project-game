@@ -19,3 +19,5 @@ MonoBehaviour:
   spreadAngle: 30
   damage: 8
   isAutomatic: 0
+  shootSound: {fileID: 8300000, guid: a71854d55202c714aba9461fe079a809, type: 3}
+  shootSoundVolume: 0.65

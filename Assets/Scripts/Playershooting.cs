@@ -21,6 +21,9 @@ public class PlayerShooting : MonoBehaviour
     // Bộ điều khiển hoạt ảnh lóe lửa, vỏ đạn và giật nòng của súng
     [SerializeField] private GunVisualAnimator gunVisualAnimator;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource shootAudioSource;
+
     [Header("Muzzle Flash & Sparks (Hiệu ứng tia lửa & tàn lửa)")]
     // GameObject hiển thị tia lửa nòng súng tại FirePoint
     [SerializeField] private GameObject muzzleFlashObject;
@@ -62,6 +65,15 @@ public class PlayerShooting : MonoBehaviour
     private void Start()
     {
         _cam = Camera.main;
+
+        if (shootAudioSource == null)
+        {
+            GameObject audioObject = new GameObject("ShootingAudio");
+            audioObject.transform.SetParent(transform, false);
+            shootAudioSource = audioObject.AddComponent<AudioSource>();
+        }
+        shootAudioSource.playOnAwake = false;
+        shootAudioSource.spatialBlend = 0f;
 
         // Tự động tìm các đối tượng con nếu chưa kéo trong Inspector
         if (gunHolder == null)
@@ -213,6 +225,8 @@ public class PlayerShooting : MonoBehaviour
     {
         if (currentWeapon.bulletPrefab == null) return;
 
+        PlayShootSound(currentWeapon);
+
         // Kích hoạt hoạt ảnh bắn (Muzzle Flash lóe lửa, văng vỏ đạn, giật nòng Recoil)
         if (gunVisualAnimator != null)
         {
@@ -277,6 +291,14 @@ public class PlayerShooting : MonoBehaviour
         float cos = Mathf.Cos(rad);
         float sin = Mathf.Sin(rad);
         return new Vector2(v.x * cos - v.y * sin, v.x * sin + v.y * cos);
+    }
+
+    private void PlayShootSound(WeaponData weapon)
+    {
+        if (shootAudioSource != null && weapon != null && weapon.shootSound != null)
+        {
+            shootAudioSource.PlayOneShot(weapon.shootSound, weapon.shootSoundVolume);
+        }
     }
 
     // Khởi tạo đối tượng tia lửa và tàn lửa tại FirePoint

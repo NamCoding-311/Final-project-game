@@ -19,6 +19,8 @@ MonoBehaviour:
   spreadAngle: 0
   damage: 60
   isAutomatic: 0
+  shootSound: {fileID: 8300000, guid: 6b6c01e017b323b458c9b3519f0e85f9, type: 3}
+  shootSoundVolume: 0.7
   weaponSprite: {fileID: 3638761059678437864, guid: 61806f54fe93bc646832b59f46d89632, type: 3}
   weaponColor: {r: 1, g: 1, b: 1, a: 1}
   shootAnimationFrames:

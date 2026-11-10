@@ -50,6 +50,9 @@ public class ArenaAutoShooting : MonoBehaviour
     // Template mẫu ban đầu nếu có
     [SerializeField] private Transform baseGunHolder;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource shootAudioSource;
+
     [System.Serializable]
     public class GunSlot
     {
@@ -74,6 +77,15 @@ public class ArenaAutoShooting : MonoBehaviour
 
     private void Start()
     {
+        if (shootAudioSource == null)
+        {
+            GameObject audioObject = new GameObject("ShootingAudio");
+            audioObject.transform.SetParent(transform, false);
+            shootAudioSource = audioObject.AddComponent<AudioSource>();
+        }
+        shootAudioSource.playOnAwake = false;
+        shootAudioSource.spatialBlend = 0f;
+
         // Tự động tìm template GunHolder ban đầu
         if (baseGunHolder == null)
         {
@@ -362,6 +374,11 @@ public class ArenaAutoShooting : MonoBehaviour
     {
         WeaponData weapon = slot.weaponData;
         if (weapon.bulletPrefab == null) return;
+
+        if (shootAudioSource != null && weapon.shootSound != null)
+        {
+            shootAudioSource.PlayOneShot(weapon.shootSound, weapon.shootSoundVolume);
+        }
 
         // Tính tốc độ bắn của súng kèm hệ số Brotato
         float rate = Mathf.Max(0.05f, weapon.fireRate / Mathf.Max(0.1f, attackSpeedMultiplier));

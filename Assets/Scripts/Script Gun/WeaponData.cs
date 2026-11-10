@@ -12,6 +12,10 @@ public class WeaponData : ScriptableObject
     public int damage = 10;
     public bool isAutomatic = true;    // AR: giữ bắn liên tục, Sniper/Shotgun: mỗi lần click 1 phát
 
+    [Header("Audio")]
+    public AudioClip shootSound;
+    [Range(0f, 1f)] public float shootSoundVolume = 0.6f;
+
     [Header("Visuals")]
     [Tooltip("Sprite hình ảnh súng ở trạng thái tĩnh (Idle)")]
     public Sprite weaponSprite;
