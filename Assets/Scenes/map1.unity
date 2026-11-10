@@ -70169,7 +70169,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &155231649
 RectTransform:
   m_ObjectHideFlags: 0
@@ -70962,7 +70962,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10, y: 3.55, z: -10}
+  m_LocalPosition: {x: 2.75, y: -0.24000001, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -96875,7 +96875,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 748781970}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 556526}
+        m_TargetAssemblyTypeName: DistanceTrackerUI, Assembly-CSharp
+        m_MethodName: ReturnToLobby
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &748781970
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -97688,8 +97700,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: '[ COMBAT TELEMETRY ]'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ef19cbb135d398140aa75424a36e2206, type: 2}
+  m_sharedMaterial: {fileID: 7716653984412776852, guid: ef19cbb135d398140aa75424a36e2206, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -97936,8 +97948,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: '[ SALVAGE BOUNTY ]'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ef19cbb135d398140aa75424a36e2206, type: 2}
+  m_sharedMaterial: {fileID: 7716653984412776852, guid: ef19cbb135d398140aa75424a36e2206, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -98494,7 +98506,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -30, y: -23.455627}
+  m_AnchoredPosition: {x: -30, y: -23.455566}
   m_SizeDelta: {x: 541.8465, y: 60.9576}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1280692322
@@ -102222,13 +102234,21 @@ PrefabInstance:
       propertyPath: gameOverPanel
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 1872399760677332670, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
+      propertyPath: m_Radius
+      value: 0.08
+      objectReference: {fileID: 0}
+    - target: {fileID: 1872399760677332670, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
+      propertyPath: m_Offset.y
+      value: 0.01
+      objectReference: {fileID: 0}
     - target: {fileID: 6714081817590200170, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.83
+      value: 1.55
       objectReference: {fileID: 0}
     - target: {fileID: 6714081817590200170, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.59
+      value: -0.84000003
       objectReference: {fileID: 0}
     - target: {fileID: 6714081817590200170, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
       propertyPath: m_LocalPosition.z

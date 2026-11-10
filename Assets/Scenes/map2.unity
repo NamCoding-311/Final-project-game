@@ -32993,6 +32993,15 @@ MonoBehaviour:
   gameOverPanel: {fileID: 2103448892}
   finalDistanceText: {fileID: 0}
   bestDistanceText: {fileID: 0}
+  sectorSummaryText: {fileID: 0}
+  killSummaryText: {fileID: 0}
+  speedSummaryText: {fileID: 0}
+  distanceScrapText: {fileID: 0}
+  mutantScrapText: {fileID: 0}
+  earnedCashText: {fileID: 0}
+  totalFundsText: {fileID: 0}
+  retryButton: {fileID: 0}
+  lobbyButton: {fileID: 0}
 --- !u!114 &719702668
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33006,6 +33015,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelCompleteUI
   levelCompletePanel: {fileID: 2103448892}
+  titleText: {fileID: 0}
+  rewardText: {fileID: 0}
+  totalFundsText: {fileID: 0}
 --- !u!1 &727045516
 GameObject:
   m_ObjectHideFlags: 0
@@ -34737,6 +34749,11 @@ MonoBehaviour:
   muzzleSparkParticles: {fileID: 0}
   muzzleFlashSprite: {fileID: 0}
   muzzleFlashDuration: 0.045
+  enableDynamicRecoil: 1
+  spreadIncreasePerShot: 1.35
+  maxRecoilSpread: 15
+  recoilRecoverySpeed: 26
+  gunShakeFactor: 0.18
 --- !u!58 &1354300027
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -34771,8 +34788,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: -0.05}
-  m_Radius: 0.3
+  m_Offset: {x: 0, y: 0.01}
+  m_Radius: 0.08
 --- !u!50 &1354300028
 Rigidbody2D:
   serializedVersion: 5
@@ -34869,7 +34886,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 7, y: 7, z: 1}
+  m_LocalScale: {x: 5, y: 5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1304801220}

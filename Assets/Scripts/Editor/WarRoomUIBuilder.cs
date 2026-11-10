@@ -9,6 +9,13 @@ public static class WarRoomUIBuilder
     [MenuItem("Tools/Build Tactical War Room UI")]
     public static void BuildUI()
     {
+        string activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        if (activeScene != "Misson lobby")
+        {
+            EditorUtility.DisplayDialog("Lỗi Scene", $"Tactical War Room chỉ được tạo trong scene 'Misson lobby'!\nScene hiện tại: '{activeScene}'.\nHãy mở scene 'Misson lobby' trước khi bấm tạo.", "OK");
+            return;
+        }
+
         Canvas canvas = Object.FindAnyObjectByType<Canvas>();
         if (canvas == null)
         {

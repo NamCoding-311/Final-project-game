@@ -21474,6 +21474,8 @@ MonoBehaviour:
   killsStatText: {fileID: 965340547}
   gemsStatText: {fileID: 359393014}
   weaponsStatText: {fileID: 502708339}
+  rewardCashText: {fileID: 0}
+  totalCashText: {fileID: 0}
   restartButton: {fileID: 1239031314}
   menuButton: {fileID: 666063005}
   endlessButton: {fileID: 16709579}
@@ -26185,17 +26187,25 @@ PrefabInstance:
       propertyPath: hpText
       value: 
       objectReference: {fileID: 2021778997}
+    - target: {fileID: 1872399760677332670, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
+      propertyPath: m_Radius
+      value: 0.08
+      objectReference: {fileID: 0}
+    - target: {fileID: 1872399760677332670, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
+      propertyPath: m_Offset.y
+      value: 0.01
+      objectReference: {fileID: 0}
     - target: {fileID: 3139919137593395232, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6714081817590200170, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6714081817590200170, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6714081817590200170, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
       propertyPath: m_LocalScale.z

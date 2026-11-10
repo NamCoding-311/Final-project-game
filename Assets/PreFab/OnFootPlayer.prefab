@@ -169,7 +169,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1.83, y: 1.59, z: 0}
-  m_LocalScale: {x: 7, y: 7, z: 1}
+  m_LocalScale: {x: 5, y: 5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8004809067395672273}
@@ -401,3 +401,8 @@ MonoBehaviour:
   muzzleSparkParticles: {fileID: 0}
   muzzleFlashSprite: {fileID: 0}
   muzzleFlashDuration: 0.045
+  enableDynamicRecoil: 1
+  spreadIncreasePerShot: 1.35
+  maxRecoilSpread: 15
+  recoilRecoverySpeed: 26
+  gunShakeFactor: 0.18

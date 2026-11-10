@@ -1209,7 +1209,7 @@ MonoBehaviour:
     - 3. Secure forward outpost & unlock Sector 02
     rewardText: +1,500 Cash  |  Armored Truck Access
     cashReward: 1500
-    sectorPreviewSprite: {fileID: -1031709563291914572, guid: e45705567bed03447b84055bcc761826, type: 3}
+    sectorPreviewSprite: {fileID: 7501387830980884940, guid: 0e71d2dc98761754398416a2763774cd, type: 3}
   - sectorIndex: 2
     sectorCode: SECTOR 02
     sectorName: CONTAMINATED ZONE
@@ -1226,7 +1226,7 @@ MonoBehaviour:
     - 3. Defeat Mutated Tank Zombie on foot
     rewardText: +3,500 Cash  |  Heavy Armor Upgrade
     cashReward: 3500
-    sectorPreviewSprite: {fileID: -1031709563291914572, guid: e45705567bed03447b84055bcc761826, type: 3}
+    sectorPreviewSprite: {fileID: 689283645380311244, guid: a4bf339dfe6c1234f8f195cd45124d63, type: 3}
   - sectorIndex: 3
     sectorCode: SECTOR 03
     sectorName: APEX GROUND ZERO
@@ -1244,7 +1244,7 @@ MonoBehaviour:
     - 3. Terminate APEX TANK and win the game!
     rewardText: +8,000 Cash  |  Ultimate Savior Trophy
     cashReward: 8000
-    sectorPreviewSprite: {fileID: 341646083534590235, guid: bf34d579efdc9ed42af87552f05b6e77, type: 3}
+    sectorPreviewSprite: {fileID: -1031709563291914572, guid: e45705567bed03447b84055bcc761826, type: 3}
   warRoomPanel: {fileID: 2131120018}
   lobbyDefaultHUD: {fileID: 1483450398}
   sectorTitleText: {fileID: 2067121455}

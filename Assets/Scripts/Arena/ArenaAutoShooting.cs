@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 // Hệ thống Điều Khiển Nhiều Súng Tự Động (Multi-Weapon Auto-Aim System) chuẩn Brotato:
@@ -160,7 +160,10 @@ public class ArenaAutoShooting : MonoBehaviour
         slotObj.transform.SetParent(transform, false);
         slotObj.transform.localPosition = Vector3.zero;
         slotObj.transform.localRotation = Quaternion.identity;
-        slotObj.transform.localScale = Vector3.one;
+                // Tá»± Ä‘á»™ng chuáº©n hÃ³a kÃ­ch thÆ°á»›c sÃºng theo tá»‰ lá»‡ scale cá»§a nhÃ¢n váº­t
+        float playerScaleX = Mathf.Max(0.001f, transform.lossyScale.x);
+        float gunLocalScale = 1.05f / playerScaleX;
+        slotObj.transform.localScale = new Vector3(gunLocalScale, gunLocalScale, 1f);
 
         // 2. GameObject Visual con: Chuyên quản lý hình ảnh Sprite và độ giật nòng (Recoil)
         GameObject visualObj = new GameObject("Visual");
@@ -217,6 +220,7 @@ public class ArenaAutoShooting : MonoBehaviour
     private void UpdateGunOrbitPositions()
     {
         float time = Time.time * orbitFloatSpeed;
+        float playerScaleX = Mathf.Max(0.001f, transform.lossyScale.x);
 
         for (int i = 0; i < _activeGuns.Count; i++)
         {
@@ -225,9 +229,10 @@ public class ArenaAutoShooting : MonoBehaviour
 
             float angleRad = slot.baseAngleOffset * Mathf.Deg2Rad;
             // Bập bùng nhẹ theo hình sin
-            float currentRadius = orbitRadius + Mathf.Sin(time + i) * 0.08f;
+            float worldRadius = orbitRadius + Mathf.Sin(time + i) * 0.08f;
+            float localRadius = worldRadius / playerScaleX;
 
-            Vector3 localOffset = new Vector3(Mathf.Cos(angleRad) * currentRadius, Mathf.Sin(angleRad) * currentRadius, 0f);
+            Vector3 localOffset = new Vector3(Mathf.Cos(angleRad) * localRadius, Mathf.Sin(angleRad) * localRadius, 0f);
             slot.slotObject.transform.localPosition = localOffset;
         }
     }

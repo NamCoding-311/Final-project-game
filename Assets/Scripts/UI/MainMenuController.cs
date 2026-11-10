@@ -61,6 +61,16 @@ public class MainMenuController : MonoBehaviour
             Debug.LogError("Mission scene not found in Build Profiles!");
     }
 
+    // ARENA SURVIVAL: Mở chế độ Đấu trường sinh tồn
+    public void OpenArenaSurvival()
+    {
+        Time.timeScale = 1f;
+        if (Application.CanStreamedLevelBeLoaded("ArenaSurvival"))
+            SceneManager.LoadScene("ArenaSurvival");
+        else
+            Debug.LogError("ArenaSurvival scene not found in active Build Settings!");
+    }
+
     // SETTINGS
     public void OpenSettings()
     {

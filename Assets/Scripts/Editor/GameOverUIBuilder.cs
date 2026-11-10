@@ -9,6 +9,13 @@ public static class GameOverUIBuilder
     [MenuItem("Tools/Build Game Over UI (Refined Layout)")]
     public static void BuildGameOverUI()
     {
+        string activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        if (!activeScene.StartsWith("map"))
+        {
+            EditorUtility.DisplayDialog("Lỗi Scene", $"Game Over UI chỉ được tạo trong các scene màn chơi lái xe (map1, map2, map3)!\nScene hiện tại: '{activeScene}'.", "OK");
+            return;
+        }
+
         Canvas canvas = GameObject.Find("Canvas")?.GetComponent<Canvas>();
         if (canvas == null)
         {
@@ -75,6 +82,7 @@ public static class GameOverUIBuilder
         frameImg.color = Color.white;
 
         // Nút Exit nhỏ góc trên phải
+        Button exitBtn = null;
         if (iconExit != null)
         {
             GameObject exitGo = CreateUIObject("Btn_ExitTop", frameGo.transform, new Vector2(1f, 1f), new Vector2(1f, 1f));
@@ -84,6 +92,7 @@ public static class GameOverUIBuilder
             Image exitImg = exitGo.AddComponent<Image>();
             exitImg.sprite = iconExit;
             exitImg.preserveAspect = true;
+            exitBtn = exitGo.AddComponent<Button>();
         }
 
         // 3. Header Tiêu đề (Căn Giữa, Nổi Bật, Tông Màu Hậu Tận Thế)
@@ -161,6 +170,7 @@ public static class GameOverUIBuilder
             // Tự động gắn event click
             UnityEventTools.AddPersistentListener(bRetryComp.onClick, dt.RetryLevel);
             UnityEventTools.AddPersistentListener(bLobbyComp.onClick, dt.ReturnToLobby);
+            if (exitBtn != null) UnityEventTools.AddPersistentListener(exitBtn.onClick, dt.ReturnToLobby);
 
             SerializedObject so = new SerializedObject(dt);
             so.FindProperty("gameOverPanel").objectReferenceValue = panelGo;

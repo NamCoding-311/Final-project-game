@@ -74626,6 +74626,14 @@ PrefabInstance:
       propertyPath: gameOverPanel
       value: 
       objectReference: {fileID: 877934320}
+    - target: {fileID: 1872399760677332670, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
+      propertyPath: m_Radius
+      value: 0.08
+      objectReference: {fileID: 0}
+    - target: {fileID: 1872399760677332670, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
+      propertyPath: m_Offset.y
+      value: 0.01
+      objectReference: {fileID: 0}
     - target: {fileID: 6714081817590200170, guid: 9eafedd14ce40e2498ec8457810f4e43, type: 3}
       propertyPath: m_LocalScale.x
       value: 5
