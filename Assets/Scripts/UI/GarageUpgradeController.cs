@@ -369,7 +369,7 @@ public class GarageUpgradeController : MonoBehaviour
         return true;
     }
 
-    private void Refresh()
+    public void Refresh()
     {
         RefreshDashButton();
         RefreshButton("HPUpgradeButton", "MAX HP", HpLevelKey, hpCost);

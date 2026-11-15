@@ -23169,7 +23169,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0a87ba282992044eac9be4ff21795ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ArenaAutoShooting
-  currentWeapon: {fileID: 11400000, guid: a78882d1d1f5cd748b23b090cc80a242, type: 2}
+  currentWeapon: {fileID: 11400000, guid: 6c4d4d940172f0842b9c4b2608e311ff, type: 2}
   extraStartingWeapons: []
   maxWeapons: 6
   orbitRadius: 1.2

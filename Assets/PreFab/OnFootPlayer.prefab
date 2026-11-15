@@ -392,11 +392,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 762476eeae240e349812152ffef1ef06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerShooting
-  currentWeapon: {fileID: 11400000, guid: 5a90003f3d4312a45b22c06fae775c70, type: 2}
+  currentWeapon: {fileID: 11400000, guid: 6c4d4d940172f0842b9c4b2608e311ff, type: 2}
+  campaignWeaponCatalog:
+  - {fileID: 11400000, guid: 6c4d4d940172f0842b9c4b2608e311ff, type: 2}
+  - {fileID: 11400000, guid: 82e9fd30d8269aa4093630d03f11dda3, type: 2}
+  - {fileID: 11400000, guid: a78882d1d1f5cd748b23b090cc80a242, type: 2}
+  - {fileID: 11400000, guid: 29a3dec7fa496e14bb9f2834695aa7c7, type: 2}
+  - {fileID: 11400000, guid: 5a90003f3d4312a45b22c06fae775c70, type: 2}
+  - {fileID: 11400000, guid: af23ffb89fd2695469a0b85b1361ba35, type: 2}
+  - {fileID: 11400000, guid: af2a494ba56fc434690de3afcf51f5d2, type: 2}
   gunHolder: {fileID: 8004809067395672273}
   firePoint: {fileID: 3289152941593314561}
   gunSpriteRenderer: {fileID: 5660489463672630612}
   gunVisualAnimator: {fileID: 7745138736475402294}
+  shootAudioSource: {fileID: 0}
   muzzleFlashObject: {fileID: 0}
   muzzleSparkParticles: {fileID: 0}
   muzzleFlashSprite: {fileID: 0}

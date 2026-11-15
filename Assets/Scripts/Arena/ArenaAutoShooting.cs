@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 // Hệ thống Điều Khiển Nhiều Súng Tự Động (Multi-Weapon Auto-Aim System) chuẩn Brotato:
@@ -21,7 +21,7 @@ public class ArenaAutoShooting : MonoBehaviour
 
     [Header("Multi-Gun Orbit Settings")]
     [SerializeField] private int maxWeapons = 6;
-    [SerializeField] private float orbitRadius = 1.2f; // Khoảng cách súng bay cách tâm nhân vật
+    [SerializeField] private float orbitRadius = 0.7f; // Khoảng cách súng bay cách tâm nhân vật
     [SerializeField] private float orbitFloatSpeed = 3.0f; // Nhịp bập bùng của súng
 
     [Header("Auto-Aim Settings")]
@@ -52,6 +52,14 @@ public class ArenaAutoShooting : MonoBehaviour
 
     [Header("Audio")]
     [SerializeField] private AudioSource shootAudioSource;
+    [Tooltip("Khoảng thời gian tối thiểu giữa 2 lần phát tiếng súng bất kỳ.")]
+    [SerializeField] private float minShootSoundInterval = 0.08f;
+    [Tooltip("Khoảng thời gian tối thiểu giữa 2 lần phát cùng một loại súng.")]
+    [SerializeField] private float perWeaponSoundCooldown = 0.14f;
+    [Tooltip("Hệ số âm lượng tổng cho tiếng súng chế độ phụ (giảm xuống vì file gốc được normalize 0dB).")]
+    [SerializeField, Range(0.05f, 1f)] private float shootSoundVolumeMultiplier = 0.35f;
+    [Tooltip("Tự động cắt các clip tiếng súng dài (như smg-2-0 4 giây) thành 1 tiếng nổ ngắn gọn kiểu Brotato.")]
+    [SerializeField] private float maxShootClipDuration = 0.18f;
 
     [System.Serializable]
     public class GunSlot
@@ -69,10 +77,20 @@ public class ArenaAutoShooting : MonoBehaviour
 
     private List<GunSlot> _activeGuns = new List<GunSlot>();
     private Sprite _defaultGunSprite;
+    private float _nextShootSoundTime;
+    private readonly Dictionary<WeaponData, float> _perWeaponNextSoundTime = new Dictionary<WeaponData, float>();
+    private readonly Dictionary<AudioClip, AudioClip> _trimmedClipCache = new Dictionary<AudioClip, AudioClip>();
 
     private void Awake()
     {
         Instance = this;
+
+        // Tắt script bắn thủ công bằng chuột (trên prefab OnFootPlayer dùng chung với map chính) để không bị bấm chuột bắn đạn trong chế độ phụ
+        PlayerShooting manualShooting = GetComponent<PlayerShooting>();
+        if (manualShooting != null)
+        {
+            manualShooting.enabled = false;
+        }
     }
 
     private void Start()
@@ -129,6 +147,12 @@ public class ArenaAutoShooting : MonoBehaviour
 
     private void Update()
     {
+        if (Time.timeScale <= 0f)
+        {
+            StopAllShootAudio();
+            return;
+        }
+
         // 1. Phím tắt test trang bị nhanh súng (Dành cho nhà phát triển test)
         if (enableTestHotkeys)
         {
@@ -375,10 +399,7 @@ public class ArenaAutoShooting : MonoBehaviour
         WeaponData weapon = slot.weaponData;
         if (weapon.bulletPrefab == null) return;
 
-        if (shootAudioSource != null && weapon.shootSound != null)
-        {
-            shootAudioSource.PlayOneShot(weapon.shootSound, weapon.shootSoundVolume);
-        }
+        TryPlayBrotatoShootSound(weapon);
 
         // Tính tốc độ bắn của súng kèm hệ số Brotato
         float rate = Mathf.Max(0.05f, weapon.fireRate / Mathf.Max(0.1f, attackSpeedMultiplier));
@@ -413,6 +434,130 @@ public class ArenaAutoShooting : MonoBehaviour
                 bullet.SetDirection(finalDir);
                 bullet.SetDamage(finalDmg, isCrit);
             }
+        }
+    }
+
+    private void TryPlayBrotatoShootSound(WeaponData weapon)
+    {
+        if (shootAudioSource == null || weapon == null || weapon.shootSound == null) return;
+
+        float now = Time.time;
+        if (now < _nextShootSoundTime) return;
+
+        if (_perWeaponNextSoundTime.TryGetValue(weapon, out float weaponReadyTime) && now < weaponReadyTime)
+        {
+            return;
+        }
+
+        // Giảm âm lượng tự động theo số súng đang cầm (1 / Sqrt(N)) và giảm nhẹ súng tự động
+        float gunCountScale = 1f / Mathf.Sqrt(Mathf.Max(1, _activeGuns.Count));
+        float autoScale = weapon.isAutomatic ? 0.75f : 1f;
+        float sfxVolume = PlayerPrefs.GetFloat("SoundVolume", 1f);
+        float finalVolume = Mathf.Clamp01(weapon.shootSoundVolume * shootSoundVolumeMultiplier * gunCountScale * autoScale * sfxVolume);
+
+        AudioClip clipToPlay = GetOrCreateTrimmedClip(weapon.shootSound, !weapon.isAutomatic && weapon.fireRate >= 0.7f);
+        shootAudioSource.PlayOneShot(clipToPlay, finalVolume);
+
+        _nextShootSoundTime = now + Mathf.Max(0.05f, minShootSoundInterval);
+        _perWeaponNextSoundTime[weapon] = now + Mathf.Max(0.08f, perWeaponSoundCooldown);
+    }
+
+    // Cắt tự động phần đầu (1 phát súng ngắn + fade-out mượt) cho các clip dài 2-5 giây như smg-2-0.mp3
+    private AudioClip GetOrCreateTrimmedClip(AudioClip source, bool isHeavyWeapon)
+    {
+        if (source == null) return null;
+        float targetDuration = isHeavyWeapon ? Mathf.Max(maxShootClipDuration, 0.28f) : Mathf.Max(0.08f, maxShootClipDuration);
+        if (source.length <= targetDuration + 0.08f) return source;
+
+        if (_trimmedClipCache.TryGetValue(source, out AudioClip cached) && cached != null)
+        {
+            return cached;
+        }
+
+        if (source.loadType != AudioClipLoadType.DecompressOnLoad)
+        {
+            return source;
+        }
+
+        try
+        {
+            int channels = source.channels;
+            int freq = source.frequency;
+            int totalFrames = source.samples;
+            float[] allSamples = new float[totalFrames * channels];
+            if (!source.GetData(allSamples, 0))
+            {
+                return source;
+            }
+
+            // Bỏ qua khoảng lặng đầu file (nếu có) để bắt đúng tiếng nổ đầu tiên
+            int startFrame = 0;
+            for (int f = 0; f < totalFrames; f++)
+            {
+                float peak = 0f;
+                int idx = f * channels;
+                for (int c = 0; c < channels; c++)
+                {
+                    float v = Mathf.Abs(allSamples[idx + c]);
+                    if (v > peak) peak = v;
+                }
+                if (peak > 0.03f)
+                {
+                    startFrame = Mathf.Max(0, f - Mathf.RoundToInt(freq * 0.005f));
+                    break;
+                }
+            }
+
+            int outFrames = Mathf.Min(totalFrames - startFrame, Mathf.RoundToInt(freq * targetDuration));
+            if (outFrames <= 0) return source;
+
+            float[] trimmedSamples = new float[outFrames * channels];
+            System.Array.Copy(allSamples, startFrame * channels, trimmedSamples, 0, outFrames * channels);
+
+            // Fade-out mượt 35% cuối clip để không bị kêu "tách" khi kết thúc
+            int fadeFrames = Mathf.Max(1, Mathf.RoundToInt(outFrames * 0.35f));
+            int fadeStart = outFrames - fadeFrames;
+            for (int f = fadeStart; f < outFrames; f++)
+            {
+                float t = 1f - (float)(f - fadeStart) / fadeFrames;
+                float gain = t * t; // Fade cong tự nhiên
+                int idx = f * channels;
+                for (int c = 0; c < channels; c++)
+                {
+                    trimmedSamples[idx + c] *= gain;
+                }
+            }
+
+            AudioClip trimmed = AudioClip.Create(source.name + "_Short", outFrames, channels, freq, false);
+            trimmed.SetData(trimmedSamples, 0);
+            _trimmedClipCache[source] = trimmed;
+            return trimmed;
+        }
+        catch
+        {
+            return source;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        foreach (var kv in _trimmedClipCache)
+        {
+            if (kv.Value != null) Destroy(kv.Value);
+        }
+        _trimmedClipCache.Clear();
+    }
+
+    private void OnDisable()
+    {
+        StopAllShootAudio();
+    }
+
+    public void StopAllShootAudio()
+    {
+        if (shootAudioSource != null)
+        {
+            shootAudioSource.Stop();
         }
     }
 

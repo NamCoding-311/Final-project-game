@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
   weaponName: MP5A3 Submachine
   bulletPrefab: {fileID: 2131882094584562652, guid: ca945c39793af4d489e0166fc97c8796, type: 3}
-  fireRate: 0.1
+  fireRate: 0.2
   pelletsPerShot: 1
   spreadAngle: 8
   damage: 9
   isAutomatic: 1
   shootSound: {fileID: 8300000, guid: 60a73e43e8096ac42840654ad046e7f7, type: 3}
-  shootSoundVolume: 0.5
+  shootSoundVolume: 0.054
   weaponSprite: {fileID: 3224441897746060511, guid: 0c5fcfcab7194b144af651f1bdc991c4, type: 3}
   weaponColor: {r: 1, g: 1, b: 1, a: 1}
   shootAnimationFrames:

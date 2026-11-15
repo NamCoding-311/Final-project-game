@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 // Điều khiển khẩu súng xoay 360 độ theo con trỏ chuột, hỗ trợ hoạt ảnh bắn (Muzzle Flash, vỏ đạn, giật nòng) và bắn đạn từ FirePoint
@@ -7,6 +8,8 @@ public class PlayerShooting : MonoBehaviour
     [Header("Weapon Configuration")]
     // Dữ liệu loại súng đang cầm (AR, Shotgun, Sniper, Pistol...)
     [SerializeField] private WeaponData currentWeapon;
+    [Tooltip("Danh sách súng dùng để tự nạp khẩu súng đã trang bị trong Garage Armory khi xuống xe.")]
+    [SerializeField] private List<WeaponData> campaignWeaponCatalog = new List<WeaponData>();
 
     [Header("Gun Transforms")]
     // Transform của tay cầm/báng súng (xoay quanh điểm này)
@@ -65,6 +68,7 @@ public class PlayerShooting : MonoBehaviour
     private void Start()
     {
         _cam = Camera.main;
+        ApplyEquippedCampaignWeaponIfOnFoot();
 
         if (shootAudioSource == null)
         {
@@ -126,8 +130,28 @@ public class PlayerShooting : MonoBehaviour
         SetupMuzzleFlash();
     }
 
+    private void ApplyEquippedCampaignWeaponIfOnFoot()
+    {
+        if (GetComponent<OnFootPlayerController>() == null) return;
+        if (campaignWeaponCatalog == null || campaignWeaponCatalog.Count == 0) return;
+
+        string equippedId = CampaignWeaponProgress.GetEquippedWeaponId();
+        for (int i = 0; i < campaignWeaponCatalog.Count; i++)
+        {
+            WeaponData candidate = campaignWeaponCatalog[i];
+            if (candidate != null && string.Equals(candidate.name, equippedId, System.StringComparison.OrdinalIgnoreCase))
+            {
+                currentWeapon = candidate;
+                return;
+            }
+        }
+    }
+
     private void Update()
     {
+        if (Time.timeScale <= 0f) return;
+        if (ArenaAutoShooting.Instance != null && ArenaAutoShooting.Instance.enabled) return;
+
         if (_cam == null) _cam = Camera.main;
 
         // 1. Cập nhật hồi tâm (giảm độ tản đạn khi không bắn hoặc vừa dứt loạt sấy)
