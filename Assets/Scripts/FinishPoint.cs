@@ -8,10 +8,21 @@ public class FinishPoint : MonoBehaviour
 
     private bool hasTriggered;
 
+    private void Awake()
+    {
+        if (levelCompleteUI == null)
+            levelCompleteUI = FindAnyObjectByType<LevelCompleteUI>();
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (hasTriggered || !other.CompareTag(playerTag))
             return;
+
+        if (levelCompleteUI == null)
+        {
+            levelCompleteUI = FindAnyObjectByType<LevelCompleteUI>();
+        }
 
         if (levelCompleteUI == null)
         {

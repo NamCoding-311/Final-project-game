@@ -81,7 +81,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 8
+  m_SortingOrder: 5
   m_MaskInteraction: 0
   m_Sprite: {fileID: -8298657570264991421, guid: d718fa0d48563f245aa3ff4d27540f9e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -105,8 +105,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 636e769901a67144f8c00a70bea6801e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoadObstacle
-  speedPenalty: 4
+  obstacleWeight: 0
+  customSpeedPenalty: 0
   minSpeedAfterHit: 3
+  enableCameraShake: 1
+  shakeDuration: 0.2
+  shakeMagnitude: 0.28
+  useFlingAnimation: 1
   despawnDistanceBehind: 35
 --- !u!61 &4671966157976312083
 BoxCollider2D:
@@ -138,7 +143,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0

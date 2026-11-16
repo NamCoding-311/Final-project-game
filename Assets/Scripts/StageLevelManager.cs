@@ -293,7 +293,39 @@ public class StageLevelManager : MonoBehaviour
         }
         if (bossWarningText != null) bossWarningText.gameObject.SetActive(false);
 
-        // Áp dụng cấu hình chặng 1
+        // Kiểm tra và khôi phục tiến trình chơi dở (Checkpoint) nếu người chơi bấm Continue ở Main Menu
+        string currentSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        if (currentSceneName.StartsWith("map"))
+        {
+            if (GameSaveManager.ShouldResume())
+            {
+                int savedStage = GameSaveManager.GetSavedStage(currentSceneName);
+                if (savedStage > 0 && savedStage < stages.Length)
+                {
+                    _currentStageIndex = savedStage;
+                    float prevDist = stages[savedStage - 1].stageDistance;
+                    if (playerTransform != null)
+                    {
+                        _startPlayerX = playerTransform.position.x - prevDist;
+                    }
+
+                    var dt = FindAnyObjectByType<DistanceTrackerUI>();
+                    if (dt != null) dt.SetStartingOffset(prevDist);
+
+                    var pb = FindAnyObjectByType<ProgressBarUI>();
+                    if (pb != null) pb.SetStartingOffset(prevDist);
+
+                    Debug.Log($"[StageLevelManager] Resumed at Stage {_currentStageIndex + 1} ({stages[_currentStageIndex].stageName}) from Checkpoint!");
+                }
+                GameSaveManager.SetResumeFlag(false);
+            }
+            else
+            {
+                GameSaveManager.SaveCheckpoint(currentSceneName, _currentStageIndex);
+            }
+        }
+
+        // Áp dụng cấu hình chặng hiện tại
         ApplyStageSettings(_currentStageIndex, isInstant: true);
     }
 
@@ -823,6 +855,7 @@ public class StageLevelManager : MonoBehaviour
         // 6. Áp dụng độ khó và máu mới cho Zombie ở chặng mới
         _currentStageIndex = nextStageIndex;
         ApplyStageSettings(_currentStageIndex, isInstant: false);
+        GameSaveManager.SaveCheckpoint(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, nextStageIndex);
 
         if (zombieSpawner != null)
         {

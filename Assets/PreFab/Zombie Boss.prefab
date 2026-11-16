@@ -250,21 +250,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZombieBoss
   bossName: Tanker
-  maxHealth: 500
-  moveSpeed: 1
-  baseAttackDamage: 25
+  maxHealth: 600
+  moveSpeed: 4.5
+  baseAttackDamage: 30
   rockPrefab: {fileID: 1957482796656274300, guid: 26adbeaaf3d06084e90c99196450c771, type: 3}
   throwPoint: {fileID: 4576576615032031081}
-  throwCooldown: 5
+  throwCooldown: 4
   minThrowDistance: 4.5
-  rockSpeed: 10
+  rockSpeed: 13
   rockArcHeight: 2.5
   throwReleaseDelay: 0.35
-  chargeSpeed: 3
+  chargeSpeed: 15
   chargeDuration: 0.8
-  chargeCooldown: 4
+  chargeCooldown: 5.5
   chargeWindupTime: 0.5
-  chargeDamage: 1
+  chargeDamage: 45
+  allowLeapSlam: 1
+  leapCooldown: 7
+  leapDuration: 0.85
+  leapHeight: 4
+  slamRadius: 3.5
+  slamDamage: 40
+  allowEnragePhase: 1
+  enrageColor: {r: 1, g: 0.3, b: 0.3, a: 1}
+  enrageSpeedMultiplier: 1.25
   allowRockThrow: 1
   allowChargeAttack: 1
   invertFacing: 1

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -115,6 +115,10 @@ public class TacticalWarRoomManager : MonoBehaviour
         UpdateCashDisplay();
 
         // Mở sẵn War Room Panel nếu người chơi vào scene này để chọn nhiệm vụ
+        if (lobbyDefaultHUD != null)
+        {
+            lobbyDefaultHUD.SetActive(false);
+        }
         if (warRoomPanel != null)
         {
             warRoomPanel.SetActive(true);
@@ -435,7 +439,7 @@ public class TacticalWarRoomManager : MonoBehaviour
         _typewriterRoutine = null;
     }
 
-    // Nút Xuất kích chiến đấu
+    // Nút Xuất kích chiến đấu -> Chuyển sang màn Garage để chọn xe, nâng cấp và mua vũ khí trước khi ra trận
     public void OnDeployClicked()
     {
         MissionSectorInfo sector = sectors[_selectedSectorIndex];
@@ -444,23 +448,32 @@ public class TacticalWarRoomManager : MonoBehaviour
         StartCoroutine(DeploySequence(sector.sceneToLoad));
     }
 
-    private IEnumerator DeploySequence(string sceneName)
+    private IEnumerator DeploySequence(string targetMapScene)
     {
         if (deployButton != null) deployButton.interactable = false;
-        if (deployButtonText != null) deployButtonText.text = "⚡ DEPLOYING...";
+        if (deployButtonText != null) deployButtonText.text = "⚡ PREPARING VEHICLE...";
 
-        // Nhấp nháy xác nhận lệnh xuất kích
-        yield return new WaitForSeconds(0.4f);
-
-        if (Application.CanStreamedLevelBeLoaded(sceneName))
+        // Lưu trước map mà người chơi đã chọn trong bàn tác chiến (để sang Garage bấm GO >> sẽ vào đúng map này)
+        if (!string.IsNullOrEmpty(targetMapScene))
         {
-            PlayerPrefs.SetString("LastLevel", sceneName);
+            PlayerPrefs.SetString("LastLevel", targetMapScene);
             PlayerPrefs.Save();
-            SceneManager.LoadScene(sceneName);
+        }
+
+        // Nhấp nháy xác nhận lệnh điều động
+        yield return new WaitForSeconds(0.35f);
+
+        if (Application.CanStreamedLevelBeLoaded("garage"))
+        {
+            SceneManager.LoadScene("garage");
+        }
+        else if (Application.CanStreamedLevelBeLoaded(targetMapScene))
+        {
+            SceneManager.LoadScene(targetMapScene);
         }
         else
         {
-            Debug.LogError($"[TacticalWarRoom] Scene '{sceneName}' not found in Build Settings!");
+            Debug.LogError($"[TacticalWarRoom] Neither 'garage' nor '{targetMapScene}' could be loaded!");
             if (deployButton != null) deployButton.interactable = true;
         }
     }
@@ -474,8 +487,8 @@ public class TacticalWarRoomManager : MonoBehaviour
 
     public void CloseWarRoom()
     {
-        if (warRoomPanel != null) warRoomPanel.SetActive(false);
-        if (lobbyDefaultHUD != null) lobbyDefaultHUD.SetActive(true);
+        // Trở về Main Menu trực tiếp thay vì màn hình xanh trống
+        ReturnToMainMenu();
     }
 
     public void ReturnToMainMenu()

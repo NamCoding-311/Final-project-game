@@ -21,3 +21,9 @@ MonoBehaviour:
   isAutomatic: 0
   shootSound: {fileID: 8300000, guid: 2f7c0bbaed30ff842bd84964b40027f5, type: 3}
   shootSoundVolume: 0.7
+  weaponSprite: {fileID: 21300000, guid: 9ab0f29515ec6cd47b47e6b63e427b5d, type: 3}
+  weaponColor: {r: 1, g: 1, b: 1, a: 1}
+  shootAnimationFrames: []
+  animationFps: 28
+  firePointOffset: {x: 0.65, y: 0.05}
+  recoilDistance: 0.12

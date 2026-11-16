@@ -41,6 +41,7 @@ public class ArenaGameOverSystem : MonoBehaviour
     [SerializeField] private Button endlessButton;
 
     private bool _isWindowOpen = false;
+    public bool IsWindowOpen => _isWindowOpen;
     private bool _isVictory = false;
 
     private int _finalWave = 1;

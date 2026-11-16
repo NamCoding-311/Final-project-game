@@ -14,6 +14,9 @@ public class SettingsController : MonoBehaviour
     public TextMeshProUGUI soundValueText;
     public TextMeshProUGUI musicValueText;
 
+    // Sự kiện thông báo khi âm lượng nhạc nền thay đổi
+    public static event System.Action<float> OnMusicVolumeChanged;
+
     private void Awake()
     {
         AutoBindReferences();
@@ -68,6 +71,7 @@ public class SettingsController : MonoBehaviour
             musicVolumeSlider.SetValueWithoutNotify(music);
         }
         UpdateLabel(musicValueText, music);
+        OnMusicVolumeChanged?.Invoke(music);
     }
 
     private void RegisterSliderEvents()
@@ -111,6 +115,7 @@ public class SettingsController : MonoBehaviour
     {
         PlayerPrefs.SetFloat("MusicVolume", value);
         UpdateLabel(musicValueText, value);
+        OnMusicVolumeChanged?.Invoke(value);
     }
 
     // Cập nhật nhãn hiển thị phần trăm (ví dụ: 100%, 75%, 0%)

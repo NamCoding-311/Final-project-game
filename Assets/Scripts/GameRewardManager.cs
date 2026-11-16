@@ -11,7 +11,24 @@ using UnityEngine;
 // =============================================================================
 public class GameRewardManager : MonoBehaviour
 {
-    public static GameRewardManager Instance { get; private set; }
+    private static GameRewardManager _instance;
+    public static GameRewardManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindAnyObjectByType<GameRewardManager>();
+                if (_instance == null)
+                {
+                    var go = new GameObject("GameRewardManager");
+                    _instance = go.AddComponent<GameRewardManager>();
+                }
+            }
+            return _instance;
+        }
+        private set { _instance = value; }
+    }
 
     public const string PREF_PLAYER_CASH = "PlayerCash";
     public const string PREF_TOTAL_COINS = "TotalCoins"; // Để tương thích ngược với CollectibleItem

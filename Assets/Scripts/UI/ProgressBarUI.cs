@@ -63,6 +63,18 @@ public class ProgressBarUI : MonoBehaviour
         UpdateMarkerPositions(0f);
     }
 
+    // Thiết lập độ lệch cự ly ban đầu khi tiếp tục từ điểm lưu Checkpoint
+    public void SetStartingOffset(float offsetDistance)
+    {
+        if (playerTransform != null)
+        {
+            _startX = playerTransform.position.x - offsetDistance;
+            float progress = Mathf.Clamp01(offsetDistance / Mathf.Max(1f, totalLevelDistance));
+            if (fillImage != null) fillImage.fillAmount = progress;
+            UpdateMarkerPositions(progress);
+        }
+    }
+
     // Tự động tìm kiếm các thành phần con nếu chưa kéo trong Inspector
     private void ResolveUIReferences()
     {
@@ -139,11 +151,28 @@ public class ProgressBarUI : MonoBehaviour
         if (_stageLevelManager != null)
         {
             var stages = _stageLevelManager.GetStages();
-            if (stages != null && stages.Length >= 3)
+            if (stages != null)
             {
-                stage1Distance = stages[0].stageDistance;
-                stage2Distance = stages[1].stageDistance;
-                totalLevelDistance = stages[2].stageDistance;
+                if (stages.Length >= 3)
+                {
+                    stage1Distance = stages[0].stageDistance;
+                    stage2Distance = stages[1].stageDistance;
+                    totalLevelDistance = stages[2].stageDistance;
+                }
+                else if (stages.Length == 2)
+                {
+                    stage1Distance = stages[0].stageDistance;
+                    stage2Distance = stages[1].stageDistance;
+                    var finish = FindAnyObjectByType<FinishPoint>();
+                    if (finish != null && playerTransform != null)
+                    {
+                        totalLevelDistance = Mathf.Max(stage2Distance + 100f, finish.transform.position.x - _startX);
+                    }
+                    else if (totalLevelDistance <= stage2Distance)
+                    {
+                        totalLevelDistance = 550f;
+                    }
+                }
             }
         }
     }

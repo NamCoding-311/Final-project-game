@@ -40,6 +40,9 @@ public class DistanceTrackerUI : MonoBehaviour
     private float _lastSpeed;
 
     private bool _isGameOver = false;
+    public bool IsGameOver => _isGameOver;
+    public float CurrentDistance => _currentDistance;
+    public int ZombieKillCount => _zombieKillCount;
     private GameRewardManager.CampaignRewardResult _deathReward;
 
     // Cache textures cho OnGUI Fallback
@@ -78,6 +81,16 @@ public class DistanceTrackerUI : MonoBehaviour
         {
             lobbyButton.onClick.RemoveAllListeners();
             lobbyButton.onClick.AddListener(ReturnToLobby);
+        }
+    }
+
+    // Thiết lập độ lệch cự ly ban đầu khi tiếp tục từ điểm lưu Checkpoint
+    public void SetStartingOffset(float offsetDistance)
+    {
+        if (playerTransform != null)
+        {
+            _startX = playerTransform.position.x - offsetDistance;
+            _currentDistance = Mathf.Max(0f, offsetDistance);
         }
     }
 
@@ -214,10 +227,10 @@ public class DistanceTrackerUI : MonoBehaviour
     public void ReturnToLobby()
     {
         Time.timeScale = 1f;
-        if (Application.CanStreamedLevelBeLoaded("Misson lobby"))
-            SceneManager.LoadScene("Misson lobby");
-        else if (Application.CanStreamedLevelBeLoaded("Main menu"))
+        if (Application.CanStreamedLevelBeLoaded("Main menu"))
             SceneManager.LoadScene("Main menu");
+        else if (Application.CanStreamedLevelBeLoaded("Misson lobby"))
+            SceneManager.LoadScene("Misson lobby");
         else
             SceneManager.LoadScene(0);
     }
@@ -373,7 +386,7 @@ public class DistanceTrackerUI : MonoBehaviour
         }
 
         GUI.color = new Color(0.30f, 0.35f, 0.45f);
-        if (GUI.Button(new Rect(c2x, btnY, btnW, btnH), "[ESC]  MISSION LOBBY"))
+        if (GUI.Button(new Rect(c2x, btnY, btnW, btnH), "[ESC]  MAIN MENU"))
         {
             ReturnToLobby();
         }

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -12,7 +12,18 @@ public class LevelCompleteUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI rewardText;
     [SerializeField] private TextMeshProUGUI totalFundsText;
 
+    [Header("Combat Telemetry (Cột Trái)")]
+    [SerializeField] private TextMeshProUGUI sectorText;
+    [SerializeField] private TextMeshProUGUI distanceText;
+    [SerializeField] private TextMeshProUGUI killText;
+    [SerializeField] private TextMeshProUGUI ratingText;
+
+    [Header("Operation Rewards (Cột Phải)")]
+    [SerializeField] private TextMeshProUGUI baseBountyText;
+    [SerializeField] private TextMeshProUGUI killScrapText;
+
     private bool _hasCompleted;
+    public bool HasCompleted => _hasCompleted;
     private GameRewardManager.CampaignRewardResult _lastReward;
 
     private void Start()
@@ -25,7 +36,24 @@ public class LevelCompleteUI : MonoBehaviour
         }
     }
 
-    // Hiá»ƒn thá»‹ báº£ng hoÃ n thÃ nh mÃ n chÆ¡i vÃ  phÃ¡t thÆ°á»Ÿng
+    private void Update()
+    {
+        if (!_hasCompleted) return;
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ReturnToLobby();
+        }
+        else if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Space))
+        {
+            string sceneName = SceneManager.GetActiveScene().name;
+            if (sceneName.Contains("1")) ContinueToMap2();
+            else if (sceneName.Contains("2")) ContinueToMap3();
+            else ReturnToMissionLobby();
+        }
+    }
+
+    // Hiển thị bảng hoàn thành màn chơi và phát thưởng
     public void ShowCompletePanel()
     {
         if (_hasCompleted) return;
@@ -46,6 +74,13 @@ public class LevelCompleteUI : MonoBehaviour
         int kills = sectorIndex * 12;
         float hpPercent = 1.0f;
 
+        DistanceTrackerUI dt = FindAnyObjectByType<DistanceTrackerUI>();
+        if (dt != null)
+        {
+            if (dt.CurrentDistance > 10f) distance = dt.CurrentDistance;
+            if (dt.ZombieKillCount > 0) kills = dt.ZombieKillCount;
+        }
+
         PlayerHealth ph = FindAnyObjectByType<PlayerHealth>();
         if (ph != null && ph.MaxHealth > 0)
         {
@@ -56,17 +91,55 @@ public class LevelCompleteUI : MonoBehaviour
 
         if (titleText != null)
         {
-            titleText.text = $"SECTOR 0{sectorIndex} SECURED!";
+            titleText.text = $"SECTOR 0{sectorIndex} SECURED // MISSION COMPLETE";
+        }
+
+        if (sectorText != null)
+        {
+            string secName = sectorIndex == 1 ? "Sector 01 (Highway Outskirts)" : (sectorIndex == 2 ? "Sector 02 (Sunset Wasteland)" : "Sector 03 (Apex Ground Zero)");
+            sectorText.text = $"Sector: {secName}";
+        }
+
+        if (distanceText != null)
+        {
+            distanceText.text = $"Distance Cleared: {Mathf.FloorToInt(distance):N0} Meters";
+        }
+
+        if (killText != null)
+        {
+            killText.text = $"Mutants Eliminated: {kills:N0} Kills";
+        }
+
+        if (ratingText != null)
+        {
+            ratingText.text = $"Tactical Rating: Rank {_lastReward.rank}";
+        }
+
+        if (baseBountyText != null)
+        {
+            baseBountyText.text = $"Sector Clear Bounty: +${_lastReward.baseBounty:N0} Cash";
+        }
+
+        if (killScrapText != null)
+        {
+            killScrapText.text = $"Combat Scrap Bonus: +${_lastReward.killCash + _lastReward.distanceCash:N0} Cash";
         }
 
         if (rewardText != null)
         {
-            StartCoroutine(GameRewardManager.AnimateCashCounter(rewardText, 0, _lastReward.totalCash, "BOUNTY REWARD: +$", $" [RANK {_lastReward.rank}]"));
+            if (Application.isPlaying)
+            {
+                StartCoroutine(GameRewardManager.AnimateCashCounter(rewardText, 0, _lastReward.totalCash, "+$", " CASH"));
+            }
+            else
+            {
+                rewardText.text = $"+${_lastReward.totalCash:N0} CASH";
+            }
         }
 
         if (totalFundsText != null)
         {
-            totalFundsText.text = $"TOTAL FUNDS: ${GameRewardManager.Instance.GetCurrentCash():N0}";
+            totalFundsText.text = $"${GameRewardManager.Instance.GetCurrentCash():N0} CASH";
         }
 
         if (levelCompletePanel != null)
@@ -77,48 +150,43 @@ public class LevelCompleteUI : MonoBehaviour
         Time.timeScale = 0f;
     }
 
-    // Chuyá»ƒn sang Map 2
+    // Chuyển sang Map 2
     public void ContinueToMap2()
     {
         Time.timeScale = 1f;
-        PlayerPrefs.SetString("LastLevel", "map2");
-        PlayerPrefs.Save();
+        GameSaveManager.SaveCheckpoint("map2", 0);
         SceneManager.LoadScene("map2");
     }
 
-    // Chuyá»ƒn sang Map 3
+    // Chuyển sang Map 3
     public void ContinueToMap3()
     {
         Time.timeScale = 1f;
-        PlayerPrefs.SetString("LastLevel", "map3");
-        PlayerPrefs.Save();
+        GameSaveManager.SaveCheckpoint("map3", 0);
         SceneManager.LoadScene("map3");
     }
 
-    // ChÆ¡i láº¡i Map 1
+    // Chơi lại Map 1
     public void ReplayMap1()
     {
         Time.timeScale = 1f;
-        PlayerPrefs.SetString("LastLevel", "map1");
-        PlayerPrefs.Save();
+        GameSaveManager.SaveCheckpoint("map1", 0);
         SceneManager.LoadScene("map1");
     }
 
-    // ChÆ¡i láº¡i Map 2
+    // Chơi lại Map 2
     public void ReplayMap2()
     {
         Time.timeScale = 1f;
-        PlayerPrefs.SetString("LastLevel", "map2");
-        PlayerPrefs.Save();
+        GameSaveManager.SaveCheckpoint("map2", 0);
         SceneManager.LoadScene("map2");
     }
 
-    // ChÆ¡i láº¡i Map 3
+    // Chơi lại Map 3
     public void ReplayMap3()
     {
         Time.timeScale = 1f;
-        PlayerPrefs.SetString("LastLevel", "map3");
-        PlayerPrefs.Save();
+        GameSaveManager.SaveCheckpoint("map3", 0);
         SceneManager.LoadScene("map3");
     }
 
@@ -126,10 +194,10 @@ public class LevelCompleteUI : MonoBehaviour
     public void ReturnToMissionLobby()
     {
         Time.timeScale = 1f;
-        if (Application.CanStreamedLevelBeLoaded("Misson lobby"))
-            SceneManager.LoadScene("Misson lobby");
-        else if (Application.CanStreamedLevelBeLoaded("Main menu"))
+        if (Application.CanStreamedLevelBeLoaded("Main menu"))
             SceneManager.LoadScene("Main menu");
+        else if (Application.CanStreamedLevelBeLoaded("Misson lobby"))
+            SceneManager.LoadScene("Misson lobby");
         else
             SceneManager.LoadScene(0);
     }
@@ -213,7 +281,7 @@ public class LevelCompleteUI : MonoBehaviour
         }
 
         GUI.color = new Color(0.3f, 0.35f, 0.45f);
-        if (GUI.Button(new Rect(x + 35 + btnW, btnY, btnW, 55), "MISSION LOBBY"))
+        if (GUI.Button(new Rect(x + 35 + btnW, btnY, btnW, 55), "MAIN MENU"))
         {
             ReturnToMissionLobby();
         }

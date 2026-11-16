@@ -321,7 +321,8 @@ public class PlayerShooting : MonoBehaviour
     {
         if (shootAudioSource != null && weapon != null && weapon.shootSound != null)
         {
-            shootAudioSource.PlayOneShot(weapon.shootSound, weapon.shootSoundVolume);
+            float sfxVolume = PlayerPrefs.GetFloat("SoundVolume", 1f);
+            shootAudioSource.PlayOneShot(weapon.shootSound, weapon.shootSoundVolume * sfxVolume);
         }
     }
 

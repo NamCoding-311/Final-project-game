@@ -43,9 +43,11 @@ public class BossRock : MonoBehaviour
         // Xoay viên đá liên tục tạo cảm giác bay mạnh mẽ
         transform.Rotate(0, 0, rotateSpeed * Time.deltaTime);
 
-        // Khi đá tiếp đất/bay đến đích mà không trúng ai -> Tự vỡ/hủy
+        // Khi đá tiếp đất/bay đến đích mà không trúng ai -> Rung nhẹ và vỡ
         if (t >= 1f)
         {
+            CameraFollow cam = FindAnyObjectByType<CameraFollow>();
+            if (cam != null) cam.TriggerShake(0.2f, 0.15f);
             Destroy(gameObject);
         }
     }
@@ -57,6 +59,9 @@ public class BossRock : MonoBehaviour
         {
             return;
         }
+
+        CameraFollow cam = FindAnyObjectByType<CameraFollow>();
+        if (cam != null) cam.TriggerShake(0.3f, 0.25f);
 
         // 1. Trúng nhân vật người chơi đi bộ (Trashcan)
         OnFootPlayerController onFoot = other.GetComponent<OnFootPlayerController>();

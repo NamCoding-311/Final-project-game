@@ -7,25 +7,41 @@ public class MainMenuController : MonoBehaviour
     public GameObject garagePanel;
     public GameObject settingsPanel;
 
-    // CONTINUE: Tiếp tục màn chơi đã lưu gần nhất
+    [Header("Save Status Indicator")]
+    [SerializeField] private TMPro.TextMeshProUGUI saveStatusText;
+
+    private void Start()
+    {
+        UpdateSaveStatusUI();
+    }
+
+    private void UpdateSaveStatusUI()
+    {
+        if (saveStatusText != null)
+        {
+            saveStatusText.text = GameSaveManager.GetSaveSummaryText();
+        }
+    }
+
+    // CONTINUE: Tiếp tục màn chơi và chặng đã lưu gần nhất
     public void ContinueGame()
     {
         Time.timeScale = 1f;
 
-        string savedScene = PlayerPrefs.GetString("LastLevel", "map1");
+        GameSaveManager.SetResumeFlag(true);
+        string savedScene = GameSaveManager.GetSavedScene();
 
-        if (!Application.CanStreamedLevelBeLoaded(savedScene))
-            savedScene = "map1";
-
+        Debug.Log($"[MainMenu] Continuing game from: {savedScene} (Stage: {GameSaveManager.GetSavedStage(savedScene)})");
         SceneManager.LoadScene(savedScene);
     }
 
-    // NEW GAME: Chơi mới từ Map 1 và reset tiến trình
+    // NEW GAME: Chơi mới từ Map 1 và xóa sạch tiến trình cũ
     public void NewGame()
     {
         Time.timeScale = 1f;
-        PlayerPrefs.SetString("LastLevel", "map1");
-        PlayerPrefs.Save();
+        GameSaveManager.ClearSaveData();
+        GameSaveManager.SetResumeFlag(false);
+        Debug.Log("[MainMenu] Starting New Game from Map 1.");
         SceneManager.LoadScene("map1");
     }
 

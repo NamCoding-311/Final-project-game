@@ -23,7 +23,8 @@ public class GarageUpgradeController : MonoBehaviour
     [SerializeField] private Sprite[] vehiclePreviewSprites;
 
     private int _selectedVehicleIndex;
-    private int _latestUnlockedVehicleIndex;
+    private int _maxUnlockedSector = 1;
+    private Button _goButton;
     private TMP_Text _vehicleNameText;
     private TMP_Text _vehicleStatusText;
 
@@ -74,14 +75,21 @@ public class GarageUpgradeController : MonoBehaviour
     public void GoToCurrentMap()
     {
         Time.timeScale = 1f;
-        string currentMap = PlayerPrefs.GetString("LastLevel", "map1");
-        if (!Application.CanStreamedLevelBeLoaded(currentMap))
+        string targetMap = "map1";
+        if (_selectedVehicleIndex == 1) targetMap = "map2";
+        else if (_selectedVehicleIndex >= 2) targetMap = "map3";
+
+        // Đồng bộ map tương ứng với xe đã chọn
+        PlayerPrefs.SetString("LastLevel", targetMap);
+        PlayerPrefs.Save();
+
+        if (!Application.CanStreamedLevelBeLoaded(targetMap))
         {
-            Debug.LogWarning($"Garage: map '{currentMap}' is unavailable; loading map1.", this);
-            currentMap = "map1";
+            Debug.LogWarning($"Garage: map '{targetMap}' is unavailable; fallback to map1.", this);
+            targetMap = "map1";
         }
 
-        SceneManager.LoadScene(currentMap);
+        SceneManager.LoadScene(targetMap);
     }
 
     public void ShowPreviousVehicle() => ShowVehicle(_selectedVehicleIndex - 1);
@@ -96,14 +104,28 @@ public class GarageUpgradeController : MonoBehaviour
             if (preview != null) vehiclePreviewImage = preview.GetComponent<Image>();
         }
 
+        if (_goButton == null)
+        {
+            GameObject goObj = GameObject.Find("go");
+            if (goObj != null) _goButton = goObj.GetComponent<Button>();
+        }
+
         if (vehiclePreviewImage == null || vehiclePreviewSprites == null || vehiclePreviewSprites.Length == 0)
             return;
 
-        // MaxUnlockedSector is advanced only when the player clears a map.
-        // The most recently unlocked map's vehicle is the only usable one;
-        // earlier and future vehicles remain visible as locked previews.
-        _latestUnlockedVehicleIndex = Mathf.Clamp(PlayerPrefs.GetInt("MaxUnlockedSector", 1) - 1, 0, vehiclePreviewSprites.Length - 1);
-        _selectedVehicleIndex = _latestUnlockedVehicleIndex;
+        _maxUnlockedSector = Mathf.Clamp(PlayerPrefs.GetInt("MaxUnlockedSector", 1), 1, vehiclePreviewSprites.Length);
+
+        // Khởi tạo xe tương ứng với map vừa chọn ở War Room
+        string lastLevel = PlayerPrefs.GetString("LastLevel", "map1");
+        int initialIdx = 0;
+        if (lastLevel.Equals("map2", System.StringComparison.OrdinalIgnoreCase)) initialIdx = 1;
+        else if (lastLevel.Equals("map3", System.StringComparison.OrdinalIgnoreCase)) initialIdx = 2;
+
+        if (initialIdx >= _maxUnlockedSector)
+        {
+            initialIdx = _maxUnlockedSector - 1;
+        }
+        _selectedVehicleIndex = Mathf.Clamp(initialIdx, 0, vehiclePreviewSprites.Length - 1);
 
         RectTransform canvasRect = transform as RectTransform;
         if (canvasRect == null) canvasRect = GetComponentInParent<Canvas>()?.transform as RectTransform;
@@ -155,24 +177,28 @@ public class GarageUpgradeController : MonoBehaviour
     {
         if (_selectedVehicleIndex < 0 || _selectedVehicleIndex >= vehiclePreviewSprites.Length) return;
 
-        bool isUsable = _selectedVehicleIndex == _latestUnlockedVehicleIndex;
+        bool isUnlocked = _selectedVehicleIndex < _maxUnlockedSector;
         if (vehiclePreviewImage != null)
         {
             vehiclePreviewImage.sprite = vehiclePreviewSprites[_selectedVehicleIndex];
             vehiclePreviewImage.preserveAspect = true;
-            vehiclePreviewImage.color = isUsable ? Color.white : new Color(0.42f, 0.42f, 0.42f, 0.85f);
+            vehiclePreviewImage.color = isUnlocked ? Color.white : new Color(0.35f, 0.35f, 0.35f, 0.85f);
         }
 
         if (_vehicleNameText != null)
             _vehicleNameText.text = $"MAP {_selectedVehicleIndex + 1} VEHICLE";
+
         if (_vehicleStatusText != null)
         {
-            _vehicleStatusText.text = isUsable
+            _vehicleStatusText.text = isUnlocked
                 ? "UNLOCKED  •  READY"
-                : _selectedVehicleIndex < _latestUnlockedVehicleIndex
-                    ? "LOCKED  •  PREVIOUS VEHICLE"
-                    : $"LOCKED  •  CLEAR MAP {_selectedVehicleIndex} TO UNLOCK";
-            _vehicleStatusText.color = isUsable ? new Color(0.4f, 1f, 0.48f) : new Color(1f, 0.35f, 0.3f);
+                : $"LOCKED  •  CLEAR MAP {_selectedVehicleIndex} TO UNLOCK";
+            _vehicleStatusText.color = isUnlocked ? new Color(0.4f, 1f, 0.48f) : new Color(1f, 0.35f, 0.3f);
+        }
+
+        if (_goButton != null)
+        {
+            _goButton.interactable = isUnlocked;
         }
     }
 
