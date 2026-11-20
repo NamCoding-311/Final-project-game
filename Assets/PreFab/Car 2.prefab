@@ -5112,6 +5112,8 @@ GameObject:
   - component: {fileID: 278397754471683393}
   - component: {fileID: 2381315871009996159}
   - component: {fileID: 1599029480375114829}
+  - component: {fileID: -1602605000369805680}
+  - component: {fileID: 1624280214819306686}
   m_Layer: 0
   m_Name: Car 2
   m_TagString: Player
@@ -5280,10 +5282,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerShooting
   currentWeapon: {fileID: 11400000, guid: 5a90003f3d4312a45b22c06fae775c70, type: 2}
+  campaignWeaponCatalog: []
   gunHolder: {fileID: 7531580844967781686}
   firePoint: {fileID: 6004938008631932678}
   gunSpriteRenderer: {fileID: 2718776989532238224}
   gunVisualAnimator: {fileID: 7371525817213914798}
+  shootAudioSource: {fileID: 0}
   muzzleFlashObject: {fileID: 0}
   muzzleSparkParticles: {fileID: 0}
   muzzleFlashSprite: {fileID: 0}
@@ -5347,3 +5351,49 @@ MonoBehaviour:
   frontBumperOffset: 1.75
   normalRamDamage: 0
   speedLossOnRam: 1.5
+--- !u!114 &-1602605000369805680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9213037732409640061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcc2cf543fe99054eadd348b07e6161a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VehicleDashFeedback
+  movement: {fileID: 0}
+  enableGhostTrail: 1
+  ghostSpawnInterval: 0.038
+  ghostLifetime: 0.24
+  ghostColorStart: {r: 0.15, g: 0.85, b: 1, a: 0.75}
+  ghostColorEnd: {r: 1, g: 0.45, b: 0.1, a: 0.6}
+  enableExhaustFlames: 1
+  exhaustLocalOffset: {x: -1.35, y: -0.2, z: 0}
+  exhaustSpawnInterval: 0.03
+  dashSound: {fileID: 8300000, guid: 00edf87e46e63314bbd65da2f463f733, type: 3}
+  ramImpactSound: {fileID: 8300000, guid: a71854d55202c714aba9461fe079a809, type: 3}
+  dashVolume: 0.95
+  impactVolume: 0.9
+--- !u!114 &1624280214819306686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9213037732409640061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76fcd66a1b2d64d43886b57915d36e38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DashCooldownHUD
+  playerMovement: {fileID: 0}
+  autoCreateHUD: 1
+  hudOffsetFromHPBar: {x: 0, y: -54}
+  hudSize: {x: 280, y: 22}
+  chargingColor: {r: 0, g: 0.85, b: 1, a: 0.95}
+  readyColor: {r: 1, g: 0.65, b: 0.1, a: 1}
+  boostingColor: {r: 1, g: 1, b: 0.3, a: 1}
+  frameBgColor: {r: 0.12, g: 0.13, b: 0.16, a: 0.95}
+  nitroIconSprite: {fileID: 6654593723889189089, guid: ac43f3da4f79db24f8c41e9b0a752778, type: 3}

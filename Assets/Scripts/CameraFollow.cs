@@ -4,6 +4,7 @@ using UnityEngine;
 // Hỗ trợ Pixel Snapping và tự động đổi màu nền Camera để triệt tiêu hoàn toàn lỗi nứt/xé hình Tilemap
 public class CameraFollow : MonoBehaviour
 {
+    public static CameraFollow Instance { get; private set; }
     [Header("Target")]
     // Transform của Player/Xe cần đi theo
     [SerializeField] private Transform target;
@@ -44,9 +45,11 @@ public class CameraFollow : MonoBehaviour
     private float _shakeMagnitude;
     private Vector3 _shakeOffset;
     private Coroutine _zoomCoroutine;
+    private Coroutine _dashPunchCoroutine;
 
     private void Awake()
     {
+        Instance = this;
         _originalXOffset = xOffset;
         _cam = GetComponent<Camera>();
         if (_cam == null) _cam = Camera.main;
@@ -167,5 +170,58 @@ public class CameraFollow : MonoBehaviour
         _cam.orthographicSize = targetSize;
         _zoomCoroutine = null;
         onComplete?.Invoke();
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+    }
+
+    // Hiệu ứng giật tốc & rung màn hình khi Dash xe (Speed Punch & Shake)
+    public void TriggerDashPunch(float punchOrthoOffset = 0.35f, float duration = 0.25f)
+    {
+        if (_cam == null) _cam = GetComponent<Camera>();
+        if (_cam == null) return;
+
+        // Rung giật lực lưỡng
+        TriggerShake(duration * 0.9f, 0.22f);
+
+        if (_dashPunchCoroutine != null)
+        {
+            StopCoroutine(_dashPunchCoroutine);
+        }
+        _dashPunchCoroutine = StartCoroutine(DashPunchRoutine(punchOrthoOffset, duration));
+    }
+
+    private System.Collections.IEnumerator DashPunchRoutine(float punchOrthoOffset, float duration)
+    {
+        float startSize = _originalOrthoSize;
+        float targetSize = startSize + punchOrthoOffset;
+        float burstDuration = duration * 0.35f;
+        float elapsed = 0f;
+
+        // Giật dãn góc nhìn tạo cảm giác xe xé gió vọt đi
+        while (elapsed < burstDuration)
+        {
+            elapsed += Time.deltaTime;
+            _cam.orthographicSize = Mathf.Lerp(startSize, targetSize, elapsed / burstDuration);
+            yield return null;
+        }
+
+        // Hồi mượt về góc nhìn nguyên bản
+        elapsed = 0f;
+        float recoverDuration = duration - burstDuration;
+        while (elapsed < recoverDuration)
+        {
+            elapsed += Time.deltaTime;
+            _cam.orthographicSize = Mathf.Lerp(targetSize, startSize, elapsed / recoverDuration);
+            yield return null;
+        }
+
+        _cam.orthographicSize = startSize;
+        _dashPunchCoroutine = null;
     }
 }

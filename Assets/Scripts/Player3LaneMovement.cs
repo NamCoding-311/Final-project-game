@@ -128,6 +128,16 @@ public class Player3LaneMovement : MonoBehaviour
             _rb.gravityScale = 0f;
             _rb.interpolation = RigidbodyInterpolation2D.Interpolate;
         }
+
+        // Tự động đính kèm bộ hiệu ứng hình ảnh/âm thanh và HUD hồi chiêu của Dash nếu chưa có
+        if (GetComponent<VehicleDashFeedback>() == null)
+        {
+            gameObject.AddComponent<VehicleDashFeedback>();
+        }
+        if (FindAnyObjectByType<DashCooldownHUD>() == null && GetComponent<DashCooldownHUD>() == null)
+        {
+            gameObject.AddComponent<DashCooldownHUD>();
+        }
     }
 
     private void Start()
@@ -219,6 +229,12 @@ public class Player3LaneMovement : MonoBehaviour
         _currentSpeed = dashSpeed;
         _dashEndTime = Time.time + dashDuration;
         _nextDashTime = Time.time + dashCooldown;
+
+        // Kích hoạt camera punch & rung giật (Speed Punch & Shake)
+        if (CameraFollow.Instance != null)
+        {
+            CameraFollow.Instance.TriggerDashPunch(0.35f, dashDuration);
+        }
     }
 
     // Chuyển làn giữa các làn từ 0 đến GetTotalLanes() - 1
@@ -282,6 +298,7 @@ public class Player3LaneMovement : MonoBehaviour
             {
                 // Khi đang Dash: Đủ xung lực và sát thương cực đại để đâm chết Zombie ngay lập tức
                 zombie.TakeDamage(dashRamDamage);
+                TriggerRamFeedback(other.bounds.center);
             }
             else
             {
@@ -300,6 +317,7 @@ public class Player3LaneMovement : MonoBehaviour
             if (_isDashing)
             {
                 charger.TakeDamage(dashRamDamage);
+                TriggerRamFeedback(other.bounds.center);
             }
             else
             {
@@ -315,6 +333,7 @@ public class Player3LaneMovement : MonoBehaviour
             if (_isDashing)
             {
                 jumper.TakeDamage(dashRamDamage);
+                TriggerRamFeedback(other.bounds.center);
             }
             else
             {
@@ -322,6 +341,30 @@ public class Player3LaneMovement : MonoBehaviour
                 PinZombieToFrontBumper(other.transform, other.attachedRigidbody);
             }
             return;
+        }
+
+        ZombieBoss boss = other.GetComponent<ZombieBoss>();
+        if (boss != null)
+        {
+            if (_isDashing)
+            {
+                boss.TakeDamage(dashRamDamage);
+                TriggerRamFeedback(other.bounds.center);
+            }
+            return;
+        }
+    }
+
+    private void TriggerRamFeedback(Vector3 hitPoint)
+    {
+        var feedback = GetComponent<VehicleDashFeedback>();
+        if (feedback != null)
+        {
+            feedback.PlayRamImpactFeedback(hitPoint);
+        }
+        else if (CameraFollow.Instance != null)
+        {
+            CameraFollow.Instance.TriggerShake(0.12f, 0.25f);
         }
     }
 
@@ -348,6 +391,23 @@ public class Player3LaneMovement : MonoBehaviour
 
     // Kiem tra xem xe co dang trong trang thai Dash khong
     public bool IsDashing() => _isDashing;
+
+    // Thoi gian hoi chieu con lai (giay)
+    public float GetDashCooldownRemaining() => Mathf.Max(0f, _nextDashTime - Time.time);
+
+    // Tong thoi gian hoi chieu (giay)
+    public float GetDashCooldownTotal() => dashCooldown;
+
+    // Tien trinh hoi chieu tu 0 (vua dash xong) den 1 (da hoi xong san sang dash)
+    public float GetDashCooldownNormalized()
+    {
+        if (dashCooldown <= 0.01f) return 1f;
+        float remaining = GetDashCooldownRemaining();
+        return Mathf.Clamp01(1f - (remaining / dashCooldown));
+    }
+
+    // Kiem tra Dash da san sang de kich hoat chua
+    public bool IsDashReady() => Time.time >= _nextDashTime;
 
     public float GetMinYLimit() => minYLimit;
     public float GetMaxYLimit() => maxYLimit;
